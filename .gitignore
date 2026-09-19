@@ -1,0 +1,27 @@
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Archives produced for handover
+*.zip
+*.rar
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Editor and OS
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+
+# Local content batches may contain drafts
+# content-batches/*.json
+
+# Deploy manifest, written at build time and read by content:confirm
+.deploy/

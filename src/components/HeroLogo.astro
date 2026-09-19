@@ -1,0 +1,182 @@
+---
+import ImpactMarkSvg from "./ImpactMarkSvg.astro";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div class={`hero-logo select-none text-ink ${className}`} data-hero-logo aria-hidden="true">
+  <ImpactMarkSvg class="h-auto w-full overflow-visible" />
+</div>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  document.documentElement.dataset.buildStamp = "1788367043";
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initHeroLogo(root: HTMLElement) {
+    const svg = root.querySelector("svg");
+    if (!svg) return;
+
+    const impactGroup = svg.querySelector<SVGGElement>("#impact-wordmark");
+    const muralsGroup = svg.querySelector<SVGGElement>("#murals-wordmark");
+    const fragments = Array.from(svg.querySelectorAll<SVGPathElement>('[id^="impact-fragment-"]'));
+    if (!impactGroup || fragments.length === 0) return;
+
+    const central = fragments.filter((el) => el.getAttribute("data-zone") === "central");
+    const outer = fragments.filter((el) => el.getAttribute("data-zone") === "outer");
+    const originX = parseFloat(impactGroup.getAttribute("data-impact-origin-x") ?? "0");
+    const originY = parseFloat(impactGroup.getAttribute("data-impact-origin-y") ?? "0");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+
+    fragments.forEach((el) => {
+      el.style.transformBox = "fill-box";
+      el.style.transformOrigin = "50% 50%";
+    });
+
+    function settle() {
+      window.dispatchEvent(new CustomEvent("impact:settled"));
+    }
+
+    if (reduceMotion) {
+      settle();
+      return;
+    }
+
+    const intro = gsap.timeline({ delay: 0.18 });
+    const centralRelease = isMobile ? 28 : 52;
+    const outerRelease = isMobile ? 10 : 18;
+
+    gsap.set(impactGroup, { svgOrigin: `${originX} ${originY}` });
+
+    intro.to(impactGroup, {
+      scaleX: 0.955,
+      scaleY: 1.025,
+      duration: 0.1,
+      ease: "power3.in"
+    });
+
+    fragments.forEach((el, index) => {
+      const isCentral = el.getAttribute("data-zone") === "central";
+      const vectorX = parseFloat(el.getAttribute("data-vector-x") ?? "0");
+      const vectorY = parseFloat(el.getAttribute("data-vector-y") ?? "0");
+      const weight = parseFloat(el.getAttribute("data-motion-weight") ?? "1");
+      const release = isCentral ? centralRelease : outerRelease;
+
+      intro.to(
+        el,
+        {
+          x: vectorX * release * weight,
+          y: vectorY * release * weight,
+          rotate: vectorX * weight * (isCentral ? 2.8 : 1.1),
+          duration: 0.48,
+          ease: "power2.out"
+        },
+        0.04 + index * 0.003
+      );
+    });
+
+    intro.to(impactGroup, { scaleX: 1, scaleY: 1, duration: 0.52, ease: "power2.out" }, 0.2);
+
+    fragments.forEach((el, index) => {
+      intro.to(
+        el,
+        { x: 0, y: 0, rotate: 0, duration: 0.72, ease: "power2.inOut" },
+        0.7 + index * 0.003
+      );
+    });
+
+    if (muralsGroup) {
+      intro.fromTo(muralsGroup, { y: 2 }, { y: 0, duration: 0.6, ease: "power2.out" }, 0.12);
+    }
+
+    intro.call(settle, undefined, 0.52);
+    intro.eventCallback("onComplete", initScrollDrift);
+
+    function initScrollDrift() {
+      const hero = document.getElementById("hero");
+      if (!hero) return;
+
+      gsap.to(root, {
+        opacity: 0.18,
+        scale: 0.97,
+        ease: "none",
+        scrollTrigger: {
+          trigger: hero,
+          start: "25% top",
+          end: "bottom top",
+          scrub: 0.8
+        }
+      });
+
+      /*
+        Trigger against the logo's own box (`root`), not the whole hero
+        section. Tying this to `hero` meant the drift's full travel only
+        completed once the *entire* hero (title, description, buttons, offer
+        index) had scrolled past — the logo itself occupies a much smaller
+        slice of that range, so almost all of the visible motion happened
+        after the logo had already scrolled out of view, while the drift
+        while it was still on screen was faint. With `end: "bottom top"`
+        against `root`, the full range instead matches exactly when the logo
+        itself leaves the viewport, confirmed against a real geometry
+        readout (root height ~241px at 1280px width vs. the old ~993px hero
+        height it was previously mapped to).
+
+        Runs on mobile too (previously skipped entirely below md, leaving
+        only the root-level fade above): the fragmentation/reassembly on
+        scroll is part of what a prior pass asked to recover here, not just
+        the entrance. Release amounts are scaled down for mobile (~45%),
+        echoing the same isMobile scaling already applied to the entrance
+        timeline above, so the shatter stays proportionate to a narrower
+        screen instead of the desktop-tuned displacement overshooting it.
+      */
+      const scrollRelease = isMobile ? 0.45 : 1;
+
+      central.forEach((el, index) => {
+        const vectorX = parseFloat(el.getAttribute("data-vector-x") ?? "0");
+        const vectorY = parseFloat(el.getAttribute("data-vector-y") ?? "0");
+        const weight = parseFloat(el.getAttribute("data-motion-weight") ?? "1");
+        const release = (52 + index * 5) * scrollRelease;
+
+        gsap.to(el, {
+          x: vectorX * release * weight,
+          y: vectorY * release * weight + (index % 2 === 0 ? -10 : 12) * scrollRelease,
+          rotate: vectorX * 3.2,
+          opacity: 0.48,
+          ease: "none",
+          scrollTrigger: {
+            trigger: root,
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.6
+          }
+        });
+      });
+
+      outer.slice(0, 5).forEach((el, index) => {
+        const vectorX = parseFloat(el.getAttribute("data-vector-x") ?? "0");
+        const vectorY = parseFloat(el.getAttribute("data-vector-y") ?? "0");
+        const release = (12 + index * 2) * scrollRelease;
+        gsap.to(el, {
+          x: vectorX * release,
+          y: vectorY * release,
+          ease: "none",
+          scrollTrigger: {
+            trigger: root,
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.8
+          }
+        });
+      });
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-hero-logo]").forEach(initHeroLogo);
+</script>

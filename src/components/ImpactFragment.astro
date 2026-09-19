@@ -1,0 +1,67 @@
+---
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+interface Props {
+  fragment?: "06" | "08" | "09" | "10" | "11";
+  class?: string;
+  drift?: number;
+  driftX?: number;
+  rotate?: number;
+}
+
+const {
+  fragment = "06",
+  class: className = "",
+  drift,
+  driftX = 0,
+  rotate = 0
+} = Astro.props;
+
+const boxes = {
+  "06": "450 70 300 220",
+  "08": "450 140 320 220",
+  "09": "650 160 350 210",
+  "10": "700 75 270 190",
+  "11": "690 15 230 160"
+} as const;
+
+/*
+  The path is inlined rather than referenced with <use href="/assets/logo/
+  impact-murals.svg#...">. A <use> pointing at an *external* SVG file does
+  not reliably resolve `fill="currentColor"` (set on that file's own <g>)
+  against this document's inherited `color` — confirmed visually, every
+  fragment rendered black regardless of its `text-*` class. Reading the same
+  file's markup at build time and inlining the one <path> this instance needs
+  keeps it in the host document, where currentColor resolves normally, the
+  same way the main logo (ImpactMarkSvg.astro) already works by being inline.
+  The source file itself and the main logo component are untouched — it also
+  stays exactly where it is, since BaseLayout.astro links it as the favicon.
+
+  Resolved from `process.cwd()`, not `import.meta.url`: this component's
+  compiled location moves under `dist/.prerender/chunks/` in a production
+  build, so a path relative to the component file itself finds nothing there
+  (confirmed by a real failed build) — `process.cwd()` is the project root in
+  both `astro dev` and `astro build` regardless of where the built chunk ends
+  up.
+*/
+const svgSource = readFileSync(
+  join(process.cwd(), "public/assets/logo/impact-murals.svg"),
+  "utf-8"
+);
+const pathMatch = svgSource.match(new RegExp(`<path id="impact-fragment-${fragment}"[^>]*\\sd="([^"]+)"`));
+const pathData = pathMatch?.[1] ?? "";
+---
+
+<svg
+  class={className}
+  viewBox={boxes[fragment]}
+  aria-hidden="true"
+  focusable="false"
+  data-drift-fragment={drift !== undefined ? "true" : undefined}
+  data-drift={drift}
+  data-drift-x={driftX}
+  data-drift-rotate={rotate}
+>
+  <path d={pathData} fill="currentColor" fill-rule="evenodd" />
+</svg>

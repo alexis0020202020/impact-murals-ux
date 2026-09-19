@@ -1,0 +1,212 @@
+---
+import { offers } from "@/content/offers";
+import FractureReveal from "../FractureReveal.astro";
+import ImpactFragment from "../ImpactFragment.astro";
+
+const brands = offers.find((offer) => offer.key === "art-for-brands")!;
+const places = offers.find((offer) => offer.key === "art-for-places")!;
+const publicArt = offers.find((offer) => offer.key === "public-art")!;
+---
+
+<section id="offers" class="relative overflow-hidden pb-16 pt-14 md:pb-44 md:pt-12" aria-labelledby="offers-heading">
+  <h2 id="offers-heading" class="sr-only">What we do</h2>
+
+  <div class="px-[var(--gutter)]" data-reveal-group>
+    <p data-reveal class="body-copy-strong max-w-[24rem]">Start with what the project needs from art.</p>
+  </div>
+
+  <!--
+    Desktop only: with the section's own top padding and the hero's closing
+    padding also both cut, "Start with what the project needs from art." now
+    leads directly into Art for Brands instead of several stacked gaps
+    reading as an empty section between the hero and the first offer.
+    Mobile's own mt-10 (already tuned in the prior mobile pass) is untouched.
+  -->
+  <div class="mt-10 md:mt-6">
+    <!-- ART FOR BRANDS -->
+    <article class="offer-scene px-[var(--gutter)]" data-offer-chapter>
+      <!--
+        Restructured (desktop only — the md: grid columns below; the mobile
+        single-column stack is unchanged) so title, description and link live
+        together in one column instead of the title alone spanning 8 columns
+        with the description isolated in a 3-column sliver on the same row:
+        that split read as the text "floating" independently above the image,
+        which then only appeared in a second row below both. Now mirrors Art
+        for Places' own one-block-of-text-beside-the-image pattern, flipped
+        (text left, image right here) so the two offers visually alternate
+        rather than both defaulting to the same side.
+      -->
+      <div class="relative grid grid-cols-1 md:grid-cols-12 md:items-start md:gap-x-10">
+        <ImpactFragment fragment="08" drift={58} driftX={-24} rotate={-8} class="pointer-events-none absolute -right-[2vw] top-[2%] block w-[22vw] text-signal opacity-[0.14] md:-left-[6vw] md:top-[6%] md:right-auto md:w-[13vw] md:opacity-20" />
+
+        <div class="relative z-10 md:col-span-5 md:col-start-1">
+          <h3 class="headline-display max-w-[8ch] text-[17vw] sm:text-[11vw] md:text-[5.7vw] lg:text-[5.15vw]">
+            {brands.title}
+          </h3>
+          <p class="body-copy mt-8 max-w-sm">{brands.summary}</p>
+          <p class="image-note mt-5">Activations · Live Art · Artist Collaborations · Murals</p>
+          <a href={`/what-we-do/${brands.slug}`} class="editorial-link mt-7 transition-colors duration-200 hover:text-clay focus-visible:text-clay" data-offer-link="art-for-brands">Art for Brands <span aria-hidden="true">↗</span></a>
+        </div>
+
+        <div class="relative mt-10 md:col-span-7 md:col-start-6 md:mt-0 md:pt-[6vh]">
+          <FractureReveal
+            offer={brands.key}
+            src={brands.image.src}
+            alt={brands.image.alt}
+            video={brands.image.video}
+            poster={brands.image.poster}
+            class="aspect-[4/5] min-h-[430px] md:aspect-[5/6] md:min-h-0"
+            data-offer-panel="art-for-brands"
+            href={`/what-we-do/${brands.slug}`}
+            ariaLabel={brands.shortTitle}
+          />
+        </div>
+      </div>
+    </article>
+
+    <!-- ART FOR PLACES -->
+    <article class="offer-scene px-[var(--gutter)]" data-offer-chapter>
+      <div class="relative grid grid-cols-1 gap-y-8 md:grid-cols-12 md:gap-x-10">
+        <ImpactFragment fragment="06" drift={44} driftX={28} rotate={8} class="pointer-events-none absolute -left-[3vw] top-[1%] block w-[20vw] text-ink opacity-[0.1] md:-right-[4vw] md:left-auto md:top-[12%] md:w-[13vw] md:opacity-[0.09]" />
+
+        <div class="relative z-10 md:col-span-5 md:col-start-8 md:pt-[8vh]">
+          <h3 class="headline-display max-w-[8ch] text-[17vw] sm:text-[11vw] md:text-[5.7vw] lg:text-[5.15vw]">
+            {places.title}
+          </h3>
+          <p class="body-copy mt-8 max-w-sm">{places.summary}</p>
+          <p class="image-note mt-5">Murals · Commissioned Artworks · Canvases · Site-Specific Art</p>
+          <a href={`/what-we-do/${places.slug}`} class="editorial-link mt-7 transition-colors duration-200 hover:text-clay focus-visible:text-clay" data-offer-link="art-for-places">Art for Places <span aria-hidden="true">↗</span></a>
+        </div>
+
+        <div class="md:col-span-7 md:col-start-1 md:row-start-1">
+          <FractureReveal
+            offer={places.key}
+            src={places.image.src}
+            alt={places.image.alt}
+            video={places.image.video}
+            poster={places.image.poster}
+            class="aspect-[4/5] min-h-[430px] md:aspect-[5/6] md:min-h-0"
+            data-offer-panel="art-for-places"
+            href={`/what-we-do/${places.slug}`}
+            ariaLabel={places.shortTitle}
+          />
+        </div>
+      </div>
+    </article>
+
+    <!-- PUBLIC ART -->
+    <article class="offer-scene px-[var(--gutter)]" data-offer-chapter>
+      <!--
+        Same one-column-of-text-beside-the-image structure as Art for Brands
+        (text left, image right — continuing the alternation rather than
+        repeating Places' image-left), at explicit request: this used to
+        stack title+description above a full-width panoramic image instead
+        of sitting beside it. The `split="b"` three-shard fracture (vs. the
+        other two offers' two-shard `split="a"`) is kept as-is, along with
+        its hover/scroll entrance behaviour — only the surrounding layout
+        changed, not the panel or its animation.
+      -->
+      <div class="relative grid grid-cols-1 md:grid-cols-12 md:items-start md:gap-x-10">
+        <ImpactFragment fragment="10" drift={70} driftX={-18} rotate={-10} class="pointer-events-none absolute -right-[4vw] top-[0%] block w-[24vw] text-signal opacity-[0.15] md:-left-[6vw] md:top-[8%] md:right-auto md:w-[13vw] md:opacity-[0.18]" />
+
+        <div class="relative z-10 md:col-span-5 md:col-start-1">
+          <!--
+            This offer's title ("PUBLIC ART & LARGE-SCALE MURALS") is
+            noticeably longer than the other two ("ART FOR BRANDS" / "ART
+            FOR PLACES"), so it keeps its own smaller desktop scale and a
+            character cap even at the same column width they use, rather
+            than wrapping awkwardly wide or overflowing its column.
+          -->
+          <h3 class="headline-display max-w-[15ch] text-[11.5vw] sm:text-[8.5vw] md:max-w-[10ch] md:text-[4.6vw] lg:text-[4.15vw]">
+            {publicArt.title}
+          </h3>
+          <p class="body-copy-strong mt-8 max-w-sm">Creative intent, built for the real site.</p>
+          <p class="body-copy mt-4 max-w-sm">{publicArt.summary}</p>
+          <p class="image-note mt-5">Murals · Facades · Public Art · Multi-Site Programmes</p>
+          <a href={`/what-we-do/${publicArt.slug}`} class="editorial-link mt-7 transition-colors duration-200 hover:text-clay focus-visible:text-clay" data-offer-link="public-art">Public Art <span aria-hidden="true">↗</span></a>
+        </div>
+
+        <div class="relative mt-10 md:col-span-7 md:col-start-6 md:mt-0 md:pt-[6vh]">
+          <FractureReveal
+            offer={publicArt.key}
+            src={publicArt.image.src}
+            alt={publicArt.image.alt}
+            video={publicArt.image.video}
+            poster={publicArt.image.poster}
+            split="b"
+            class="aspect-[4/5] min-h-[430px] md:aspect-[5/6] md:min-h-0"
+            data-offer-panel="public-art"
+            href={`/what-we-do/${publicArt.slug}`}
+            ariaLabel={publicArt.shortTitle}
+          />
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { initFractureReveal, armFractureHover } from "@/lib/fracture";
+
+  document.documentElement.dataset.buildStamp = "1788367043";
+  gsap.registerPlugin(ScrollTrigger);
+
+  initFractureReveal(document, { immediate: false });
+
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const mobile = window.matchMedia("(max-width: 767px)").matches;
+
+    document.querySelectorAll<HTMLElement>("[data-offer-chapter]").forEach((chapter) => {
+      // Secondary media only: the primary image per chapter is now a
+      // FractureReveal panel, animated once by initFractureReveal above.
+      // Running this drift on the same elements too would fight the
+      // fracture entrance for control of `transform` on the same frames.
+      const media = Array.from(
+        chapter.querySelectorAll<HTMLElement>(".media-placeholder, .media-shell")
+      ).filter((item) => !item.closest("[data-fracture-panel]"));
+      const heading = chapter.querySelector<HTMLElement>("h3");
+
+      if (heading) {
+        gsap.from(heading, {
+          opacity: 0,
+          y: mobile ? 18 : 34,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: { trigger: heading, start: "top 91%", once: true }
+        });
+      }
+
+      media.forEach((item, index) => {
+        gsap.fromTo(
+          item,
+          { y: mobile ? 12 : 30 + index * 9 },
+          {
+            y: mobile ? -5 : -16 - index * 7,
+            ease: "none",
+            scrollTrigger: {
+              trigger: chapter,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1.1
+            }
+          }
+        );
+      });
+    });
+  }
+
+  // Hovering or focusing an offer's link nudges that offer's own image panel,
+  // so the reaction reads as coordinated rather than isolated to the link.
+  document.querySelectorAll<HTMLElement>("[data-offer-link]").forEach((link) => {
+    const key = link.dataset.offerLink;
+    const panel = document.querySelector<HTMLElement>(`[data-offer-panel="${key}"]`);
+    if (!panel) return;
+    armFractureHover(panel);
+    link.addEventListener("pointerenter", () => panel.dispatchEvent(new Event("pointerenter")));
+    link.addEventListener("pointerleave", () => panel.dispatchEvent(new Event("pointerleave")));
+    link.addEventListener("focus", () => panel.dispatchEvent(new Event("focusin")));
+    link.addEventListener("blur", () => panel.dispatchEvent(new Event("focusout")));
+  });
+</script>

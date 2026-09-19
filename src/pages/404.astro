@@ -1,0 +1,31 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+---
+
+<BaseLayout title="Page not found" noindex>
+  <PageHeader
+    eyebrow="404"
+    heading="PAGE NOT FOUND."
+    lead="That page doesn't exist, or has moved. Here's where to go instead."
+  />
+
+  <div class="px-[var(--gutter)] pb-24 md:pb-36">
+    <nav aria-label="Suggested pages" class="max-w-md">
+      <ul class="grid grid-cols-1 divide-y divide-ink/10 border-t border-ink/10">
+        <li>
+          <a href="/" class="editorial-link block py-4">Home <span aria-hidden="true">↗</span></a>
+        </li>
+        <li>
+          <a href="/what-we-do" class="editorial-link block py-4">What We Do <span aria-hidden="true">↗</span></a>
+        </li>
+        <li>
+          <a href="/studio" class="editorial-link block py-4">Studio <span aria-hidden="true">↗</span></a>
+        </li>
+        <li>
+          <a href="/discuss-a-project" class="editorial-link block py-4">Discuss a Project <span aria-hidden="true">↗</span></a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</BaseLayout>

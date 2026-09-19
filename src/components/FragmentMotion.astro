@@ -1,0 +1,38 @@
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { initEditorialReveal } from "@/lib/reveal";
+
+  document.documentElement.dataset.buildStamp = "1788367043";
+  gsap.registerPlugin(ScrollTrigger);
+
+  initEditorialReveal(document);
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduceMotion) {
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    document.querySelectorAll<SVGElement>("[data-drift-fragment]").forEach((fragment) => {
+      const amount = Number(fragment.dataset.drift ?? 30) * (isMobile ? 0.38 : 1);
+      const amountX = Number(fragment.dataset.driftX ?? 0) * (isMobile ? 0.35 : 1);
+      const rotate = Number(fragment.dataset.driftRotate ?? 0) * (isMobile ? 0.35 : 1);
+      const trigger = fragment.closest("section") ?? fragment.parentElement ?? fragment;
+
+      gsap.fromTo(
+        fragment,
+        { y: amount * -0.45, x: amountX * -0.4, rotate: rotate * -0.35 },
+        {
+          y: amount,
+          x: amountX,
+          rotate,
+          ease: "none",
+          scrollTrigger: {
+            trigger,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.25
+          }
+        }
+      );
+    });
+  }
+</script>

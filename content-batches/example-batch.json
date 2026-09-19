@@ -1,0 +1,42 @@
+{
+  "$comment": [
+    "EXAMPLE BATCH. Fictional structure only, no real article and no factual claim.",
+    "Copy this shape for real batches prepared elsewhere.",
+    "Body is standard Markdown: headings, paragraphs, lists, links, tables and images.",
+    "You never create one row per paragraph and you never arrange blocks visually.",
+    "Approval is deliberately absent: an import can never publish by itself.",
+    "See docs/SEO-IMPORT-FORMAT.md for the field reference."
+  ],
+  "records": [
+    {
+      "id": "im-example-0001",
+      "type": "insight",
+      "title": "EXAMPLE: what a batch record looks like",
+      "slug": "example-batch-record",
+      "description": "Example record showing the import shape. Not a real article and not commercial content.",
+      "offer": "public-art",
+      "topics": ["murals", "production"],
+      "author": "Alexis",
+      "publishAt": "2026-01-15",
+      "image": {
+        "src": "/assets/projects/production-onsite.svg",
+        "alt": "Alt text is supplied here and is never generated automatically.",
+        "caption": "Optional caption."
+      },
+      "body": "An opening paragraph. The site applies its own typography, spacing and rules, so nothing here needs formatting by hand.\n\n## A section heading\n\nProse under a section, with an [internal link](/what-we-do/public-art) that the validator checks against the generated routes.\n\n- A list item\n- Another item\n\n### A sub-section\n\n| Column | Column |\n| --- | --- |\n| Value | Value |\n\n## A second section\n\nOnce a piece has three sections and enough length, a contents list appears automatically."
+    },
+    {
+      "id": "im-example-0002",
+      "type": "guide",
+      "title": "EXAMPLE: what a specialised page looks like",
+      "slug": "example-specialised-page",
+      "description": "Example specialised page showing the guide shape. Not real content.",
+      "offer": "art-for-places",
+      "topics": ["commissioning"],
+      "author": "Alexis",
+      "intent": "The specific question a visitor is asking when they land here.",
+      "publishAt": "2026-01-20",
+      "body": "A guide answers one distinct question. It carries its own sections and routes the visitor into an offer.\n\n## What this covers\n\nProse.\n\n## What it does not cover\n\nProse, with a link to [the enquiry](/discuss-a-project)."
+    }
+  ]
+}

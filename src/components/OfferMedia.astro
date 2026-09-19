@@ -1,0 +1,71 @@
+---
+import type { OfferKey } from "@/content/offers";
+
+interface Props {
+  offer: OfferKey;
+  src?: string;
+  alt?: string;
+  class?: string;
+  label?: string;
+  eager?: boolean;
+  /** MP4 URL. When set, this renders instead of the image/placeholder. */
+  video?: string;
+  /** Shown before the video plays, and is what a reduced-motion visitor sees instead of the loop. */
+  poster?: string;
+}
+
+const {
+  offer,
+  src,
+  alt = "",
+  class: className = "",
+  label = "Project photography",
+  eager = false,
+  video,
+  poster
+} = Astro.props;
+
+const hasVideo = Boolean(video);
+const isPlaceholder = !hasVideo && (!src || /placeholder/i.test(alt) || /\/assets\/projects\/.*\.svg$/i.test(src));
+const variant = offer === "art-for-brands" ? "brands" : offer === "art-for-places" ? "places" : "public";
+---
+
+{isPlaceholder ? (
+  <div
+    class={`media-placeholder ${className}`}
+    data-variant={variant}
+    role="img"
+    aria-label={`${label}. Real project photography to be added.`}
+  >
+    <span class="media-placeholder-plane media-placeholder-plane-a" aria-hidden="true"></span>
+    <span class="media-placeholder-plane media-placeholder-plane-b" aria-hidden="true"></span>
+  </div>
+) : hasVideo ? (
+  <div class={`media-shell ${className}`}>
+    <video
+      muted
+      loop
+      playsinline
+      preload="none"
+      poster={poster || undefined}
+      data-autoplay-video
+      aria-label={alt || label}
+    >
+      <source src={video} type="video/mp4" />
+    </video>
+  </div>
+) : (
+  <div class={`media-shell ${className}`}>
+    <img
+      src={src}
+      alt={alt}
+      loading={eager ? "eager" : "lazy"}
+      decoding="async"
+    />
+  </div>
+)}
+
+<script>
+  import { initAutoplayVideo } from "@/lib/media-autoplay";
+  initAutoplayVideo(document);
+</script>

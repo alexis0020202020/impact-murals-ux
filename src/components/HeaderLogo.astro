@@ -1,0 +1,19 @@
+---
+import ImpactMarkSvg from "./ImpactMarkSvg.astro";
+
+interface Props {
+  class?: string;
+  href?: string;
+}
+
+const { class: className = "", href = "#top" } = Astro.props;
+---
+
+<a
+  href={href}
+  aria-label="Impact Murals, home"
+  class={`header-logo-link inline-block transition-opacity duration-200 hover:opacity-80 ${className}`}
+>
+  <!-- Parent fixes the height, so the mark constrains height and lets width follow. -->
+  <ImpactMarkSvg class="h-full w-auto" />
+</a>

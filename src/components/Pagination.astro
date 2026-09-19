@@ -1,0 +1,60 @@
+---
+import { pagePath } from "@/lib/routes";
+
+/**
+ * Index pagination.
+ *
+ * Every page number is a real anchor, not a script-driven control, so a
+ * crawler that never runs JavaScript still reaches the last page of a section.
+ * All numbers are rendered rather than a moving window: an entry that has
+ * fallen off the first page must stay one click from the section index, not
+ * several.
+ */
+interface Props {
+  base: string;
+  current: number;
+  total: number;
+}
+
+const { base, current, total } = Astro.props;
+const pages = Array.from({ length: total }, (_unused, i) => i + 1);
+---
+
+{total > 1 && (
+  <nav class="mt-14 border-t border-stone-line/60 pt-6 md:mt-16" aria-label="Pagination">
+    <ul class="flex flex-wrap items-center gap-x-5 gap-y-3">
+      {current > 1 && (
+        <li>
+          <a href={pagePath(base, current - 1)} rel="prev" class="cta-secondary text-[11px]">
+            PREVIOUS
+          </a>
+        </li>
+      )}
+
+      {pages.map((page) => (
+        <li>
+          {page === current ? (
+            <span class="notation text-[11px] text-ink" aria-current="page">
+              {String(page).padStart(2, "0")}
+            </span>
+          ) : (
+            <a
+              href={pagePath(base, page)}
+              class="notation text-[11px] text-stone/70 transition-colors duration-200 hover:text-ink"
+            >
+              {String(page).padStart(2, "0")}
+            </a>
+          )}
+        </li>
+      ))}
+
+      {current < total && (
+        <li>
+          <a href={pagePath(base, current + 1)} rel="next" class="cta-secondary text-[11px]">
+            NEXT
+          </a>
+        </li>
+      )}
+    </ul>
+  </nav>
+)}

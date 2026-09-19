@@ -1,0 +1,101 @@
+# Netlify configuration for the Impact Murals static site.
+#
+# The site is a static Astro build with no adapter and no server runtime, so
+# Netlify only needs to run the build and publish the output directory.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Astro 7 requires Node 18.20.8+, 20.3+ or 22+. Pinned so a Netlify default
+  # change cannot silently break the build.
+  NODE_VERSION = "22"
+
+# Runs only when CONTENT_CONFIRMATION_ENABLED=true and CONTEXT=production.
+[[plugins]]
+  package = "./netlify/plugins/editorial-confirm"
+
+[[headers]]
+  for = "/deploy-proof.json"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+# Superseded offer URLs.
+#
+# The five earlier context pages became three commercial pillars. Each old URL
+# redirects to the pillar that now covers the same intent, never to the
+# homepage, so an existing link still lands on relevant content.
+#
+# No competing static file is generated for these paths in a production build
+# (see getStaticPaths in src/pages/what-we-do/[slug].astro), because Netlify
+# resolves an existing file before evaluating a redirect. With no file present
+# these rules are unambiguous. `force = true` is kept as a second guarantee.
+[[redirects]]
+  from = "/what-we-do/brand-retail-environments"
+  to = "/what-we-do/art-for-brands"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/what-we-do/art-activations"
+  to = "/what-we-do/art-for-brands"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/what-we-do/hospitality-property-destinations"
+  to = "/what-we-do/art-for-places"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/what-we-do/workshops-community"
+  to = "/what-we-do/art-for-places"
+  status = 301
+  force = true
+
+# Hashed assets are content-addressed and safe to cache permanently.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# The three master offer videos: same file reused across many pages
+# (each offer's own page, its homepage teaser, and every guide/insight
+# tagged with that offer), so caching them well matters more than usual.
+[[headers]]
+  for = "/videos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    # Netlify already applies HSTS to this custom domain by platform default;
+    # stated explicitly here so the guarantee lives in the repository instead
+    # of an undocumented dashboard/platform behaviour. No includeSubDomains or
+    # preload: those affect hosts and browser-list submission beyond this
+    # repository's scope and are a deliberate decision for the site owner.
+    Strict-Transport-Security = "max-age=31536000"
+    # Every resource this site actually loads is same-origin: no third-party
+    # script, font, image, iframe or analytics anywhere in the source (see the
+    # security audit). Report-Only so nothing can break silently: the two
+    # inline `application/ld+json` blocks (BaseLayout org schema, per-page
+    # breadcrumb/article schema) are expected to be reported under script-src,
+    # since a static site has no per-request nonce to allow them precisely.
+    # Move to enforcing `Content-Security-Policy` only after that inline-JSON-LD
+    # question is resolved (accept scoped 'unsafe-inline', or compute build-time
+    # hashes) — see the audit report.
+    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+    # None of these browser features are used anywhere on the site.
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), interest-cohort=()"

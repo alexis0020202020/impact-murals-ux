@@ -1,0 +1,54 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import EnquiryFlow from "@/components/EnquiryFlow.astro";
+import Contact from "@/components/Contact.astro";
+import ImpactFragment from "@/components/ImpactFragment.astro";
+import FragmentMotion from "@/components/FragmentMotion.astro";
+import { breadcrumbsFor } from "@/lib/routes";
+import { pageSeo } from "@/content/seo";
+import { enquiryCopy } from "@/content/enquiry";
+
+const trail = await breadcrumbsFor("/discuss-a-project");
+---
+
+<BaseLayout title={pageSeo.discuss.title} description={pageSeo.discuss.description}>
+  <Breadcrumbs trail={trail} hideOnMobile />
+
+  <!--
+    Compacted on mobile only (md: values unchanged): this is the page a
+    visitor lands on specifically to reach the questionnaire's first choice,
+    and the header + intro previously pushed that first choice well past the
+    first screen. Desktop keeps its own generous heading scale.
+  -->
+  <header class="relative overflow-hidden px-[var(--gutter)] pb-6 pt-6 md:pb-14 md:pt-14">
+    <ImpactFragment fragment="08" drift={40} driftX={16} rotate={7} class="pointer-events-none absolute -right-[4vw] top-[10%] hidden w-[14vw] text-signal opacity-[0.15] md:block" />
+    <div class="grid grid-cols-1 gap-y-3 md:grid-cols-12 md:items-end md:gap-x-10">
+      <div class="md:col-span-8">
+        <h1 class="headline-display max-w-[13ch] text-[8vw] sm:text-[6vw] md:text-[4vw] lg:text-[3.5vw]">
+          {enquiryCopy.heading}
+        </h1>
+      </div>
+      <div class="md:col-span-4 md:pb-1">
+        <p class="body-copy text-[13px] leading-relaxed md:text-[13px]">
+          {enquiryCopy.lead}
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <section class="px-[var(--gutter)] pb-28 md:pb-40">
+    <div class="grid grid-cols-1 gap-y-10 md:grid-cols-12 md:gap-x-10">
+      <div class="md:col-span-8 md:col-start-5">
+        <EnquiryFlow />
+      </div>
+
+      <aside class="md:col-span-3 md:col-start-1 md:row-start-1 md:pt-1">
+        <p class="body-copy-strong max-w-[16rem]">Prefer to speak directly?</p>
+        <Contact class="mt-5" showPrimary={false} />
+      </aside>
+    </div>
+  </section>
+
+  <FragmentMotion />
+</BaseLayout>

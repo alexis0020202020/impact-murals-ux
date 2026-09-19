@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "codex-grid-background",
+        "value": "*",
+        "files": [
+          "src/styles/global.css"
+        ],
+        "createdAt": "2026-09-02T11:22:00.949Z",
+        "reason": "Pre-existing .media-placeholder::after texture (not authored this session), used only on placeholder-image surfaces explicitly labelled 'real photography to be added'; matches this project's own Impact Field/surface-plate design language (confirmed via DESIGN.md), opacity .22 with .04 alpha lines, not a generic decorative dashboard grid"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/components/EnquiryFlow.astro"
+        ],
+        "createdAt": "2026-09-02T13:04:57.024Z",
+        "reason": "Pre-existing .imq-summary rule, not authored this session (only the script block was edited). Matches the site's own established blockquote convention (border-left: 2px solid var(--color-signal)) already used in global.css .article-body blockquote; thin 2px accent using the single site-wide signal colour, not a generic thick AI-card border"
+      }
+    ]
+  }
+}

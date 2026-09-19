@@ -1,0 +1,272 @@
+---
+import HeaderLogo from "./HeaderLogo.astro";
+import Contact from "./Contact.astro";
+import { primaryNavigation } from "@/content/navigation";
+import { offers } from "@/content/offers";
+
+const primary = primaryNavigation.find((item) => item.emphasis === "primary");
+const standard = primaryNavigation.filter((item) => item.emphasis !== "primary");
+const path = Astro.url.pathname;
+
+function isCurrent(href: string) {
+  if (href === "/") return path === "/";
+  return path === href || path.startsWith(`${href}/`);
+}
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-ink/10 bg-paper/88 text-ink backdrop-blur-md"
+  id="top"
+>
+  <div class="flex h-14 items-center justify-between px-[var(--gutter)] md:h-16">
+    <HeaderLogo class="h-[17px] text-ink md:h-[18px]" href="/" />
+
+    <nav class="hidden h-full items-center gap-9 md:flex" aria-label="Primary">
+      <ul class="flex h-full items-center gap-8">
+        {standard.map((item) => (
+          <li
+            class:list={["relative flex h-full items-center", item.href === "/what-we-do" && "nav-dropdown"]}
+            data-nav-dropdown={item.href === "/what-we-do" ? "" : undefined}
+          >
+            <a
+              href={item.href}
+              aria-current={isCurrent(item.href) ? "page" : undefined}
+              class:list={[
+                "font-body text-[12px] transition-colors duration-200",
+                isCurrent(item.href) ? "text-ink" : "text-stone hover:text-ink"
+              ]}
+              data-nav-dropdown-trigger={item.href === "/what-we-do" ? "" : undefined}
+            >
+              {item.label}
+            </a>
+
+            {item.href === "/what-we-do" && (
+              <div class="nav-dropdown-panel fixed left-0 right-0 top-16 border-b border-t border-ink/10 bg-paper-bright/98 backdrop-blur-md">
+                <div class="grid grid-cols-3 gap-x-10 px-[var(--gutter)] py-7">
+                  {offers.map((offer) => (
+                    <a href={`/what-we-do/${offer.slug}`} class="group/offer block border-t border-ink/15 pt-4">
+                      <span class="headline-editorial block max-w-[11ch] text-[1.55vw]">{offer.shortTitle}</span>
+                      <span class="mt-3 block max-w-[22rem] font-body text-[11px] leading-relaxed text-stone">
+                        {offer.key === "art-for-brands"
+                          ? "Campaigns, launches and artistic collaborations"
+                          : offer.key === "art-for-places"
+                            ? "Interiors, hospitality and developments"
+                            : "Facades, public realm and specialist production"}
+                      </span>
+                      <span class="mt-4 inline-block font-body text-[11px] text-ink transition-transform duration-200 group-hover/offer:translate-x-1">Open ↗</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <noscript>
+                <style>
+                  .nav-dropdown-panel { opacity: 1; pointer-events: auto; transform: none; }
+                </style>
+              </noscript>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <Contact variant="compact" />
+
+      {primary && (
+        <a href={primary.href} class="editorial-link text-[12px]">
+          {primary.label}<span aria-hidden="true">↗</span>
+        </a>
+      )}
+    </nav>
+
+    <div class="flex items-center gap-4 md:hidden">
+      {primary && (
+        <a
+          href={primary.href}
+          class="-mx-2.5 -my-3.5 inline-flex items-center px-2.5 py-3.5 font-body text-[11px] text-ink underline decoration-ink/25 underline-offset-4"
+        >
+          Start
+        </a>
+      )}
+      <button
+        type="button"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="nav-mobile-panel"
+        class="flex h-11 w-11 flex-col items-center justify-center gap-1.5"
+      >
+        <span class="sr-only">Toggle menu</span>
+        <span id="nav-toggle-bar-1" class="block h-px w-5 bg-ink transition-transform duration-200"></span>
+        <span id="nav-toggle-bar-2" class="block h-px w-5 bg-ink transition-transform duration-200"></span>
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="nav-mobile-panel"
+    inert
+    class="max-h-0 overflow-y-auto overscroll-contain border-t border-ink/10 bg-paper transition-[max-height] duration-300 ease-out md:hidden"
+  >
+    <ul class="flex flex-col px-[var(--gutter)] py-3">
+      {standard.map((item) => (
+        <li class="border-b border-ink/10 last:border-b-0">
+          <a
+            href={item.href}
+            aria-current={isCurrent(item.href) ? "page" : undefined}
+            class:list={[
+              "nav-mobile-link block py-4 font-body text-[17px]",
+              isCurrent(item.href) ? "text-ink" : "text-paper-dim"
+            ]}
+          >
+            {item.label}
+          </a>
+
+          {item.href === "/what-we-do" && (
+            <ul class="border-t border-ink/10 pb-3">
+              {offers.map((offer) => (
+                <li>
+                  <a
+                    href={`/what-we-do/${offer.slug}`}
+                    aria-current={isCurrent(`/what-we-do/${offer.slug}`) ? "page" : undefined}
+                    class:list={[
+                      "nav-mobile-link block py-3 pl-4 font-body text-[14px]",
+                      isCurrent(`/what-we-do/${offer.slug}`) ? "text-ink" : "text-stone"
+                    ]}
+                  >
+                    {offer.shortTitle}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))}
+    </ul>
+    <div class="border-t border-ink/10 px-[var(--gutter)] py-5">
+      <Contact variant="compact" />
+    </div>
+  </div>
+</header>
+
+<script>
+  import { gsap } from "gsap";
+
+  document.documentElement.dataset.buildStamp = "1788367043";
+  const toggle = document.getElementById("nav-toggle");
+  const panel = document.getElementById("nav-mobile-panel");
+  const bar1 = document.getElementById("nav-toggle-bar-1");
+  const bar2 = document.getElementById("nav-toggle-bar-2");
+  const links = document.querySelectorAll<HTMLAnchorElement>(".nav-mobile-link");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Everything outside the header (the page content and footer the panel
+  // pushes down) is made unreachable while the panel is open, so this
+  // in-flow disclosure still contains focus and background scroll the way a
+  // full overlay menu would, without changing its visual/layout style.
+  const main = document.getElementById("main");
+  const footer = document.querySelector("footer");
+
+  let open = false;
+
+  function getFocusable(container: Element): HTMLElement[] {
+    return Array.from(container.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"));
+  }
+
+  function trapTab(event: KeyboardEvent) {
+    if (event.key !== "Tab" || !open || !panel || !toggle) return;
+    const focusable = [toggle, ...getFocusable(panel)];
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  function setOpen(next: boolean) {
+    open = next;
+    toggle?.setAttribute("aria-expanded", String(open));
+    panel?.toggleAttribute("inert", !open);
+    panel?.classList.toggle("max-h-[42rem]", open);
+    panel?.classList.toggle("max-h-0", !open);
+    // The two bars settle at slightly different speeds, echoing fragments
+    // arriving a beat apart rather than one uniform, synchronised X.
+    bar1?.style.setProperty("transition-duration", open ? "220ms" : "160ms");
+    bar2?.style.setProperty("transition-duration", open ? "260ms" : "160ms");
+    bar1?.style.setProperty("transform", open ? "translateY(3px) rotate(45deg)" : "none");
+    bar2?.style.setProperty("transform", open ? "translateY(-2px) rotate(-45deg)" : "none");
+
+    // Background scroll lock: only the panel itself should scroll while
+    // open. No scrollY is ever touched, so there is nothing to restore and
+    // no position jump on close.
+    document.documentElement.classList.toggle("nav-scroll-lock", open);
+    main?.toggleAttribute("inert", open);
+    footer?.toggleAttribute("inert", open);
+
+    if (open && !reduceMotion) {
+      gsap.fromTo(
+        links,
+        { opacity: 0, x: -10 },
+        { opacity: 1, x: 0, duration: 0.4, stagger: 0.045, ease: "power2.out", delay: 0.05 }
+      );
+    } else if (!open) {
+      gsap.set(links, { clearProps: "opacity,transform" });
+    }
+  }
+
+  toggle?.addEventListener("click", () => setOpen(!open));
+  links.forEach((link) => link.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", trapTab);
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !open) return;
+    setOpen(false);
+    toggle?.focus();
+  });
+
+  // Desktop "What We Do" dropdown. Driven entirely by JS (see the comment on
+  // .nav-dropdown-panel in global.css for why this isn't a CSS :hover /
+  // :focus-within pair): hover opens it for pointer users, focus opens it for
+  // keyboard users tabbing in, and Escape closes it and returns focus to the
+  // trigger — the same shape as the mobile menu's setOpen() above.
+  document.querySelectorAll<HTMLLIElement>("[data-nav-dropdown]").forEach((item) => {
+    const trigger = item.querySelector<HTMLAnchorElement>("[data-nav-dropdown-trigger]");
+    const dropdownPanel = item.querySelector<HTMLElement>(".nav-dropdown-panel");
+    if (!trigger || !dropdownPanel) return;
+
+    let suppressFocusOpen = false;
+
+    function setDropdownOpen(next: boolean) {
+      dropdownPanel!.classList.toggle("is-open", next);
+    }
+
+    item.addEventListener("pointerenter", (event) => {
+      if (event.pointerType !== "mouse") return;
+      setDropdownOpen(true);
+    });
+    item.addEventListener("pointerleave", (event) => {
+      if (event.pointerType !== "mouse") return;
+      setDropdownOpen(false);
+    });
+    item.addEventListener("focusin", () => {
+      // Escape moves focus back to `trigger`, which is itself inside `item`
+      // and would otherwise immediately re-open the panel this same handler
+      // is meant to close.
+      if (suppressFocusOpen) return;
+      setDropdownOpen(true);
+    });
+    item.addEventListener("focusout", (event) => {
+      if (item.contains(event.relatedTarget as Node)) return;
+      setDropdownOpen(false);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !dropdownPanel!.classList.contains("is-open")) return;
+      setDropdownOpen(false);
+      suppressFocusOpen = true;
+      trigger.focus();
+      suppressFocusOpen = false;
+    });
+  });
+</script>

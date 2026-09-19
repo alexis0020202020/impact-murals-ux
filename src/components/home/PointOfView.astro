@@ -1,0 +1,23 @@
+---
+import ImpactFragment from "../ImpactFragment.astro";
+---
+
+<section class="surface-dark relative min-h-[74svh] overflow-hidden py-24 md:flex md:min-h-[82svh] md:items-center md:py-36" aria-labelledby="point-of-view-heading">
+  <ImpactFragment fragment="10" drift={74} driftX={-20} rotate={12} class="pointer-events-none absolute -right-[4vw] top-[7%] hidden w-[25vw] text-paper opacity-[0.055] md:block" />
+  <ImpactFragment fragment="08" drift={52} driftX={24} rotate={-8} class="pointer-events-none absolute -bottom-[10%] left-[7%] w-[32vw] text-signal opacity-[0.14] sm:w-[20vw]" />
+
+  <div class="relative w-full px-[var(--gutter)]" data-reveal-group>
+    <div class="grid grid-cols-1 gap-y-12 md:grid-cols-12 md:gap-x-10">
+      <div class="md:col-span-9">
+        <h2 id="point-of-view-heading" data-reveal class="headline-display max-w-[9.5ch] text-[15vw] sm:text-[9.6vw] md:text-[5.85vw] lg:text-[5.25vw]">
+          THE ART COMES FROM THE PROJECT.
+        </h2>
+      </div>
+      <div class="md:col-span-3 md:self-end md:pb-3">
+        <p data-reveal class="font-body text-[16px] leading-relaxed text-paper/72">
+          The brief, place, audience and ambition shape the artistic direction. From there, we bring in the artists and specialists the project calls for.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

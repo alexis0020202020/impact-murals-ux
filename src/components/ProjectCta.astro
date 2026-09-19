@@ -1,0 +1,40 @@
+---
+import Contact from "./Contact.astro";
+import ImpactFragment from "./ImpactFragment.astro";
+
+interface Props {
+  heading?: string;
+  body?: string;
+  /** When set, the CTA carries this offer through to the enquiry flow's first step. */
+  offerKey?: "art-for-brands" | "art-for-places" | "public-art";
+  /** Passed through to Contact. Defaults to Contact's own default (shown). */
+  hint?: boolean;
+  /** Passed through to Contact. Defaults to Contact's own default ("START A PROJECT"). */
+  primaryLabel?: string;
+}
+
+const {
+  heading = "HAVE A PROJECT IN MIND?",
+  body = "Bring a location, a brief, an approved direction, or simply an early idea. A finished brief is not required to start the conversation.",
+  offerKey,
+  hint,
+  primaryLabel
+} = Astro.props;
+---
+
+<section class="surface-dark relative min-h-[58svh] overflow-hidden pt-16 pb-24 md:flex md:min-h-[66svh] md:items-center md:py-28">
+  <ImpactFragment fragment="11" drift={64} driftX={-18} rotate={-6} class="pointer-events-none absolute -left-[12vw] bottom-[0%] block w-[42vw] text-paper opacity-[0.09] md:-left-[4vw] md:bottom-[4%] md:w-[19vw] md:opacity-[0.14]" />
+  <div class="relative w-full grid grid-cols-1 gap-y-11 px-[var(--gutter)] md:grid-cols-12 md:items-start md:gap-x-10" data-reveal-group>
+    <div class="md:col-span-7">
+      <h2 data-reveal class="headline-display max-w-[10ch] text-[14vw] sm:text-[9vw] md:text-[5.45vw] lg:text-[4.9vw]">
+        {heading}
+      </h2>
+    </div>
+    <div class="md:col-span-5">
+      <p data-reveal class="font-body text-[15px] leading-relaxed text-paper/70">{body}</p>
+      <div data-reveal>
+        <Contact class="mt-8" offerKey={offerKey} hint={hint} primaryLabel={primaryLabel} />
+      </div>
+    </div>
+  </div>
+</section>

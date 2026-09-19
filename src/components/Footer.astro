@@ -1,0 +1,59 @@
+---
+import { footerNavigation } from "@/content/navigation";
+import { global } from "@/content/global";
+import { sectionIndexPath, sectionLabel } from "@/lib/routes";
+
+const year = new Date().getFullYear();
+const editorialSections = (
+  await Promise.all(
+    (["insight", "guide"] as const).map(async (type) => {
+      const href = await sectionIndexPath(type);
+      return href ? { href, label: sectionLabel(type) } : null;
+    })
+  )
+).filter((section): section is { href: string; label: string } => section !== null);
+
+const mainLinks = [...footerNavigation[0].items, ...editorialSections];
+const offerLinks = footerNavigation[1].items;
+---
+
+<footer class="surface-dark border-t border-paper/10 pb-8 pt-14 md:pt-18">
+  <div class="px-[var(--gutter)]">
+    <div class="grid grid-cols-1 gap-y-12 md:grid-cols-12 md:gap-x-10">
+      <div class="md:col-span-6">
+        <p class="headline-display max-w-[9ch] text-[11vw] sm:text-[7vw] md:text-[3.6vw] lg:text-[3.1vw]">
+          IMPACT MURALS
+        </p>
+        <p class="mt-5 max-w-md font-body text-[14px] leading-relaxed text-paper/58">
+          Dubai-based art direction and production studio for brands, places and public art across the UAE.
+        </p>
+      </div>
+
+      <div class="md:col-span-5 md:col-start-8 md:pt-1">
+        <nav aria-label="Footer">
+          <ul class="flex flex-wrap gap-x-6 gap-y-1">
+            {mainLinks.map((item) => (
+              <li><a href={item.href} class="inline-block py-2 font-body text-[13px] text-paper/65 transition-colors hover:text-paper">{item.label}</a></li>
+            ))}
+          </ul>
+          <ul class="mt-5 flex flex-wrap gap-x-6 gap-y-1 border-t border-paper/12 pt-3">
+            {offerLinks.map((item) => (
+              <li><a href={item.href} class="inline-block py-2 font-body text-[12px] text-paper/48 transition-colors hover:text-paper">{item.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+
+        <div class="mt-6 flex flex-wrap gap-x-6 gap-y-1">
+          <a href={`mailto:${global.contact.email}`} class="inline-block py-2 font-body text-[12px] text-paper/65 transition-colors hover:text-paper">{global.contact.email}</a>
+          <a href={`tel:${global.contact.phone}`} class="inline-block py-2 font-body text-[12px] text-paper/65 transition-colors hover:text-paper">{global.contact.phoneDisplay}</a>
+          <a href={global.contact.whatsapp} target="_blank" rel="noopener noreferrer" class="inline-block py-2 font-body text-[12px] text-paper/65 transition-colors hover:text-paper">WhatsApp ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 flex items-center justify-between border-t border-paper/10 pt-5">
+      <p class="image-note !text-paper/35">© {year} Impact Murals</p>
+      <p class="image-note !text-paper/35">{global.areaServed}</p>
+    </div>
+  </div>
+</footer>

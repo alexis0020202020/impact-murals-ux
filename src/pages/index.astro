@@ -1,0 +1,25 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Hero from "@/components/home/Hero.astro";
+import OfferChapters from "@/components/home/OfferChapters.astro";
+import PointOfView from "@/components/home/PointOfView.astro";
+import HowWeJoin from "@/components/home/HowWeJoin.astro";
+import StudioMoment from "@/components/home/StudioMoment.astro";
+import FinalCta from "@/components/home/FinalCta.astro";
+import FragmentMotion from "@/components/FragmentMotion.astro";
+import { pageSeo } from "@/content/seo";
+---
+
+<BaseLayout
+  title={pageSeo.home.title}
+  description={pageSeo.home.description}
+  useTemplate={false}
+>
+  <Hero />
+  <OfferChapters />
+  <PointOfView />
+  <HowWeJoin />
+  <StudioMoment />
+  <FinalCta />
+  <FragmentMotion />
+</BaseLayout>

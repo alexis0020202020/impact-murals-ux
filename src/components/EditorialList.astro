@@ -1,0 +1,54 @@
+---
+import { offers } from "@/content/offers";
+import { sectionSegment } from "@/lib/routes";
+import type { ContentRecord } from "@/lib/content-source";
+
+/**
+ * The listing used by both editorial indexes.
+ *
+ * One component rather than two, so articles and specialised pages cannot
+ * drift into two different list treatments as either section grows.
+ */
+interface Props {
+  entries: ContentRecord[];
+}
+
+const { entries } = Astro.props;
+const dateFormat = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric"
+});
+---
+
+<ol class="flex flex-col">
+  {entries.map((entry) => {
+    const offer = offers.find((o) => o.key === entry.offer);
+    const href = `/${sectionSegment(entry.type)}/${entry.slug}`;
+    return (
+      <li class="border-t border-stone-line/60 last:border-b last:border-stone-line/60">
+        <a href={href} class="group block py-7 md:py-8">
+          <div class="grid grid-cols-1 gap-y-3 md:grid-cols-12 md:gap-x-10">
+            <div class="md:col-span-7">
+              <h2 class="headline-display text-[6vw] sm:text-[4.2vw] md:text-[1.9vw] lg:text-[1.7vw] transition-opacity duration-200 group-hover:opacity-75">
+                {entry.title}
+              </h2>
+              <p class="notation mt-2.5 text-[10px] text-stone/60">
+                {offer?.shortTitle}
+                {entry.isTestFixture ? " · TEST FIXTURE" : ""}
+              </p>
+            </div>
+            <div class="md:col-span-4 md:col-start-9">
+              <p class="font-body text-[15px] leading-relaxed text-stone">{entry.description}</p>
+              <p class="notation mt-2.5 text-[10px] text-stone/60">
+                <time datetime={entry.publishAt}>
+                  {dateFormat.format(new Date(entry.publishAt))}
+                </time>
+              </p>
+            </div>
+          </div>
+        </a>
+      </li>
+    );
+  })}
+</ol>

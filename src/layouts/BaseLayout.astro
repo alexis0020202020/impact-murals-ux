@@ -1,0 +1,113 @@
+---
+import "@/styles/global.css";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { seo } from "@/content/seo";
+import { global } from "@/content/global";
+import { toJsonLd } from "@/lib/json-ld";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Pass false on the homepage, where the title is already complete. */
+  useTemplate?: boolean;
+  ogImage?: string;
+  /** Override the canonical, e.g. a superseded URL pointing at its successor. */
+  canonical?: string;
+  /**
+   * Keep the page reachable and linked, but ask search engines not to index it.
+   *
+   * Always passed from the route registry, never decided in a template, so the
+   * meta robots tag and the sitemap always express the same decision. `follow`
+   * is deliberate: an excluded page still passes value through its links.
+   */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = seo.defaultDescription,
+  useTemplate = true,
+  ogImage = seo.defaultOgImage,
+  canonical,
+  noindex = false
+} = Astro.props;
+
+const resolvedTitle = title
+  ? useTemplate
+    ? seo.titleTemplate.replace("%s", title)
+    : title
+  : seo.defaultTitle;
+
+/*
+  Astro.url.pathname carries a trailing slash for a directory-style route
+  (e.g. "/studio/"), but the route registry, the sitemap and the two pages
+  that build their own canonical (offer and capability pages) all use the
+  no-trailing-slash form ("/studio"). Left alone, every other page's own
+  canonical tag would disagree with its own sitemap entry by exactly one
+  trailing slash. Normalised here so the whole site canonicalises the same
+  way; "/" is left untouched, since stripping it would leave an empty path.
+*/
+const normalizedPathname =
+  Astro.url.pathname === "/" ? "/" : Astro.url.pathname.replace(/\/+$/, "");
+const canonicalUrl = canonical ?? new URL(normalizedPathname, seo.canonicalBase).toString();
+const ogImageUrl = new URL(ogImage, seo.canonicalBase).toString();
+
+const organizationSchema: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: seo.organization.name,
+  url: seo.canonicalBase,
+  description: seo.defaultDescription,
+  areaServed: seo.organization.areaServed
+};
+// Omitted while empty, so no unconfirmed profile is ever claimed. Populates
+// itself the moment a real, permitted account is added to global.socialLinks.
+if (global.socialLinks.length > 0) {
+  organizationSchema.sameAs = global.socialLinks.map((link) => link.href);
+}
+
+/** Site-level identity. Deliberately no `potentialAction` (SearchAction): the site has no working search feature to point it at. */
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: seo.siteName,
+  url: seo.canonicalBase
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{resolvedTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <meta property="og:site_name" content={seo.siteName} />
+    <meta property="og:title" content={resolvedTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content={global.locale} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/assets/logo/impact-murals.svg" type="image/svg+xml" />
+
+    <script type="application/ld+json" set:html={toJsonLd(organizationSchema)} is:inline />
+    <script type="application/ld+json" set:html={toJsonLd(websiteSchema)} is:inline />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <div class="[--gutter:1.25rem] sm:[--gutter:2rem] md:[--gutter:2.75rem] lg:[--gutter:4rem]">
+      <Header />
+      <main id="main">
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>

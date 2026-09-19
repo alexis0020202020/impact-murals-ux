@@ -1,0 +1,131 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import StrikeRule from "@/components/StrikeRule.astro";
+import ArticleBody from "@/components/ArticleBody.astro";
+import EditorialCommercialIntro from "@/components/EditorialCommercialIntro.astro";
+import { loadContentRecords } from "@/lib/content-source";
+import { renderMarkdown } from "@/lib/content-source/markdown";
+import { filterPublic } from "@/lib/publishing";
+import { breadcrumbsFor, routeFor, LANDING_SEGMENT } from "@/lib/routes";
+import { relatedEditorial } from "@/lib/relations";
+import { offers } from "@/content/offers";
+import { global } from "@/content/global";
+import { toJsonLd } from "@/lib/json-ld";
+import { commercialHubFor } from "@/content/commercial-hubs";
+
+/**
+ * Specialised page template. Same source, same gate, same layout engine as
+ * articles; only the framing differs, because a guide answers one intent.
+ */
+export async function getStaticPaths() {
+  const published = filterPublic(await loadContentRecords());
+  return published
+    .filter((record) => record.type === "guide")
+    .map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+
+const { page } = Astro.props;
+const offer = offers.find((o) => o.key === page.offer);
+const commercialHub = commercialHubFor(page.commercialHubCode);
+const path = `/${LANDING_SEGMENT}/${page.slug}`;
+const trail = await breadcrumbsFor(path);
+// Same registry, same decision as the sitemap.
+const route = await routeFor(path);
+const related = await relatedEditorial(page);
+const body = renderMarkdown(page.body);
+
+const schema: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: page.title,
+  description: page.description,
+  url: `${global.domain}/${LANDING_SEGMENT}/${page.slug}`,
+  publisher: { "@type": "Organization", name: global.name }
+};
+---
+
+<BaseLayout title={page.seoTitle || page.title} description={page.description} ogImage={page.image?.src} noindex={route?.noIndex}>
+  <Breadcrumbs trail={trail} currentLabel={page.title} />
+
+  {page.isTestFixture && (
+    <div class="px-[var(--gutter)] pt-6">
+      <p class="notation border border-signal/50 px-4 py-3 text-[10px] leading-relaxed text-signal">
+        TEST FIXTURE. Validates the specialised page template and is excluded from the production
+        build.
+      </p>
+    </div>
+  )}
+
+  <PageHeader eyebrow="SPECIALISED" heading={page.title} lead={page.description} />
+
+  <EditorialCommercialIntro offer={page.offer} />
+
+  <div class="mt-12 px-[var(--gutter)] md:mt-16">
+    {page.image?.src && (
+      <figure class="mb-12 md:mb-16">
+        <img
+          src={page.image.src}
+          alt={page.image.alt}
+          loading="lazy"
+          decoding="async"
+          class="aspect-[16/9] w-full object-cover md:aspect-[16/7]"
+        />
+        {page.image.caption && (
+          <figcaption class="notation mt-3 text-[10px] text-stone/60">
+            {page.image.caption}
+          </figcaption>
+        )}
+      </figure>
+    )}
+
+    <ArticleBody body={body} />
+
+    {related.length > 0 && (
+      <div class="mt-16 md:mt-20">
+        <StrikeRule />
+        <p class="notation mt-8 text-[10px] text-stone/70">Related reading</p>
+        <ul class="mt-4 flex flex-col">
+          {related.map((item) => (
+            <li class="border-t border-stone-line/50 last:border-b last:border-stone-line/50">
+              <a href={item.href} class="group block py-4">
+                <span class="block font-body text-[16px] text-stone transition-colors duration-200 group-hover:text-ink">
+                  {item.title}
+                </span>
+                <span class="notation mt-1.5 block text-[10px] text-stone/60">{item.kind}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {offer && (
+      <div class="mt-16 pb-24 md:mt-20 md:pb-28">
+        <StrikeRule />
+        <div class="mt-8 grid grid-cols-1 gap-y-5 md:grid-cols-12 md:items-end md:gap-x-10">
+          <div class="md:col-span-7">
+            <p class="notation text-[10px] text-stone/70">Related service</p>
+            <h2 class="headline-display mt-3 text-[6.4vw] sm:text-[4.4vw] md:text-[2.2vw] lg:text-[1.9vw]">
+              {commercialHub?.title ?? offer.title}
+            </h2>
+          </div>
+          <div class="flex flex-wrap gap-x-8 gap-y-3 md:col-span-4 md:col-start-9">
+            <a href={commercialHub?.href ?? `/what-we-do/${offer.slug}`} class="cta-secondary text-[11px]">
+              {commercialHub ? "EXPLORE THE SERVICE" : "READ THE OFFER"}
+            </a>
+            <a
+              href={`/discuss-a-project?offer=${offer.key}`}
+              class="cta-primary px-6 py-3.5 text-[11px]"
+            >
+              DISCUSS A PROJECT
+            </a>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+
+  <script type="application/ld+json" set:html={toJsonLd(schema)} is:inline />
+</BaseLayout>

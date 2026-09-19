@@ -1,0 +1,482 @@
+---
+/**
+ * Project enquiry.
+ *
+ * Wraps the standalone `impact-murals-enquiry` module (GPL-2.0-or-later, see
+ * src/lib/enquiry/LICENSE.md). The module owns the flow, the validation and
+ * the transport. This file only mounts it, themes it and supplies the studio's
+ * confirmed contact details.
+ *
+ * Mounted once, on /discuss-a-project only. There is no second copy of the
+ * flow anywhere on the site.
+ */
+import "@/lib/enquiry/enquiry.css";
+import { global } from "@/content/global";
+---
+
+<div data-impact-enquiry>
+  <p data-nosnippet class="font-body text-[15px] text-stone">Loading the enquiry…</p>
+</div>
+
+<noscript>
+  <p class="font-body text-[16px] leading-relaxed text-paper-dim">
+    The enquiry form needs JavaScript. You can reach the studio directly at
+    <a class="cta-secondary text-[11px]" href={`mailto:${global.contact.email}`}>
+      {global.contact.email}
+    </a>
+    or on
+    <a
+      class="cta-secondary text-[11px]"
+      href={global.contact.whatsapp}
+      rel="noopener noreferrer"
+      target="_blank">WhatsApp</a
+    >.
+  </p>
+</noscript>
+
+<!--
+  Static registration form. Netlify only detects forms present in the built
+  HTML, so this must stay in the markup even though the visible flow is
+  rendered by JavaScript. It is declared exactly once across the whole site.
+  Every name listed in NETLIFY_FIELDS is present here.
+-->
+<form
+  id="imq-netlify-registration"
+  name="impact-project-enquiry"
+  method="POST"
+  data-netlify="true"
+  netlify-honeypot="website"
+  hidden
+>
+  <input type="hidden" name="form-name" value="impact-project-enquiry" />
+  <input name="request_id" />
+  <input name="offer" />
+  <input name="offer_label" />
+  <input name="interests" />
+  <textarea name="brief"></textarea>
+  <input name="location" />
+  <input name="timing" />
+  <input name="budget" />
+  <input name="name" />
+  <input name="email" />
+  <input name="phone" />
+  <input name="company" />
+  <input name="source_path" />
+  <input name="website" />
+</form>
+
+<script>
+  import { mountEnquiry } from "@/lib/enquiry/enquiry.js";
+  import baseConfig from "@/lib/enquiry/config.js";
+  import { global } from "@/content/global";
+
+  document.documentElement.dataset.buildStamp = "1788367043";
+
+  /*
+    Contact details come from the site's content layer, so they are maintained
+    in one place. Nothing is inherited from the previous Graffiti.ae plugin.
+
+    `contactEmail` is the public link shown inside the flow. It is not the
+    server-side notification recipient: that is configured in Netlify.
+  */
+  const config = {
+    ...baseConfig,
+    mode: global.enquiry.mode,
+    contactEmail: global.contact.email,
+    whatsappNumber: global.contact.whatsappNumber,
+    privacyUrl: global.privacyUrl
+  };
+
+  let instance: { destroy(): void } | undefined;
+  let stepObserver: MutationObserver | undefined;
+  let recapObserver: MutationObserver | undefined;
+
+  // The enquiry module (src/lib/enquiry/, third-party, not edited here) fully
+  // replaces its root's content on every step change. Observing that from the
+  // outside lets each new step arrive with a brief settle, extending the same
+  // grammar as the rest of the site, without touching the protected module's
+  // own render, validation or focus-management logic.
+  async function armStepTransition(root: Element) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const { gsap } = await import("gsap");
+
+    stepObserver = new MutationObserver(() => {
+      const section = root.querySelector(":scope > section");
+      if (!section) return;
+      gsap.fromTo(
+        section,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }
+      );
+    });
+    stepObserver.observe(root, { childList: true });
+  }
+
+  // The step-3 recap (`.imq-summary`) shows the chosen offer and the free-text
+  // brief, but not the format chips picked in step 2 — a real answer the
+  // visitor already gave that they'd otherwise have to re-scan step 2 to
+  // recall. Tracked here (not read from the module's internal state, which
+  // isn't exposed) by mirroring the same checkboxes the module itself reads,
+  // and reused verbatim as the module's own escaped label text — never
+  // invented copy. Unconditional (unlike the transition above): this is
+  // content, not motion, so it must not depend on reduced-motion.
+  function armInterestsRecap(root: Element) {
+    let selectedInterests: string[] = [];
+
+    root.addEventListener("change", (event) => {
+      const target = event.target as HTMLElement;
+      if (!target.matches('input[name="interests"]')) return;
+      selectedInterests = Array.from(
+        root.querySelectorAll<HTMLInputElement>('input[name="interests"]:checked')
+      ).map((input) => input.value);
+    });
+
+    root.addEventListener("click", (event) => {
+      if ((event.target as HTMLElement).closest("[data-offer]")) selectedInterests = [];
+    });
+
+    recapObserver = new MutationObserver(() => {
+      const summary = root.querySelector(".imq-summary");
+      const isStepThree = root.querySelector('.imq-contact-fieldset, input[name="email"]');
+      if (!summary || !isStepThree || summary.querySelector("[data-interests-recap]")) return;
+      if (selectedInterests.length === 0) return;
+
+      const note = document.createElement("p");
+      note.dataset.interestsRecap = "";
+      note.textContent = selectedInterests.join(" · ");
+      summary.appendChild(note);
+    });
+    recapObserver.observe(root, { childList: true, subtree: true });
+  }
+
+  function start() {
+    const root = document.querySelector("[data-impact-enquiry]");
+    if (!root) return;
+    instance = mountEnquiry(root, config);
+    armStepTransition(root);
+    armInterestsRecap(root);
+  }
+
+  start();
+
+  // Harmless today: the site does not use view transitions, so these never
+  // fire. Kept so the component stays correct if they are enabled later.
+  document.addEventListener("astro:page-load", start);
+  document.addEventListener("astro:before-swap", () => {
+    instance?.destroy();
+    instance = undefined;
+    stepObserver?.disconnect();
+    stepObserver = undefined;
+    recapObserver?.disconnect();
+    recapObserver = undefined;
+  });
+</script>
+
+<style is:global>
+  .imq {
+    --imq-bg: transparent;
+    --imq-panel: var(--color-paper-bright);
+    --imq-text: var(--color-ink);
+    --imq-muted: var(--color-stone);
+    --imq-line: var(--color-stone-line);
+    --imq-accent: var(--color-ink);
+    --imq-error: var(--color-signal);
+
+    max-width: none;
+    margin-inline: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-ink);
+    color-scheme: light;
+    font-family: var(--font-body);
+  }
+
+  /*
+    Compacted from the module's own default sizing: on a fresh step, this
+    heading previously pushed the first interactive field a full extra scroll
+    down on mobile, stacked underneath the page's own (separate) intro above
+    it. Theming only, from this wrapper — the module's own markup/behaviour is
+    untouched.
+  */
+  .imq h2 {
+    max-width: 14ch;
+    font-family: var(--font-display);
+    /* Desktop max lowered again (3rem → 2.6rem): the page's own h1 sits
+       directly above this on /discuss-a-project, and at desktop widths the
+       two headings stacked pushed step 1's first field lower than needed
+       for a page whose primary job is reaching those fields. Mobile is
+       unaffected — it was already clamped to the 1.6rem floor. */
+    font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+    font-weight: 610;
+    line-height: .98;
+    letter-spacing: -.04em;
+    text-transform: uppercase;
+  }
+
+  .imq .imq-intro {
+    max-width: 58ch;
+    margin-top: .55rem;
+    margin-bottom: 1.1rem;
+    color: var(--color-paper-dim);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .imq .imq-eyebrow,
+  .imq .imq-preview-badge,
+  .imq .imq-progress {
+    font-family: var(--font-notation);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+  }
+
+  .imq .imq-preview-badge {
+    margin-bottom: 1rem;
+    padding: .35rem 0;
+    border: 0;
+    color: var(--color-signal);
+    font-size: 9px;
+  }
+
+  .imq .imq-progress {
+    gap: .65rem 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 0 0 1rem;
+    border-bottom: 1px solid var(--color-stone-line);
+  }
+
+  .imq-progress li {
+    gap: .45rem;
+    color: var(--color-stone);
+    font-size: 9px;
+  }
+
+  .imq-progress li > span {
+    width: 1.4rem;
+    height: 1.4rem;
+    border-color: var(--color-stone-line);
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .imq-progress li[aria-current="step"] {
+    color: var(--color-ink);
+  }
+
+  .imq-progress li[aria-current="step"] > span {
+    border-color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-paper-bright);
+  }
+
+  .imq .imq-eyebrow {
+    margin-bottom: .7rem;
+    color: var(--color-stone);
+    font-size: 9px;
+  }
+
+  .imq-offers {
+    gap: 0;
+    border-bottom: 1px solid var(--color-stone-line);
+  }
+
+  .imq .imq-offer {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+    padding: 1.1rem 0;
+    border: 0;
+    border-top: 1px solid var(--color-stone-line);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .imq .imq-offer .imq-number {
+    display: none;
+  }
+
+  .imq .imq-offer:hover,
+  .imq .imq-offer.is-selected {
+    padding-left: .7rem;
+    border-color: var(--color-ink);
+    background: transparent;
+  }
+
+  .imq-offer strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.5vw, 1.65rem);
+    font-weight: 590;
+    letter-spacing: -.025em;
+  }
+
+  .imq-offer-description {
+    max-width: 56ch;
+    margin-top: .35rem;
+    color: var(--color-stone);
+    font-size: 12px;
+  }
+
+  .imq-arrow {
+    color: var(--color-ink);
+  }
+
+  .imq .imq-chip span {
+    min-height: 42px;
+    padding: .7rem .8rem;
+    border: 1px solid var(--color-stone-line);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-paper-dim);
+    font-size: 12px;
+  }
+
+  .imq .imq-chip input:checked + span {
+    border-color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-paper-bright);
+  }
+
+  .imq .imq-field input,
+  .imq .imq-field textarea {
+    min-height: 48px;
+    padding: .75rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--color-stone-line);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-ink);
+  }
+
+  .imq .imq-field textarea {
+    min-height: 130px;
+  }
+
+  .imq .imq-field input:focus,
+  .imq .imq-field textarea:focus {
+    border-bottom-color: var(--color-ink);
+    outline: none;
+  }
+
+  .imq .imq-field input::placeholder,
+  .imq .imq-field textarea::placeholder {
+    color: color-mix(in srgb, var(--color-stone) 70%, transparent);
+  }
+
+  .imq .imq-primary {
+    min-height: 48px;
+    padding: .8rem 1rem;
+    border: 1px solid var(--color-ink);
+    border-radius: 0;
+    background: var(--color-ink);
+    color: var(--color-paper-bright) !important;
+    font-family: var(--font-notation);
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .imq .imq-primary:hover {
+    filter: none;
+    background: transparent;
+    color: var(--color-ink) !important;
+  }
+
+  .imq .imq-back {
+    min-height: 48px;
+    padding: .7rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--color-ink);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-ink);
+  }
+
+  .imq .imq-summary {
+    padding: 1rem 0 1rem 1rem;
+    border: 0;
+    border-left: 2px solid var(--color-signal);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .imq .imq-summary [data-interests-recap] {
+    margin-top: .4rem;
+    color: var(--color-stone);
+    font-size: 12px;
+  }
+
+  .imq .imq-error-banner {
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .imq .imq-direct {
+    justify-content: flex-start;
+  }
+
+  .imq :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 520px) {
+    .imq { padding: 0; }
+    .imq .imq-progress { gap: .65rem 1rem; }
+    .imq-progress li { font-size: 8px; }
+    .imq .imq-offer { padding: 1rem 0; grid-template-columns: minmax(0, 1fr) auto; }
+    .imq .imq-offer:hover,
+    .imq .imq-offer.is-selected { padding-left: .5rem; }
+  }
+
+  /*
+    Mobile-only entry compaction. Captures of the previous build showed the
+    header, breadcrumb, page intro, this module's own heading + intro +
+    preview badge + progress row all stacking before the first real choice
+    reached the screen. The breadcrumb and page header are handled on the
+    page itself (discuss-a-project.astro); this trims the module's own
+    theming layer further, tightening margins rather than the module's
+    markup or logic, which stay untouched.
+  */
+  @media (max-width: 767px) {
+    .imq h2 {
+      max-width: 17ch;
+      font-size: 1.5rem;
+    }
+
+    .imq .imq-intro {
+      margin-top: .4rem;
+      margin-bottom: .85rem;
+      font-size: 14px;
+    }
+
+    .imq .imq-preview-badge {
+      margin-bottom: .75rem;
+    }
+
+    .imq .imq-progress {
+      margin-bottom: 1.1rem;
+      padding-bottom: .75rem;
+    }
+
+    .imq .imq-eyebrow {
+      margin-bottom: .5rem;
+    }
+
+    /*
+      The module renders a second, small "Prefer a conversation? Email ·
+      WhatsApp" link row (.imq-direct) mid-flow, in addition to the page's
+      own "Prefer to speak directly?" aside with the real Contact buttons
+      further down. On a phone, both are visible within a short scroll of
+      each other and read as a duplicated, weaker echo of the same two
+      contacts. Hidden here on mobile only: the destinations are not
+      removed, only this one redundant presentation of them, and the
+      full-size buttons in the page's own aside remain the single place
+      direct contact lives in this flow below the mobile breakpoint.
+    */
+    .imq-direct {
+      display: none;
+    }
+  }
+</style>

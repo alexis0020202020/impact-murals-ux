@@ -1,0 +1,958 @@
+@import "tailwindcss";
+
+@import "@fontsource-variable/instrument-sans";
+@import "@fontsource/archivo";
+@import "@fontsource/ibm-plex-mono";
+
+@theme {
+  --color-ink: #171613;
+  --color-ink-raised: #24211d;
+  --color-paper: #f2efe7;
+  --color-paper-bright: #faf8f2;
+  --color-paper-dim: #514d46;
+  --color-stone: #6f695f;
+  --color-stone-line: #cbc5b9;
+  --color-signal: #d94d2b;
+  --color-sand: #ddd5c6;
+  --color-clay: #b66d51;
+  --color-moss: #66705d;
+
+  --font-display: "Instrument Sans Variable", "Instrument Sans", "Helvetica Neue", sans-serif;
+  --font-body: "Archivo", "Helvetica Neue", sans-serif;
+  --font-notation: "IBM Plex Mono", "Courier New", monospace;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    background: var(--color-paper);
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  /* Background scroll lock while the mobile menu panel is open (Header.astro). */
+  html.nav-scroll-lock {
+    overflow: hidden;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    overflow-x: clip;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  img,
+  svg,
+  video {
+    max-width: 100%;
+  }
+
+  ::selection {
+    background: var(--color-signal);
+    color: var(--color-paper-bright);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .clip-clean {
+    overflow: clip;
+  }
+}
+
+@layer components {
+  .headline-display {
+    font-family: var(--font-display);
+    font-weight: 610;
+    text-transform: uppercase;
+    letter-spacing: -0.045em;
+    line-height: 0.94;
+    color: var(--color-ink);
+  }
+
+  .headline-editorial {
+    font-family: var(--font-display);
+    font-weight: 590;
+    letter-spacing: -0.038em;
+    line-height: 0.98;
+    color: var(--color-ink);
+  }
+
+  .notation {
+    font-family: var(--font-notation);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .surface-dark {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .surface-dark .headline-display,
+  .surface-dark .headline-editorial {
+    color: var(--color-paper-bright);
+  }
+
+  .surface-dark .notation {
+    color: color-mix(in srgb, var(--color-paper) 62%, transparent);
+  }
+
+  .surface-dark .text-stone,
+  .surface-dark .text-paper-dim {
+    color: color-mix(in srgb, var(--color-paper) 70%, transparent);
+  }
+
+  .surface-light {
+    background: var(--color-paper-bright);
+    color: var(--color-ink);
+  }
+
+  .body-copy {
+    font-family: var(--font-body);
+    color: var(--color-paper-dim);
+    font-size: clamp(1rem, 1.2vw, 1.125rem);
+    line-height: 1.65;
+  }
+
+  .body-copy-strong {
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+    line-height: 1.55;
+  }
+
+  .strike-line,
+  .strike-rule {
+    position: relative;
+    height: 1px;
+    width: 100%;
+    background: color-mix(in srgb, var(--color-ink) 18%, transparent);
+    transform-origin: 50% 50%;
+  }
+
+  .strike-line::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: 50%;
+    width: clamp(2.5rem, 5vw, 5rem);
+    height: 5px;
+    transform: translateX(-50%) skewX(-22deg);
+    background: var(--color-signal);
+  }
+
+  .strike-rule[data-origin="left"] {
+    transform-origin: 0% 50%;
+  }
+
+  .strike-rule[data-origin="center"] {
+    transform-origin: 50% 50%;
+  }
+
+  .cta-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 2.8rem;
+    padding: 0.82rem 1.15rem;
+    border: 1px solid var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-paper-bright);
+    font-family: var(--font-notation);
+    font-size: 0.68rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease,
+      transform 180ms cubic-bezier(0.32, 0, 0.2, 1);
+  }
+
+  .cta-primary:hover {
+    background: transparent;
+    color: var(--color-ink);
+    transform: translateY(-1px);
+  }
+
+  .surface-dark .cta-primary {
+    border-color: var(--color-paper-bright);
+    background: var(--color-paper-bright);
+    color: var(--color-ink);
+  }
+
+  .surface-dark .cta-primary:hover {
+    background: transparent;
+    color: var(--color-paper-bright);
+  }
+
+  .cta-primary:active {
+    transform: translateY(0);
+  }
+
+  .cta-arrow {
+    display: inline-block;
+    transition: transform 220ms cubic-bezier(0.32, 0, 0.2, 1);
+  }
+
+  .cta-primary:hover .cta-arrow {
+    transform: translateX(3px);
+  }
+
+  .cta-secondary {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.28rem;
+    color: var(--color-ink);
+    font-family: var(--font-notation);
+    font-size: 0.68rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  .cta-secondary::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0.35);
+    transform-origin: left;
+    transition: transform 220ms ease;
+  }
+
+  .cta-secondary:hover::after {
+    transform: scaleX(1);
+  }
+
+  .surface-dark .cta-secondary {
+    color: var(--color-paper-bright);
+  }
+
+  .media-shell {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--color-sand);
+  }
+
+  .media-shell img,
+  .media-shell video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .media-placeholder {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    overflow: hidden;
+    min-height: 18rem;
+    background:
+      radial-gradient(circle at 18% 20%, rgba(255,255,255,.5), transparent 34%),
+      linear-gradient(132deg, var(--placeholder-a, #ddd7cc), var(--placeholder-b, #c6c0b5));
+  }
+
+  .media-placeholder::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .2201;
+    background-image:
+      linear-gradient(rgba(23,22,19,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(23,22,19,.035) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mix-blend-mode: multiply;
+  }
+
+  .media-placeholder[data-variant="brands"] {
+    --placeholder-a: #ded4ca;
+    --placeholder-b: #b9a99e;
+  }
+
+  .media-placeholder[data-variant="places"] {
+    --placeholder-a: #e2ded3;
+    --placeholder-b: #b7baae;
+  }
+
+  .media-placeholder[data-variant="public"] {
+    --placeholder-a: #d6d1c7;
+    --placeholder-b: #a9ada5;
+  }
+
+  .media-placeholder-plane {
+    position: absolute;
+    z-index: 1;
+    display: block;
+    pointer-events: none;
+    border: 1px solid rgba(23,22,19,.11);
+    background: rgba(250,248,242,.16);
+  }
+
+  .media-placeholder-plane-a {
+    width: 46%;
+    height: 54%;
+    top: 10%;
+    left: 9%;
+    transform: rotate(-3deg);
+  }
+
+  .media-placeholder-plane-b {
+    width: 36%;
+    height: 28%;
+    right: 8%;
+    bottom: 11%;
+    transform: rotate(4deg);
+    background: rgba(23,22,19,.055);
+  }
+
+  .image-note {
+    font-family: var(--font-notation);
+    font-size: 0.66rem;
+    line-height: 1.5;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--color-stone);
+  }
+
+  /* Offer formats: one concrete entry per line, not a decorative button list. */
+  .offer-format-list li {
+    position: relative;
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+
+  .offer-format-list li:first-child {
+    border-top: 0;
+  }
+
+  .offer-format-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1.28rem;
+    width: 0.45rem;
+    height: 1px;
+    background: var(--color-signal);
+  }
+
+  .offer-format-list li:first-child::before {
+    top: 0.63rem;
+  }
+
+  /*
+    Each format now links to its own sales page. `.offer-format-row` carries
+    the padding formerly on the `li` itself (so the whole padded row, not just
+    the text, is the tap/click target) and stays a plain span as a fallback
+    for any format with no matching sales page yet. The arrow is always
+    visible at rest, not only on hover, since mobile has no hover state.
+  */
+  .offer-format-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 0.15rem 0.65rem 1.05rem;
+    color: var(--color-paper-dim);
+  }
+
+  .offer-format-list li:first-child .offer-format-row {
+    padding-top: 0;
+  }
+
+  a.offer-format-row {
+    transition: color 180ms ease;
+  }
+
+  a.offer-format-row:hover,
+  a.offer-format-row:focus-visible {
+    color: var(--color-clay);
+  }
+
+  .offer-format-arrow {
+    flex: none;
+    font-size: 0.7rem;
+    color: var(--color-signal);
+    opacity: 0.6;
+    transition: transform 180ms ease, opacity 180ms ease;
+  }
+
+  a.offer-format-row:hover .offer-format-arrow,
+  a.offer-format-row:focus-visible .offer-format-arrow {
+    opacity: 1;
+    transform: translateX(3px);
+  }
+
+  /*
+    Desktop "What We Do" dropdown. State is driven entirely by JS (a single
+    `.is-open` class, toggled on hover/focus/Escape in Header.astro), not by
+    :hover/:focus-within pseudo-classes: in this exact build, a CSS-only
+    :focus-within variant on this element measurably failed to apply opacity
+    even though the selector itself matched and no competing rule was found
+    (checked directly against the live cascade, not assumed) — an explicit
+    JS-driven class avoids depending on that. A <noscript> fallback keeps the
+    three offer links reachable as plain visible links when JS is unavailable.
+  */
+  .nav-dropdown-panel {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.25rem);
+    transition: opacity 200ms ease, transform 200ms ease;
+  }
+
+  .nav-dropdown-panel.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  /* Immediate touch feedback for the mobile menu panel's own links. */
+  .nav-mobile-link {
+    transition: background-color 120ms ease;
+  }
+
+  .nav-mobile-link:active {
+    background-color: color-mix(in srgb, var(--color-ink) 6%, transparent);
+  }
+
+  .offer-scene {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .offer-scene + .offer-scene {
+    margin-top: clamp(5rem, 9vw, 9rem);
+  }
+
+  /*
+    Mobile only: the desktop clamp's 5rem floor (80px) reads as a dead gap
+    between one mural and the next offer's title on a phone, where there is
+    no multi-column layout to justify it. Reduced here rather than in the
+    clamp itself, which must stay untouched above this breakpoint.
+  */
+  @media (max-width: 767px) {
+    .offer-scene + .offer-scene {
+      margin-top: 3.25rem;
+    }
+  }
+
+  /*
+    Fracture grammar: the logo's shatter/reassembly reduced to two reusable
+    cut patterns, so every reveal in the site speaks the same visual language
+    instead of five unrelated effects. Each shard is a full-size copy of the
+    same media, clipped to a static polygon; only `transform` animates (never
+    `clip-path` itself), matching the compositor-only discipline already used
+    everywhere else in this codebase.
+  */
+  .fracture-panel {
+    position: relative;
+    isolation: isolate;
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .fracture-shard {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Two-shard split: one shallow diagonal seam. The default reveal. */
+  .fracture-shard-a1 { clip-path: polygon(0% 0%, 100% 0%, 100% 62%, 0% 42%); }
+  .fracture-shard-a2 { clip-path: polygon(0% 42%, 100% 62%, 100% 100%, 0% 100%); }
+
+  /* Three-shard split: a steeper crossing angle, closer to the wordmark's own fracture. Used once, sparingly. */
+  .fracture-shard-b1 { clip-path: polygon(0% 0%, 38% 0%, 30% 100%, 0% 100%); }
+  .fracture-shard-b2 { clip-path: polygon(38% 0%, 68% 0%, 62% 100%, 30% 100%); }
+  .fracture-shard-b3 { clip-path: polygon(68% 0%, 100% 0%, 100% 100%, 62% 100%); }
+
+  /*
+    The single full-panel video (see FractureReveal.astro): unclipped, sits
+    above the poster shards in DOM order, and stays invisible until JS adds
+    `.is-ready` (both the shard entrance has settled and a real frame has
+    rendered — see armFractureHandoff in media-autoplay.ts). The opacity
+    transition is the whole crossfade; there is no separate poster fade-out
+    because the video fully covers the assembled poster once opaque.
+  */
+  .fracture-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 170ms ease;
+  }
+
+  .fracture-video.is-ready {
+    opacity: 1;
+  }
+
+  .fracture-seam {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .editorial-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    font-family: var(--font-body);
+    font-size: .88rem;
+    color: var(--color-ink);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 34%, transparent);
+    padding-bottom: .2rem;
+    transition: border-color 180ms ease, transform 180ms ease;
+  }
+
+  .editorial-link:hover {
+    border-bottom-color: var(--color-ink);
+    transform: translateX(2px);
+  }
+
+  .surface-dark .editorial-link {
+    color: var(--color-paper-bright);
+    border-bottom-color: color-mix(in srgb, var(--color-paper) 42%, transparent);
+  }
+
+  .surface-dark .editorial-link:hover {
+    border-bottom-color: var(--color-paper-bright);
+  }
+
+  /*
+    Shared contact system (Contact.astro): one dominant "Discuss a Project"
+    button plus two quiet, always-legible direct routes. `.contact-link` never
+    hides its label behind a hover state, so it stays readable at rest on
+    every surface it appears on (light or `.surface-dark`, via the same
+    ancestor-selector pattern already used by `.editorial-link` above).
+  */
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    line-height: 1;
+    transition: color 180ms ease;
+  }
+
+  .contact-link:hover {
+    color: var(--color-clay);
+  }
+
+  .contact-link-icon {
+    width: 15px;
+    height: 15px;
+    flex: none;
+  }
+
+  .contact-link--compact {
+    color: var(--color-stone);
+    font-size: 0.74rem;
+    /* Larger click/tap target without growing the visible glyph or shifting
+       neighbouring nav items: padding expands the hit area, the matching
+       negative margin keeps the row's visual spacing unchanged. */
+    padding: 0.55rem 0.4rem;
+    margin: -0.55rem -0.4rem;
+  }
+
+  .contact-link--compact:hover {
+    color: var(--color-ink);
+  }
+
+  /*
+    Larger tap target in the mobile menu panel specifically (same class also
+    used in the desktop header nav, untouched here since this query never
+    matches there): ~30px tall at the desktop-tuned padding, short of the
+    ~44px guidance for a primary destination in an open mobile menu.
+  */
+  @media (max-width: 767px) {
+    .contact-link--compact {
+      padding: 1rem 0.5rem;
+      margin: -1rem -0.5rem;
+    }
+  }
+
+  .contact-link--compact .contact-link-icon {
+    width: 13px;
+    height: 13px;
+  }
+
+  .surface-dark .contact-link {
+    color: var(--color-paper-bright);
+  }
+
+  .surface-dark .contact-link:hover {
+    color: var(--color-clay);
+  }
+
+  .surface-dark .contact-link--compact {
+    color: color-mix(in srgb, var(--color-paper) 65%, transparent);
+  }
+
+  .surface-dark .contact-link--compact:hover {
+    color: var(--color-paper-bright);
+  }
+
+  .contact-hint {
+    max-width: 22rem;
+    font-family: var(--font-notation);
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: none;
+    color: var(--color-stone);
+  }
+
+  .surface-dark .contact-hint {
+    color: color-mix(in srgb, var(--color-paper) 62%, transparent);
+  }
+
+  /*
+    Start a project / Email / WhatsApp as three comparable, real buttons —
+    deliberately not `.cta-primary` (tuned for one small notation-style CTA
+    elsewhere): this trio needs shared height, weight and a visible border on
+    the two secondary actions, per the brief that replaced the old
+    icon-and-text-link treatment.
+
+    `.contact-buttons-wrap` is a size container, not a viewport breakpoint, so
+    the row lays out correctly whether it sits in the hero's wide reading
+    group or a narrow column (ProjectCta, offer intros) on the very same
+    page — a media query keyed to the viewport can't tell those apart.
+  */
+  .contact-buttons-wrap {
+    container-type: inline-size;
+  }
+
+  .contact-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .contact-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 52px;
+    padding: 0.85rem 1.5rem;
+    border: 1.5px solid var(--color-ink);
+    font-family: var(--font-notation);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
+  }
+
+  .contact-btn:active {
+    transform: translateY(0);
+  }
+
+  .contact-btn-icon {
+    width: 21px;
+    height: 21px;
+    flex: none;
+  }
+
+  /*
+    Three container-width tiers, since a straight 100%/50%/50% split doesn't
+    fit "WHATSAPP" at every width this component gets placed at (e.g. the
+    narrow ProjectCta/offer-intro column, well under real mobile width):
+      < 21rem  — each secondary sized to its own content, wrapping freely.
+      21–30rem — true mobile pattern: Start a project fills the row, Email
+                 and WhatsApp share the next one exactly (confirmed at 342px,
+                 a real phone's content width after gutters).
+      ≥ 30rem  — wide enough for all three at natural width, one line.
+  */
+  .contact-btn-primary {
+    flex: 0 1 100%;
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-paper-bright);
+  }
+
+  .contact-btn-primary:hover {
+    background: transparent;
+    color: var(--color-ink);
+    transform: translateY(-1.5px);
+  }
+
+  .contact-btn-secondary {
+    flex: 1 1 auto;
+    min-width: 0;
+    background: transparent;
+  }
+
+  .contact-btn-secondary:hover {
+    background: color-mix(in srgb, var(--color-ink) 6%, transparent);
+    transform: translateY(-1.5px);
+  }
+
+  @container (min-width: 21rem) {
+    .contact-btn-secondary {
+      flex: 1 1 calc(50% - 0.375rem);
+    }
+  }
+
+  @container (min-width: 30rem) {
+    .contact-btn-primary,
+    .contact-btn-secondary {
+      flex: 0 1 auto;
+    }
+  }
+
+  .surface-dark .contact-btn {
+    color: var(--color-paper-bright);
+    border-color: var(--color-paper-bright);
+  }
+
+  .surface-dark .contact-btn-primary {
+    background: var(--color-paper-bright);
+    color: var(--color-ink);
+  }
+
+  .surface-dark .contact-btn-primary:hover {
+    background: transparent;
+    color: var(--color-paper-bright);
+  }
+
+  .surface-dark .contact-btn-secondary:hover {
+    background: color-mix(in srgb, var(--color-paper) 12%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-btn {
+      transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+    }
+
+    .contact-btn:hover {
+      transform: none;
+    }
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-ink);
+    color: var(--color-paper-bright);
+    font-family: var(--font-notation);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+  }
+
+  .skip-link:focus {
+    left: 0;
+  }
+
+  /* Editorial / automated content */
+  .article-body {
+    max-width: 70ch;
+  }
+
+  .article-body > * + * {
+    margin-top: 1.35em;
+  }
+
+  .article-body p,
+  .article-body li {
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.72;
+    color: var(--color-paper-dim);
+  }
+
+  .article-body h2,
+  .article-body h3,
+  .article-body h4 {
+    font-family: var(--font-display);
+    font-weight: 610;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--color-ink);
+    scroll-margin-top: 6rem;
+  }
+
+  .article-body h2 {
+    margin-top: 2.7em;
+    font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+  }
+
+  .article-body h3 {
+    margin-top: 2.2em;
+    font-size: clamp(1.25rem, 2.6vw, 1.7rem);
+  }
+
+  .article-body h4 {
+    margin-top: 1.8em;
+    font-size: 1.05rem;
+  }
+
+  .article-body a {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--color-ink) 35%, transparent);
+    transition: text-decoration-color 180ms ease;
+  }
+
+  .article-body a:hover {
+    text-decoration-color: var(--color-signal);
+  }
+
+  .article-body ul,
+  .article-body ol {
+    padding-left: 1.3em;
+  }
+
+  .article-body ul { list-style: disc; }
+  .article-body ol { list-style: decimal; }
+
+  .article-body li + li { margin-top: 0.5em; }
+
+  .article-body blockquote {
+    margin-left: 0;
+    border-left: 2px solid var(--color-signal);
+    padding-left: 1.2em;
+    color: var(--color-stone);
+  }
+
+  .article-body img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .article-body figcaption {
+    margin-top: 0.7em;
+    font-family: var(--font-notation);
+    font-size: 10px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--color-stone);
+  }
+
+  .article-body table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    font-size: 15px;
+  }
+
+  .article-body th,
+  .article-body td {
+    border-top: 1px solid var(--color-stone-line);
+    padding: 0.8em 1em 0.8em 0;
+    text-align: left;
+    vertical-align: top;
+    color: var(--color-paper-dim);
+  }
+
+  .article-body th {
+    font-family: var(--font-notation);
+    font-size: 10px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--color-stone);
+  }
+
+  .article-body code {
+    font-family: var(--font-notation);
+    font-size: 0.9em;
+    background: var(--color-paper-bright);
+    padding: 0.15em 0.4em;
+  }
+
+  .article-body pre {
+    background: var(--color-ink);
+    color: var(--color-paper-bright);
+    padding: 1.1em;
+    overflow-x: auto;
+  }
+
+  .article-body pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+  }
+
+  .article-body hr {
+    border: 0;
+    border-top: 1px solid var(--color-stone-line);
+    margin-block: 2.4em;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

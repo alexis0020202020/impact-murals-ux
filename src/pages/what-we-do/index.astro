@@ -1,0 +1,65 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import OfferMedia from "@/components/OfferMedia.astro";
+import ProjectCta from "@/components/ProjectCta.astro";
+import ImpactFragment from "@/components/ImpactFragment.astro";
+import FragmentMotion from "@/components/FragmentMotion.astro";
+import { breadcrumbsFor } from "@/lib/routes";
+import { pageSeo } from "@/content/seo";
+import { offers } from "@/content/offers";
+
+const trail = await breadcrumbsFor("/what-we-do");
+---
+
+<BaseLayout title={pageSeo.whatWeDo.title} description={pageSeo.whatWeDo.description}>
+  <Breadcrumbs trail={trail} />
+
+  <header class="relative overflow-hidden px-[var(--gutter)] pb-24 pt-14 md:pb-36 md:pt-20">
+    <ImpactFragment fragment="11" drift={42} driftX={18} rotate={6} class="pointer-events-none absolute -right-[4vw] top-[12%] hidden w-[13vw] text-ink opacity-[0.07] md:block" />
+    <div class="grid grid-cols-1 gap-y-9 md:grid-cols-12 md:gap-x-10">
+      <div class="md:col-span-9">
+        <h1 class="headline-display max-w-[11ch] text-[14vw] sm:text-[9vw] md:text-[5.4vw] lg:text-[4.85vw]">
+          WHAT WE DO
+        </h1>
+        <p class="body-copy mt-7 max-w-[34rem]">A brand, a place and a public site ask different things of art. These areas define the project context, not a fixed technique. Some projects naturally cross more than one.</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="overflow-hidden px-[var(--gutter)] pb-28 md:pb-44">
+    <div class="grid grid-cols-1 gap-y-14 md:grid-cols-3 md:gap-x-10 md:gap-y-0">
+      {offers.map((offer, index) => (
+        <article class="relative border-t border-ink/15 pt-6">
+          <a href={`/what-we-do/${offer.slug}`} class="group block">
+            <span class="notation text-[10px] text-stone">0{index + 1}</span>
+            <h2 class="headline-editorial mt-3 max-w-[12ch] text-[9vw] sm:text-[6vw] md:text-[2.5vw] lg:text-[2.15vw]">
+              {offer.title}
+            </h2>
+            <OfferMedia
+              offer={offer.key}
+              src={offer.image.src}
+              alt={offer.image.alt}
+              video={offer.image.video}
+              poster={offer.image.poster}
+              class="mt-5 aspect-[5/4] max-h-[280px]"
+            />
+            <p class="body-copy mt-5">{offer.summary}</p>
+            <span class="editorial-link mt-6 transition-colors duration-200 group-hover:text-clay group-focus-visible:text-clay">
+              Explore {offer.key === "public-art" ? "Public Art" : offer.shortTitle} <span aria-hidden="true">↗</span>
+            </span>
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <ProjectCta
+    heading="NOT SURE WHERE YOUR PROJECT FITS?"
+    body="If your project crosses these areas, tell us what you have in mind. We can help define the right approach."
+    hint={false}
+    primaryLabel="DISCUSS A PROJECT"
+  />
+
+  <FragmentMotion />
+</BaseLayout>

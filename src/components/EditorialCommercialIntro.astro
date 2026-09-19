@@ -1,0 +1,84 @@
+---
+import type { OfferKey } from "@/content/offers";
+import { getOfferByKey } from "@/content/offers";
+import { editorialCommercial } from "@/content/editorial-commercial";
+
+interface Props {
+  offer?: OfferKey;
+}
+
+const { offer } = Astro.props;
+const ctaHref = offer
+  ? `${editorialCommercial.ctaHref}?offer=${offer}`
+  : editorialCommercial.ctaHref;
+
+/**
+ * The video is the same master asset already wired to this offer's own page
+ * (src/content/offers.ts), looked up by the record's own `offer` field — the
+ * single existing family classification already validated at build time
+ * (see validateRecord in lib/content-source/validate.ts, which refuses the
+ * whole build if `offer` is not one of the three pillars). No second
+ * family/category system, and no per-page video is stored anywhere.
+ *
+ * `familyOffer` is only ever undefined here if `offer` itself is absent,
+ * since every valid value already resolves — kept as a safety net, not a
+ * path expected to run: falling through to no video (never an unrelated
+ * pillar's video) and logging so a real gap gets noticed during a build
+ * rather than silently showing the wrong category's footage.
+ */
+const familyOffer = offer ? getOfferByKey(offer) : undefined;
+if (offer && !familyOffer) {
+  console.warn(
+    `[EditorialCommercialIntro] Unrecognised offer "${offer}" — rendering without a video instead of guessing one.`
+  );
+}
+
+const videoSrc = familyOffer?.image.video || editorialCommercial.video.src;
+const videoPoster = familyOffer?.image.poster || editorialCommercial.video.poster;
+const hasVideo = Boolean(videoSrc);
+---
+
+<section class="px-[var(--gutter)]" aria-label="Impact Murals">
+  <div class="max-w-5xl border-y border-stone-line/50 py-7 md:py-9">
+    {hasVideo && (
+      <div class="overflow-hidden bg-ink">
+        <video
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster={videoPoster || undefined}
+          data-autoplay-video
+          aria-label="Impact Murals overview"
+          class="aspect-[16/9] w-full object-cover md:aspect-[16/7]"
+        >
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+      </div>
+    )}
+
+    <div class:list={["grid grid-cols-1 gap-5 md:grid-cols-12 md:items-end md:gap-x-10", hasVideo && "mt-6"]}>
+      <div class="md:col-span-8">
+        <p class="notation text-[10px] text-stone/70">{editorialCommercial.eyebrow}</p>
+        <h2 class="headline-display mt-3 max-w-3xl text-[6vw] sm:text-[4.2vw] md:text-[2.25vw] lg:text-[2vw]">
+          {editorialCommercial.heading}
+        </h2>
+        <p class="mt-3 max-w-2xl font-body text-[15px] leading-relaxed text-stone">
+          {editorialCommercial.body}
+        </p>
+      </div>
+      <div class="md:col-span-4 md:flex md:justify-end">
+        <a href={ctaHref} class="cta-primary inline-flex px-6 py-3.5 text-[11px]">
+          {editorialCommercial.ctaLabel}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{hasVideo && (
+  <script>
+    import { initAutoplayVideo } from "@/lib/media-autoplay";
+    initAutoplayVideo(document);
+  </script>
+)}

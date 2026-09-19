@@ -1,0 +1,27 @@
+---
+import { homepage } from "@/content/homepage";
+import ImpactFragment from "../ImpactFragment.astro";
+import Contact from "../Contact.astro";
+---
+
+<section class="surface-dark relative min-h-[62svh] overflow-hidden pt-16 pb-24 md:flex md:min-h-[70svh] md:items-center md:py-32">
+  <ImpactFragment fragment="11" drift={72} driftX={-20} rotate={-7} class="pointer-events-none absolute -left-[14vw] bottom-[0%] block w-[46vw] text-paper opacity-[0.1] md:-left-[5vw] md:bottom-[2%] md:w-[22vw] md:opacity-[0.16]" />
+  <ImpactFragment fragment="09" drift={46} driftX={26} rotate={10} class="pointer-events-none absolute -right-[10vw] top-[6%] hidden w-[24vw] text-paper opacity-[0.08] sm:block md:right-[3vw] md:top-[10%] md:w-[14vw] md:opacity-[0.12]" />
+  <div class="relative w-full px-[var(--gutter)]" data-reveal-group>
+    <div class="grid grid-cols-1 gap-y-12 md:grid-cols-12 md:items-start md:gap-x-10">
+      <div class="md:col-span-7">
+        <h2 data-reveal class="headline-display max-w-[10ch] text-[15vw] sm:text-[9.3vw] md:text-[5.8vw] lg:text-[5.2vw]">
+          {homepage.finalCta.heading}
+        </h2>
+      </div>
+      <div class="md:col-span-5">
+        <p data-reveal class="font-body text-[15px] leading-relaxed text-paper/70">
+          {homepage.finalCta.body}
+        </p>
+        <div data-reveal>
+          <Contact class="mt-8" primaryLabel={homepage.finalCta.label} />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

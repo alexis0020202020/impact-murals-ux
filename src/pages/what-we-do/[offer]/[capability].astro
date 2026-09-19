@@ -1,0 +1,118 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import Contact from "@/components/Contact.astro";
+import ArticleBody from "@/components/ArticleBody.astro";
+import ProjectCta from "@/components/ProjectCta.astro";
+import FragmentMotion from "@/components/FragmentMotion.astro";
+import { capabilities } from "@/content/capabilities";
+import { getOfferByKey } from "@/content/offers";
+import { global } from "@/content/global";
+import { breadcrumbsFor, LANDING_SEGMENT } from "@/lib/routes";
+import { loadContentRecords } from "@/lib/content-source";
+import { renderMarkdown } from "@/lib/content-source/markdown";
+import { filterPublic } from "@/lib/publishing";
+
+/**
+ * The 20 "WHAT WE CAN CREATE" sales pages, one level under their parent offer.
+ * One extra path segment versus what-we-do/[slug].astro, so the two routes
+ * never collide: /what-we-do/{offer} vs /what-we-do/{offer}/{capability}.
+ */
+export function getStaticPaths() {
+  return capabilities.map((capability) => ({
+    params: { offer: capability.offerKey, capability: capability.slug },
+    props: { capability }
+  }));
+}
+
+const { capability } = Astro.props;
+const offer = getOfferByKey(capability.offerKey)!;
+const path = `/what-we-do/${offer.slug}/${capability.slug}`;
+const canonical = `${global.domain}${path}`;
+const trail = await breadcrumbsFor(path);
+const body = renderMarkdown(capability.body);
+
+/**
+ * Sales-page links may point to nodes that already exist in the master graph
+ * but are scheduled for later. Keep the architecture now, render the link only
+ * once its target is actually public.
+ */
+const publishedEditorial = filterPublic(await loadContentRecords());
+const publicEditorialPaths = new Set(
+  publishedEditorial.map((record) =>
+    record.type === "guide"
+      ? `/${LANDING_SEGMENT}/${record.slug}`
+      : `/insights/${record.slug}`
+  )
+);
+
+const relatedPath = (href: string): string => {
+  try {
+    return new URL(href, global.domain).pathname.replace(/\/$/, "") || "/";
+  } catch {
+    return href.replace(global.domain, "").replace(/\/$/, "");
+  }
+};
+
+const visibleRelatedGuides = capability.relatedGuides
+  .map((item) => ({ ...item, href: relatedPath(item.href) }))
+  .filter((item) => publicEditorialPaths.has(item.href));
+---
+
+<BaseLayout title={capability.title} description={capability.tagline} canonical={canonical}>
+  <Breadcrumbs trail={trail} currentLabel={capability.shortTitle} />
+
+  <header class="relative overflow-hidden px-[var(--gutter)] pb-16 pt-12 md:pb-24 md:pt-20">
+    <div class="grid grid-cols-1 gap-y-9 md:grid-cols-12 md:items-start md:gap-x-10">
+      <div class="md:col-span-9">
+        <h1 class="headline-display max-w-[20ch] text-[10.5vw] sm:text-[7.5vw] md:text-[3.7vw] lg:text-[3.3vw]">
+          {capability.title}
+        </h1>
+        <p class="body-copy-strong mt-6 max-w-xl">{capability.tagline}</p>
+      </div>
+      <div class="md:col-span-3">
+        <p class="body-copy">{capability.intro}</p>
+        <Contact class="mt-7" offerKey={capability.offerKey} primaryLabel="DISCUSS A PROJECT" />
+      </div>
+    </div>
+  </header>
+
+  <section class="px-[var(--gutter)] pb-24 md:pb-32">
+    <ArticleBody body={body} />
+  </section>
+
+  {visibleRelatedGuides.length > 0 && (
+    <section class="border-t border-ink/15 px-[var(--gutter)] py-16 md:py-20">
+      <div class="grid grid-cols-1 gap-y-7 md:grid-cols-12 md:gap-x-10">
+        <div class="md:col-span-3">
+          <p class="image-note">RELATED GUIDES &amp; INSIGHTS</p>
+          <p class="mt-3 max-w-xs font-body text-[13px] leading-relaxed text-stone">
+            {capability.relatedIntro}
+          </p>
+        </div>
+        <ul class="md:col-span-8 md:col-start-5">
+          {visibleRelatedGuides.map((item) => (
+            <li class="border-t border-ink/10 first:border-t-0">
+              <a
+                href={item.href}
+                class="group grid grid-cols-[1fr_auto] gap-6 py-4"
+              >
+                <span class="block font-body text-[15px] text-ink">{item.title}</span>
+                <span class="self-center text-[12px] text-stone transition-transform group-hover:translate-x-1">↗</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <ProjectCta
+    heading={capability.closingHeading}
+    body={capability.closingBody}
+    offerKey={capability.offerKey}
+    primaryLabel="DISCUSS A PROJECT"
+  />
+
+  <FragmentMotion />
+</BaseLayout>

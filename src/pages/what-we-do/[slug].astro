@@ -1,0 +1,218 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import OfferMedia from "@/components/OfferMedia.astro";
+import ProjectCta from "@/components/ProjectCta.astro";
+import Contact from "@/components/Contact.astro";
+import ImpactFragment from "@/components/ImpactFragment.astro";
+import FragmentMotion from "@/components/FragmentMotion.astro";
+import { offers, legacyOfferRedirects } from "@/content/offers";
+import { capabilitiesForOffer } from "@/content/capabilities";
+import { global } from "@/content/global";
+import { pageSeoOffers } from "@/content/seo";
+import { breadcrumbsFor } from "@/lib/routes";
+import { contentForOffer } from "@/lib/relations";
+
+export function getStaticPaths() {
+  const live = offers.map((offer) => ({
+    params: { slug: offer.slug },
+    props: { offer, redirectedFrom: null as string | null }
+  }));
+
+  if (import.meta.env.PROD) return live;
+
+  const legacy = Object.entries(legacyOfferRedirects).map(([oldSlug, key]) => ({
+    params: { slug: oldSlug },
+    props: { offer: offers.find((o) => o.key === key)!, redirectedFrom: oldSlug }
+  }));
+
+  return [...live, ...legacy];
+}
+
+const { offer, redirectedFrom } = Astro.props;
+const canonical = `${global.domain}/what-we-do/${offer.slug}`;
+const trail = await breadcrumbsFor(`/what-we-do/${offer.slug}`);
+const reading = await contentForOffer(offer.key);
+/** Same order as offer.formats: zips each locked format label to its sales page. */
+const childCapabilities = capabilitiesForOffer(offer.key);
+
+const offerIdea = offer.key === "art-for-brands"
+  ? "START WITH THE BRAND, NOT THE FORMAT."
+  : offer.key === "art-for-places"
+    ? "START WITH THE SPACE."
+    : "LARGE SCALE NEEDS PROPER PLANNING.";
+
+/** Only Public Art carries its own section heading above the capability steps. */
+const capabilitiesHeading = offer.key === "public-art" ? "FROM ARTWORK TO EXECUTION." : null;
+
+const capabilities = offer.key === "art-for-brands"
+  ? [
+      { title: "FROM EARLY IDEA TO APPROVED DIRECTION.", body: "We can help define the role of art while the direction is still open, or develop the work within an approved campaign or concept. The scope is agreed before design development begins." },
+      { title: "BUILT FOR THE FORMAT IT WILL ACTUALLY TAKE.", body: "A live performance, mural, product artwork or packaging commission each puts different demands on the work. We develop it for the final format and plan production accordingly. If the making itself is part of the experience, we consider that too." }
+    ]
+  : offer.key === "art-for-places"
+    ? [
+        { title: "FROM ONE ARTWORK TO A WIDER PROGRAMME.", body: "Some places call for one defining piece. Others need a considered group of works across several areas or sites. We help decide where art belongs, how the pieces relate and which artists are right for each part." },
+        { title: "FROM EARLY CONCEPT TO ESTABLISHED DESIGN.", body: "We can work alongside an interior or development team while the plans are taking shape, or respond to a design that is already established. In either case, the art is developed around the project's own direction." },
+        { title: "DEVELOPED FOR THE REAL SPACE.", body: "Scale, light, surfaces, access and installation shape how an artwork sits within the space. We develop and produce the work with those conditions in mind through to final placement." }
+      ]
+    : [
+        { title: "SITE & SCOPE", body: "We review the brief, setting, surface, scale, access and working conditions to define the real parameters of the project." },
+        { title: "ARTWORK & PRODUCTION METHOD", body: "We develop the artistic direction when needed, or work within an approved artwork, then define the materials, artists and production approach for the site." },
+        { title: "PLANNING & COORDINATION", body: "We plan access, sequencing, working windows and site coordination with the wider project team." },
+        { title: "ON-SITE EXECUTION", body: "We manage the artists and production through completion, keeping the finished work aligned with the approved direction." }
+      ];
+
+const proofLabel = offer.key === "art-for-brands"
+  ? "Brand / activation photography"
+  : offer.key === "art-for-places"
+    ? "Spatial project photography"
+    : "Public art / site photography";
+
+/** Each offer's own hero paragraph, distinct from the shorter offer.summary used on the card views. */
+const headerLead = offer.key === "art-for-brands"
+  ? "Art shaped around a brand and its audience, from campaigns and launches to live experiences, products and spaces. We develop the artistic direction and carry it through production."
+  : offer.key === "art-for-places"
+    ? "Art conceived for the place it will inhabit. We work with the architecture, use and character of interiors, hospitality spaces, retail, workplaces and developments, then carry the work through to installation."
+    : "Public art begins with the site, its scale and the brief. We develop the artistic direction, then plan and produce the work around the realities of the site.";
+
+const closingBody = offer.key === "art-for-brands"
+  ? "Tell us about the brand, campaign, event or product and where art fits into it. You can come with a defined direction or an open brief."
+  : offer.key === "art-for-places"
+    ? "Share the location, plans or references you have, and tell us what role you imagine for art. An early idea is enough to begin."
+    : "Share the site, brief or approved artwork, along with any drawings, dimensions or timing you have. We can start before every detail is final.";
+---
+
+<BaseLayout title={pageSeoOffers[offer.key].title} description={pageSeoOffers[offer.key].description} canonical={canonical}>
+  <Breadcrumbs trail={trail} currentLabel={offer.shortTitle} />
+
+  {redirectedFrom && (
+    <div class="mx-[var(--gutter)] mt-4 border-t border-ink/15 pt-3">
+      <p class="font-body text-[11px] text-stone">This page moved. You are now reading {offer.title}.</p>
+    </div>
+  )}
+
+  <header class="relative overflow-hidden px-[var(--gutter)] pb-16 pt-12 md:pb-24 md:pt-20">
+    <ImpactFragment fragment={offer.key === "art-for-brands" ? "08" : offer.key === "art-for-places" ? "06" : "10"} drift={44} driftX={18} rotate={7} class="pointer-events-none absolute -right-[4vw] top-[10%] hidden w-[14vw] text-ink opacity-[0.07] md:block" />
+    <!--
+      md:items-start, not md:items-end: the contact column now carries three
+      full buttons plus a hint line, taller than the title on every offer, so
+      bottom-aligning the row pushed the title down below the contacts
+      instead of the two starting together — confirmed by measuring the two
+      columns' real heights before this fix.
+    -->
+    <div class="grid grid-cols-1 gap-y-9 md:grid-cols-12 md:items-start md:gap-x-10">
+      <div class="md:col-span-9">
+        <h1 class="headline-display max-w-[11.5ch] text-[15vw] sm:text-[9.5vw] md:text-[5.6vw] lg:text-[5vw]">
+          {offer.title}
+        </h1>
+      </div>
+      <div class="md:col-span-3">
+        <p class="body-copy">{headerLead}</p>
+        <Contact class="mt-7" offerKey={offer.key} primaryLabel="DISCUSS A PROJECT" />
+      </div>
+    </div>
+  </header>
+
+  <!-- Formats: what the offer can concretely become, right after the intro and before the approach is explained. -->
+  <section class="relative overflow-hidden px-[var(--gutter)] pb-28 md:pb-40">
+    <ImpactFragment fragment="09" drift={56} driftX={-20} rotate={-8} class="pointer-events-none absolute -left-[5vw] bottom-[8%] hidden w-[15vw] text-signal opacity-[0.16] md:block" />
+    <div class="grid grid-cols-1 gap-y-9 md:grid-cols-12 md:gap-x-10">
+      <div class="md:col-span-7">
+        <OfferMedia
+          offer={offer.key}
+          src={offer.image.src}
+          alt={offer.image.alt}
+          video={offer.image.video}
+          poster={offer.image.poster}
+          class="aspect-[4/5] min-h-[380px] md:aspect-[4/5] md:min-h-0"
+          label={proofLabel}
+          eager
+        />
+      </div>
+      <div class="md:col-span-4 md:col-start-9 md:self-center">
+        <p class="body-copy-strong">WHAT WE CAN CREATE</p>
+        <ul class="offer-format-list mt-5">
+          {offer.formats.map((format, index) => {
+            const capability = childCapabilities[index];
+            return (
+              <li>
+                {capability ? (
+                  <a href={`/what-we-do/${offer.slug}/${capability.slug}`} class="offer-format-row">
+                    <span>{format}</span>
+                    <span aria-hidden="true" class="offer-format-arrow">↗</span>
+                  </a>
+                ) : (
+                  <span class="offer-format-row">{format}</span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Approach: how the studio thinks about this situation, once the concrete formats are already on the page. -->
+  <section class="relative overflow-hidden border-t border-ink/10 px-[var(--gutter)] py-28 md:py-40">
+    <div class="grid grid-cols-1 gap-y-10 md:grid-cols-12 md:gap-x-10">
+      <div class="md:col-span-8">
+        <h2 class="headline-editorial max-w-[11ch] text-[13vw] sm:text-[8vw] md:text-[4.8vw] lg:text-[4.3vw]">
+          {offerIdea}
+        </h2>
+      </div>
+      <div class="md:col-span-3 md:col-start-10 md:self-end md:pb-2">
+        <p class="body-copy">{offer.situation}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-[var(--gutter)] pb-28 md:pb-44">
+    {capabilitiesHeading && (
+      <h2 class="headline-editorial mb-14 max-w-[11ch] text-[10vw] sm:text-[6.5vw] md:mb-16 md:text-[3.4vw] lg:text-[3vw]">
+        {capabilitiesHeading}
+      </h2>
+    )}
+    <div class="grid grid-cols-1 gap-y-16 md:grid-cols-12 md:gap-x-10 md:gap-y-24">
+      {capabilities.map((item, index) => (
+        <div class:list={[
+          "max-w-[29rem]",
+          index === 0 ? "md:col-span-4 md:col-start-2" : index === 1 ? "md:col-span-4 md:col-start-7 md:pt-[10vh]" : index === 2 ? "md:col-span-4 md:col-start-3 md:pt-[4vh]" : "md:col-span-4 md:col-start-8 md:pt-[14vh]"
+        ]}>
+          <h3 class="headline-editorial text-[8.5vw] sm:text-[5vw] md:text-[2.2vw] lg:text-[1.95vw]">{item.title}</h3>
+          <p class="body-copy mt-4">{item.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {reading.length > 0 && (
+    <section class="border-t border-ink/15 px-[var(--gutter)] py-16 md:py-20">
+      <div class="grid grid-cols-1 gap-y-7 md:grid-cols-12 md:gap-x-10">
+        <p class="image-note md:col-span-3">READ NEXT</p>
+        <ul class="md:col-span-8 md:col-start-5">
+          {reading.slice(0, 4).map((item) => (
+            <li class="border-t border-ink/10 first:border-t-0">
+              <a href={item.href} class="group grid grid-cols-[1fr_auto] gap-6 py-4">
+                <span>
+                  <span class="block font-body text-[15px] text-ink">{item.title}</span>
+                  <span class="mt-1 block font-body text-[12px] leading-relaxed text-stone">{item.description}</span>
+                </span>
+                <span class="self-center text-[12px] text-stone transition-transform group-hover:translate-x-1">↗</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <ProjectCta
+    heading={offer.key === "art-for-brands" ? "WORKING ON A BRAND PROJECT?" : offer.key === "art-for-places" ? "WORKING ON A SPACE?" : "PLANNING A LARGE-SCALE MURAL OR PUBLIC ART PROJECT?"}
+    body={closingBody}
+    offerKey={offer.key}
+    primaryLabel="DISCUSS A PROJECT"
+  />
+
+  <FragmentMotion />
+</BaseLayout>

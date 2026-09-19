@@ -1,0 +1,79 @@
+---
+import { global } from "@/content/global";
+import { toJsonLd } from "@/lib/json-ld";
+
+interface Crumb {
+  path: string;
+  label: string;
+}
+
+interface Props {
+  trail: Crumb[];
+  /** Override the last label, e.g. a project title not in the route registry. */
+  currentLabel?: string;
+  /**
+   * Hide the visible trail below the mobile breakpoint (desktop unchanged).
+   * The BreadcrumbList structured data still renders regardless, so nothing
+   * is lost for search engines — only the on-screen row is skipped, for a
+   * page like /discuss-a-project where getting to the first real field
+   * matters more on a phone than a wayfinding row above a page that already
+   * states where it is in its own heading.
+   */
+  hideOnMobile?: boolean;
+}
+
+const { trail, currentLabel, hideOnMobile = false } = Astro.props;
+
+const crumbs = trail.map((crumb, index) =>
+  index === trail.length - 1 && currentLabel ? { ...crumb, label: currentLabel } : crumb
+);
+
+/**
+ * BreadcrumbList reflects exactly what is rendered. It is generated from the
+ * same trail, so the structured data cannot drift from the visible navigation.
+ */
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: crumbs.map((crumb, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: crumb.label,
+    item: `${global.domain}${crumb.path === "/" ? "" : crumb.path}`
+  }))
+};
+---
+
+{
+  crumbs.length > 1 && (
+    <nav aria-label="Breadcrumb" class:list={["px-[var(--gutter)] pt-5 md:pt-6", hideOnMobile && "hidden md:block"]}>
+      <ol class="flex flex-wrap items-center gap-x-2 gap-y-1">
+        {crumbs.map((crumb, index) => {
+          const isLast = index === crumbs.length - 1;
+          return (
+            <li class="flex items-center gap-x-2">
+              {isLast ? (
+                <span class="font-body text-[10px] text-stone" aria-current="page">
+                  {crumb.label}
+                </span>
+              ) : (
+                <>
+                  <a
+                    href={crumb.path}
+                    class="font-body text-[10px] text-stone transition-colors duration-200 hover:text-ink"
+                  >
+                    {crumb.label}
+                  </a>
+                  <span aria-hidden="true" class="font-body text-[10px] text-stone/50">
+                    /
+                  </span>
+                </>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+      <script type="application/ld+json" set:html={toJsonLd(schema)} is:inline />
+    </nav>
+  )
+}

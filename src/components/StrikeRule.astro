@@ -1,0 +1,49 @@
+---
+/**
+ * The Strike Line reused as a structural divider.
+ *
+ * It carries the same idea as the hero: a lateral line that arrives from a
+ * point and resolves. Here it is quiet, drawn once on scroll, with no
+ * displacement. This is how the hero language extends across the site
+ * without repeating the hero animation.
+ */
+interface Props {
+  /** Where the line grows from. Centre echoes the hero most directly. */
+  origin?: "center" | "left";
+  class?: string;
+}
+
+const { origin = "left", class: className = "" } = Astro.props;
+---
+
+<div
+  class={`strike-rule ${className}`}
+  data-strike-rule
+  data-origin={origin}
+  aria-hidden="true"
+>
+</div>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  document.documentElement.dataset.buildStamp = "1788367043";
+  gsap.registerPlugin(ScrollTrigger);
+
+  const rules = document.querySelectorAll<HTMLElement>("[data-strike-rule]");
+  if (rules.length > 0 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    rules.forEach((rule) => {
+      gsap.fromTo(
+        rule,
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: { trigger: rule, start: "top 92%", once: true }
+        }
+      );
+    });
+  }
+</script>

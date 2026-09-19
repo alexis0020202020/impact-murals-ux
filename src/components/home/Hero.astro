@@ -1,0 +1,121 @@
+---
+import { homepage } from "@/content/homepage";
+import { offers } from "@/content/offers";
+import HeroLogo from "../HeroLogo.astro";
+import Contact from "../Contact.astro";
+import ImpactFragment from "../ImpactFragment.astro";
+
+const { hero } = homepage;
+---
+
+<section
+  id="hero"
+  class="relative overflow-hidden px-[var(--gutter)] pb-14 pt-6 md:pb-10 md:pt-8"
+  data-hero
+>
+  <div class="relative mx-auto max-w-[1800px]">
+    <!--
+      Desktop-only decorative presence (mobile untouched, per this pass's
+      scope: `hidden md:block` on both, matching the same pattern already
+      used by PointOfView/HowWeJoin/StudioMoment's own primary fragment).
+      The reading group below tops out at max-w-[40rem] and the logo at
+      max-w-[720px], leaving wide desktop viewports with a large empty
+      right-hand field that the hero currently uses for nothing — these sit
+      in it, secondary to the logo (low opacity, well clear of the wordmark,
+      title and buttons), one large and mostly off the right edge near the
+      logo, one smaller lower down near the contact row, giving the top of
+      the page the same layered, asymmetric depth every other section on
+      this page already has.
+    -->
+    <ImpactFragment fragment="09" drift={46} driftX={22} rotate={9} class="pointer-events-none absolute -right-[8vw] top-[0%] hidden w-[24vw] text-ink opacity-[0.05] md:block" />
+    <ImpactFragment fragment="11" drift={34} driftX={-14} rotate={-6} class="pointer-events-none absolute -right-[1vw] top-[46%] hidden w-[10vw] text-signal opacity-[0.12] md:block" />
+
+    <HeroLogo class="w-[76vw] max-w-[720px] sm:w-[62vw] md:w-[50vw] lg:w-[44vw]" />
+
+    <!--
+      One left-aligned reading group: title, description and the three
+      contact actions belong together, at a generous but comfortable width —
+      not the old narrow right-hand column. The logo above is back to its
+      long-standing validated size (restored after an intermediate pass over-
+      shrunk it to force everything above the fold); the group below is
+      rebalanced around it instead, and a short natural scroll on shorter
+      screens is accepted rather than compressing the logo again.
+    -->
+    <div class="mt-10 max-w-[40rem] md:mt-12">
+      <h1
+        data-hero-copy
+        class="headline-display max-w-[13ch] text-[11.5vw] sm:text-[7.6vw] md:text-[3.6vw] lg:text-[3.1vw]"
+      >
+        {hero.headline}
+      </h1>
+
+      <p data-hero-copy class="body-copy mt-6 max-w-[31rem] text-[16px] md:mt-6">
+        {hero.supportingText}
+      </p>
+
+      <div data-hero-copy class="mt-6 md:mt-7">
+        <Contact primaryLabel="DISCUSS A PROJECT" />
+      </div>
+
+      <div data-hero-copy class="mt-6 md:mt-7">
+        <a href="#offers" class="editorial-link">Explore what we do <span aria-hidden="true">↓</span></a>
+        <nav aria-label="Go straight to an offer" class="mt-5">
+          <ul class="grid grid-cols-1 divide-y divide-ink/10 border-t border-ink/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            {offers.map((offer, index) => (
+              <li>
+                <a
+                  href={`/what-we-do/${offer.slug}`}
+                  class="group/index flex items-center justify-between gap-4 py-3 transition-colors duration-200 sm:flex-col sm:items-start sm:gap-1.5 sm:py-1 sm:pr-6 sm:pl-6 sm:first:pl-0"
+                >
+                  <span class="notation text-[10px] text-stone">0{index + 1}</span>
+                  <span class="flex items-center gap-2 font-body text-[14px] text-ink transition-colors duration-200 group-hover/index:text-clay group-focus-visible/index:text-clay">
+                    {offer.shortTitle}
+                    <span aria-hidden="true" class="inline-block transition-transform duration-200 group-hover/index:translate-x-1">↗</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="mt-12 flex items-end justify-between border-t border-ink/15 pt-3 md:mt-16">
+      <p data-hero-copy class="image-note">ARTIST-LED / UAE</p>
+      <p data-hero-copy class="image-note hidden text-right sm:block">ART DIRECTION · ARTISTS · PRODUCTION</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+
+  document.documentElement.dataset.buildStamp = "1788367043";
+
+  function initHero(section: HTMLElement) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const copy = Array.from(section.querySelectorAll<HTMLElement>("[data-hero-copy]"));
+    if (copy.length === 0) return;
+
+    gsap.set(copy, { opacity: 0, y: 14 });
+    let played = false;
+
+    const play = () => {
+      if (played) return;
+      played = true;
+      gsap.to(copy, {
+        opacity: 1,
+        y: 0,
+        duration: 0.68,
+        stagger: 0.055,
+        ease: "power3.out"
+      });
+    };
+
+    window.addEventListener("impact:settled", play, { once: true });
+    window.setTimeout(play, 1050);
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-hero]").forEach(initHero);
+</script>

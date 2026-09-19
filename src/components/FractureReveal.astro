@@ -1,0 +1,127 @@
+---
+/**
+ * A media panel that arrives as fracture shards and settles into alignment,
+ * echoing the logo's own shatter/reassembly. Static per-shard clip-path,
+ * transform-only animation (see `.fracture-*` in global.css for the rationale).
+ *
+ * Each shard renders a full copy of the same poster image, clipped to its
+ * slice, so the resting (settled) state reads as one continuous image with no
+ * seam beyond the deliberate accent line. When a video is available, exactly
+ * one full-panel `<video>` sits on top of the (video-less) shards and crossfades
+ * in once the shards have settled AND the video has a real rendered frame —
+ * see `armFractureHandoff` in `media-autoplay.ts`. Playing the clip once per
+ * panel instead of once per shard removes the inter-shard frame/seam mismatch
+ * that independently-decoding sibling `<video>` elements could never fully
+ * avoid, even with synchronized `currentTime`.
+ */
+import type { OfferKey } from "@/content/offers";
+
+interface Props {
+  offer: OfferKey;
+  src?: string;
+  alt?: string;
+  class?: string;
+  label?: string;
+  split?: "a" | "b";
+  eager?: boolean;
+  /** When set, the panel itself becomes a real link (not just decoration next to one). */
+  href?: string;
+  ariaLabel?: string;
+  /**
+   * MP4 URL. When set, this renders instead of the image/placeholder — one
+   * copy per shard, same as the image branch below, so the entrance/settle
+   * animation is untouched.
+   */
+  video?: string;
+  /** Shown before the video plays, and is what a reduced-motion visitor sees instead of the loop. */
+  poster?: string;
+  [dataAttr: `data-${string}`]: string | undefined;
+}
+
+const {
+  offer,
+  src,
+  alt = "",
+  class: className = "",
+  label = "Project photography",
+  split = "a",
+  eager = false,
+  href,
+  ariaLabel,
+  video,
+  poster,
+  ...rest
+} = Astro.props;
+
+const hasVideo = Boolean(video);
+const isPlaceholder = !hasVideo && (!src || /placeholder/i.test(alt) || /\/assets\/projects\/.*\.svg$/i.test(src));
+const variant = offer === "art-for-brands" ? "brands" : offer === "art-for-places" ? "places" : "public";
+const shardCount = split === "b" ? 3 : 2;
+const shardClasses = split === "b"
+  ? ["fracture-shard-b1", "fracture-shard-b2", "fracture-shard-b3"]
+  : ["fracture-shard-a1", "fracture-shard-a2"];
+
+const Tag = href ? "a" : "div";
+---
+
+<Tag
+  class={`fracture-panel ${className}`}
+  data-fracture-panel
+  data-fracture-split={split}
+  href={href}
+  aria-label={href ? ariaLabel : undefined}
+  {...rest}>
+  {Array.from({ length: shardCount }).map((_, index) => (
+    isPlaceholder ? (
+      <div
+        class={`fracture-shard ${shardClasses[index]} media-placeholder`}
+        data-variant={variant}
+        data-fracture-shard
+        role={index === 0 && !href ? "img" : undefined}
+        aria-hidden={index === 0 && !href ? undefined : "true"}
+        aria-label={index === 0 && !href ? `${label}. Real project photography to be added.` : undefined}
+      >
+        <span class="media-placeholder-plane media-placeholder-plane-a" aria-hidden="true"></span>
+        <span class="media-placeholder-plane media-placeholder-plane-b" aria-hidden="true"></span>
+      </div>
+    ) : hasVideo ? (
+      <div class={`fracture-shard ${shardClasses[index]} media-shell`} data-fracture-shard aria-hidden={index === 0 && !href ? undefined : "true"}>
+        <img
+          src={poster}
+          alt={index === 0 && !href ? (alt || label) : ""}
+          loading={eager ? "eager" : "lazy"}
+          decoding="async"
+        />
+      </div>
+    ) : (
+      <div class={`fracture-shard ${shardClasses[index]} media-shell`} data-fracture-shard aria-hidden={index === 0 && !href ? undefined : "true"}>
+        <img
+          src={src}
+          alt={index === 0 && !href ? alt : ""}
+          loading={eager ? "eager" : "lazy"}
+          decoding="async"
+        />
+      </div>
+    )
+  ))}
+  {hasVideo && (
+    <video
+      class="fracture-video"
+      muted
+      loop
+      playsinline
+      preload="none"
+      poster={poster || undefined}
+      data-autoplay-video
+      data-fracture-video
+      aria-hidden="true"
+    >
+      <source src={video} type="video/mp4" />
+    </video>
+  )}
+</Tag>
+
+<script>
+  import { initAutoplayVideo } from "@/lib/media-autoplay";
+  initAutoplayVideo(document);
+</script>

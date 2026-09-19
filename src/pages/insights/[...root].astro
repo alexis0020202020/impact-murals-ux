@@ -1,0 +1,89 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import ProjectCta from "@/components/ProjectCta.astro";
+import EditorialList from "@/components/EditorialList.astro";
+import Pagination from "@/components/Pagination.astro";
+import { isPreviewEnvironment } from "@/lib/publishing";
+import {
+  breadcrumbsFor,
+  pageCount,
+  pagePath,
+  pageSlice,
+  publishedOfType,
+  routeFor
+} from "@/lib/routes";
+import { insightsIndexCopy } from "@/content/editorial-copy";
+
+/**
+ * Editorial index at /insights, paginated at /insights/page/2 and onwards.
+ *
+ * A rest route for two reasons. It lets the section genuinely not exist when
+ * there is nothing to show: with no approved articles getStaticPaths returns no
+ * path and the URL is simply absent. And it carries the paginated pages, which
+ * a named parameter route cannot, because they have two segments.
+ *
+ * Articles keep their own /insights/[slug] route. Named parameters take
+ * priority over rest parameters, so article URLs are unaffected.
+ */
+export async function getStaticPaths() {
+  const entries = await publishedOfType("insight");
+  if (entries.length === 0) return [];
+
+  return Array.from({ length: pageCount(entries.length) }, (_unused, i) => {
+    const page = i + 1;
+    return {
+      params: { root: page === 1 ? undefined : `page/${page}` },
+      props: { page }
+    };
+  });
+}
+
+const { page } = Astro.props;
+const base = "/insights";
+
+const all = await publishedOfType("insight");
+const entries = pageSlice(all, page);
+const total = pageCount(all.length);
+
+// Indexation comes from the route registry, never recomputed here, so the meta
+// robots tag on this page and its presence in the sitemap cannot disagree.
+const route = await routeFor(pagePath(base, page));
+const trail = await breadcrumbsFor(pagePath(base, page));
+
+const title = page === 1 ? "Insights" : `Insights, page ${page}`;
+// Distinct per page, not a copy-pasted repeat of page 1's description, while
+// still reading as one continuous series rather than unrelated wording.
+const description =
+  page === 1 ? insightsIndexCopy.lead : `${insightsIndexCopy.lead} Page ${page} of ${total}.`;
+---
+
+<BaseLayout title={title} description={description} noindex={route?.noIndex}>
+  <Breadcrumbs trail={trail} />
+  <PageHeader
+    eyebrow={insightsIndexCopy.eyebrow}
+    heading={insightsIndexCopy.heading}
+    lead={insightsIndexCopy.lead}
+  />
+
+  <div class="px-[var(--gutter)] pb-24 md:pb-28">
+    {isPreviewEnvironment && entries.some((e) => e.isTestFixture) && (
+      <p class="notation mb-8 border border-signal/50 px-4 py-3 text-[10px] leading-relaxed text-signal">
+        Development preview: entries marked TEST FIXTURE validate the template and are excluded
+        from the production build.
+      </p>
+    )}
+
+    {total > 1 && (
+      <p class="notation mb-6 text-[10px] text-stone/60">
+        {`PAGE ${page} OF ${total} · ${all.length} ARTICLES`}
+      </p>
+    )}
+
+    <EditorialList entries={entries} />
+    <Pagination base={base} current={page} total={total} />
+  </div>
+
+  <ProjectCta />
+</BaseLayout>

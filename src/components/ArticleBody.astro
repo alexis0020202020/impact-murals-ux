@@ -1,0 +1,43 @@
+---
+import type { RenderedBody } from "@/lib/content-source/markdown";
+import { shouldShowToc } from "@/lib/content-source/markdown";
+
+interface Props {
+  body: RenderedBody;
+}
+
+const { body } = Astro.props;
+const showToc = shouldShowToc(body);
+---
+
+<!--
+  Imported Markdown, laid out automatically with the site's own type and
+  spacing. The HTML was sanitised at build time in markdown.ts, so `set:html`
+  here receives content that cannot carry a script, an iframe or an event
+  handler.
+-->
+<div class="grid grid-cols-1 gap-y-10 md:grid-cols-12 md:gap-x-10">
+  {showToc && (
+    <nav class="md:col-span-3 md:order-2" aria-labelledby="toc-heading">
+      <div class="md:sticky md:top-28">
+        <p id="toc-heading" class="notation text-[10px] text-stone/70">On this page</p>
+        <ol class="mt-4 flex flex-col gap-2.5 border-l border-stone-line pl-4">
+          {body.toc.map((entry) => (
+            <li class={entry.level === 3 ? "pl-3" : ""}>
+              <a
+                href={`#${entry.id}`}
+                class="font-body text-[14px] leading-snug text-stone transition-colors duration-200 hover:text-ink"
+              >
+                {entry.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </nav>
+  )}
+
+  <div class:list={["article-body", showToc ? "md:col-span-8 md:order-1" : "md:col-span-8"]}>
+    <Fragment set:html={body.html} />
+  </div>
+</div>

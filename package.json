@@ -1,0 +1,36 @@
+{
+  "name": "impact-murals-website",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build && node scripts/validate-content.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "content:setup": "node scripts/setup-airtable.mjs",
+    "content:import": "node scripts/import-batch.mjs",
+    "content:check": "node scripts/validate-content.mjs",
+    "content:stress": "node scripts/stress-build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "content:confirm": "node scripts/confirm-deploy.mjs",
+    "content:integration": "node scripts/test-airtable-build.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@fontsource/archivo": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "astro": "^7.1.6",
+    "gsap": "^3.15.0",
+    "marked": "^18.0.11",
+    "sanitize-html": "^2.17.7"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.4.0",
+    "@types/sanitize-html": "^2.16.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.7.3"
+  }
+}

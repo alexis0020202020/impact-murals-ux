@@ -1,0 +1,30 @@
+---
+import OfferMedia from "../OfferMedia.astro";
+import ImpactFragment from "../ImpactFragment.astro";
+import { studio } from "@/content/studio";
+---
+
+<section class="relative overflow-hidden pb-16 md:pb-44">
+  <div class="relative px-[var(--gutter)]" data-reveal-group>
+    <div class="grid grid-cols-1 gap-y-9 md:grid-cols-12 md:gap-x-10">
+      <div class="relative md:col-span-8" data-reveal>
+        <OfferMedia
+          offer="public-art"
+          video={studio.media.video}
+          poster={studio.media.poster}
+          class="aspect-video"
+          label="Artist and studio photography"
+        />
+        <ImpactFragment fragment="06" drift={54} driftX={18} rotate={8} class="pointer-events-none absolute -bottom-[7vw] -right-[8vw] hidden w-[18vw] text-signal opacity-[0.18] md:block" />
+      </div>
+
+      <div class="relative z-10 md:col-span-4 md:col-start-9 md:pt-[10vh]">
+        <h2 data-reveal class="headline-display max-w-[8.5ch] text-[14vw] sm:text-[9vw] md:text-[4.35vw] lg:text-[3.9vw]">
+          ARTIST-LED. PROJECT-DRIVEN.
+        </h2>
+        <p data-reveal class="body-copy mt-7 max-w-sm">Led by Alexis, a creative director and artist with more than a decade of hands-on experience, Impact Murals brings together the artists and production specialists each project needs.</p>
+        <a href="/studio" data-reveal class="editorial-link mt-8">About the studio <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </div>
+</section>

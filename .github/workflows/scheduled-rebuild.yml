@@ -1,0 +1,99 @@
+# Scheduled rebuild for date-based publishing.
+#
+# WHY THIS EXISTS
+# The site is statically built, so `publishAt` is evaluated at build time. An
+# article dated tomorrow does not appear by itself tomorrow: a build has to run
+# after that date. This workflow is that trigger.
+#
+# STATUS: gated by SEO_AUTOPUBLISH_ENABLED=true in this repository's variables.
+# The delivered code does not create secrets or enable the gate.
+#
+# PREREQUISITE, easy to miss: this only works once the site is built by Netlify
+# from a Git repository. A build hook rebuilds a configured branch; it cannot
+# turn a manually uploaded folder into a pipeline. Connecting the repo is a
+# one-off setup step, separate from day-to-day editing.
+#
+# CADENCE
+# Three slots a day, 09:00, 13:00 and 18:00 Gulf Standard Time.
+# GST is UTC+4 with no daylight saving, so the UTC times are fixed.
+# Three slots is a ceiling, not a promise: three articles sharing one date all
+# become eligible at the first slot of that day. Give them distinct dates, or
+# accept that a day's batch publishes together.
+#
+# TO ACTIVATE, three steps:
+#   1. Netlify, Site settings, Build & deploy, Build hooks: create a hook.
+#   2. This repository, Settings, Secrets and variables, Actions:
+#      add secret BUILD_HOOK_URL. Never commit it.
+#   3. After an end-to-end test, set repository variable SEO_AUTOPUBLISH_ENABLED=true.
+#
+# TO PAUSE, without taking anything offline:
+#   Settings, Secrets and variables, Actions, Variables tab:
+#   set PUBLISHING_PAUSED to "true".
+#   This repository variable stops triggers only. The authoritative pause is
+#   PUBLISHING_PAUSED=true in the NETLIFY production build environment. Set it
+#   there to block ALL rebuilds, including those started by a code push.
+
+name: Scheduled rebuild
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why this manual run"
+        required: false
+        default: "manual"
+  schedule:
+    - cron: "0 5 * * *"   # 09:00 Gulf Standard Time
+    - cron: "0 9 * * *"   # 13:00 Gulf Standard Time
+    - cron: "0 14 * * *"  # 18:00 Gulf Standard Time
+
+permissions:
+  contents: read
+
+concurrency:
+  group: impact-murals-rebuild-trigger
+  cancel-in-progress: false
+
+jobs:
+  trigger:
+    if: github.event_name == 'workflow_dispatch' || vars.SEO_AUTOPUBLISH_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # GitHub does not allow the `secrets` context in an `if:` condition, so
+      # the secret is read through the environment inside the script instead.
+      - name: Trigger Netlify build
+        env:
+          BUILD_HOOK_URL: ${{ secrets.BUILD_HOOK_URL }}
+          PUBLISHING_PAUSED: ${{ vars.PUBLISHING_PAUSED }}
+        run: |
+          set -euo pipefail
+
+          if [ "${PUBLISHING_PAUSED:-}" = "true" ] || [ "${PUBLISHING_PAUSED:-}" = "1" ]; then
+            echo "PUBLISHING_PAUSED is true. No build was triggered."
+            echo "Pages already deployed are unaffected."
+            exit 0
+          fi
+
+          if [ -z "${BUILD_HOOK_URL:-}" ]; then
+            echo "BUILD_HOOK_URL is not set."
+            echo "Create a Netlify build hook and add it as a repository secret."
+            echo "See the header of this file for the three steps."
+            exit 1
+          fi
+
+          # The URL is never echoed: printing it would leak a credential that
+          # lets anyone trigger unlimited builds.
+          status=$(curl --max-time 30 -sS -o /dev/null -w "%{http_code}" \
+            -X POST -d '{}' "$BUILD_HOOK_URL")
+          echo "Netlify responded with HTTP $status"
+
+          if [ "$status" != "200" ] && [ "$status" != "201" ]; then
+            echo "Build hook did not accept the request."
+            exit 1
+          fi
+
+          echo ""
+          echo "A build was QUEUED. That is not the same as published."
+          echo "Publication is only confirmed once a production deploy succeeds"
+          echo "and the confirmation step records the deployed version."
