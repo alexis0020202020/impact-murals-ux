@@ -7,13 +7,10 @@ import { LANDING_SEGMENT } from "./routes";
 /**
  * Internal linking, resolved from the content itself.
  *
- * Every record declares one `offer` and a list of `topics`. Relations are
- * computed from those two fields, so publishing an article automatically links
- * it to its offer, to sibling articles and to related specialised pages. No
- * page maintains a manual list of links.
- *
- * Deliberately not "everything links to everything": a relation needs a shared
- * offer or a shared topic to exist at all, and the strongest few win.
+ * Explicit Airtable graph edges always win. When some explicit targets are not
+ * public yet, the remaining slots are backfilled with already-public siblings
+ * from the same offer / shared topics. This preserves the locked architecture
+ * without ever emitting links to future 404s during a staged rollout.
  */
 
 export interface RelatedLink {
@@ -34,7 +31,6 @@ export async function contentForOffer(offer: OfferKey, limit = 6): Promise<Relat
   const published = filterPublic(await loadContentRecords());
   return published
     .filter((record) => record.offer === offer)
-    // Guides before articles: a specialised page is the stronger next step.
     .sort((a, b) => (a.type === b.type ? 0 : a.type === "guide" ? -1 : 1))
     .slice(0, limit)
     .map((record) => ({
@@ -58,8 +54,12 @@ export function projectsForOffer(offer: OfferKey): RelatedLink[] {
 }
 
 /**
- * Siblings for an editorial page: same offer first, then shared topics.
- * Excludes the current entry and never invents a relation that does not exist.
+ * Related editorial links for a published page.
+ *
+ * 1. Use public Primary Parent / Related IDs first, in the Airtable order.
+ * 2. If some explicit targets are still scheduled for the future, fill the
+ *    remaining slots with already-public pages from the same pillar / topics.
+ * 3. Never output an unpublished URL.
  */
 export async function relatedEditorial(
   current: {
@@ -73,51 +73,67 @@ export async function relatedEditorial(
   limit = 6
 ): Promise<RelatedLink[]> {
   const published = filterPublic(await loadContentRecords());
+  const byId = new Map(published.map((record) => [record.id, record]));
 
-  /*
-   * The locked SEO graph wins when explicit relations exist.
-   *
-   * A target can be stored months before it is published. We keep that edge in
-   * Airtable, but only render it when the target is actually public. This keeps
-   * future URLs out of the live HTML without losing the architecture.
-   */
   const explicitIds = [
     current.primaryParentId,
     ...(current.relatedIds ?? [])
   ].filter((id): id is string => Boolean(id));
 
-  if (explicitIds.length > 0) {
-    const byId = new Map(published.map((record) => [record.id, record]));
-    const seen = new Set<string>();
-    const explicit = explicitIds
-      .filter((id) => id !== current.id && !seen.has(id) && seen.add(id))
-      .map((id) => byId.get(id))
-      .filter((record): record is NonNullable<typeof record> => Boolean(record))
-      .slice(0, limit);
+  const selected: (typeof published)[number][] = [];
+  const selectedIds = new Set<string>();
 
-    return explicit.map((record) => ({
-      href: hrefFor(record),
-      title: record.title,
-      description: record.description,
-      kind: record.type as "insight" | "guide"
-    }));
+  for (const id of explicitIds) {
+    if (selected.length >= limit) break;
+    if (id === current.id || selectedIds.has(id)) continue;
+
+    const record = byId.get(id);
+    if (!record) continue;
+
+    selected.push(record);
+    selectedIds.add(id);
   }
 
-  // Backward-compatible fallback for older records that do not yet carry graph edges.
-  return published
-    .filter((record) => record.slug !== current.slug)
-    .map((record) => {
-      const sharedTopics = record.topics.filter((t) => current.topics.includes(t)).length;
-      const sameOffer = record.offer === current.offer ? 2 : 0;
-      return { record, score: sameOffer + sharedTopics };
-    })
-    .filter(({ score }) => score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map(({ record }) => ({
-      href: hrefFor(record),
-      title: record.title,
-      description: record.description,
-      kind: record.type as "insight" | "guide"
-    }));
+  if (selected.length < limit) {
+    const fallback = published
+      .filter(
+        (record) =>
+          record.slug !== current.slug &&
+          record.id !== current.id &&
+          !selectedIds.has(record.id)
+      )
+      .map((record) => {
+        const sharedTopics = record.topics.filter((t) => current.topics.includes(t)).length;
+        const sameOffer = record.offer === current.offer ? 2 : 0;
+        const reverseExplicit =
+          record.primaryParentId === current.id ||
+          (record.relatedIds ?? []).includes(current.id ?? "")
+            ? 3
+            : 0;
+
+        return {
+          record,
+          score: reverseExplicit + sameOffer + sharedTopics
+        };
+      })
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return (a.record.globalRank ?? Number.MAX_SAFE_INTEGER) -
+          (b.record.globalRank ?? Number.MAX_SAFE_INTEGER);
+      });
+
+    for (const { record } of fallback) {
+      if (selected.length >= limit) break;
+      selected.push(record);
+      selectedIds.add(record.id);
+    }
+  }
+
+  return selected.map((record) => ({
+    href: hrefFor(record),
+    title: record.title,
+    description: record.description,
+    kind: record.type as "insight" | "guide"
+  }));
 }
