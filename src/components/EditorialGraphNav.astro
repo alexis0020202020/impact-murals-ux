@@ -1,0 +1,53 @@
+---
+import type { EditorialGraph } from "@/lib/relations";
+
+interface Props {
+  graph: EditorialGraph;
+}
+
+const { graph } = Astro.props;
+const hasAny = Boolean(graph.parent || graph.children.length || graph.related.length);
+---
+
+{hasAny && (
+  <section class="mt-16 md:mt-20" aria-labelledby="editorial-graph-heading">
+    <p id="editorial-graph-heading" class="notation text-[10px] text-stone/70">
+      EXPLORE THIS TOPIC
+    </p>
+
+    <div class="mt-4 border-y border-stone-line/50">
+      {graph.parent && (
+        <a href={graph.parent.href} class="group grid gap-1 py-4 md:grid-cols-[9rem_1fr] md:gap-6">
+          <span class="notation text-[10px] text-stone/60">PARENT</span>
+          <span class="font-body text-[16px] text-stone transition-colors duration-200 group-hover:text-ink">
+            {graph.parent.title}
+          </span>
+        </a>
+      )}
+
+      {graph.children.map((item) => (
+        <a
+          href={item.href}
+          class="group grid gap-1 border-t border-stone-line/50 py-4 md:grid-cols-[9rem_1fr] md:gap-6"
+        >
+          <span class="notation text-[10px] text-stone/60">NEXT IN TOPIC</span>
+          <span class="font-body text-[16px] text-stone transition-colors duration-200 group-hover:text-ink">
+            {item.title}
+          </span>
+        </a>
+      ))}
+
+      {graph.related.map((item) => (
+        <a
+          href={item.href}
+          class="group grid gap-1 border-t border-stone-line/50 py-4 md:grid-cols-[9rem_1fr] md:gap-6"
+        >
+          <span class="notation text-[10px] text-stone/60">RELATED</span>
+          <span class="font-body text-[16px] text-stone transition-colors duration-200 group-hover:text-ink">
+            {item.title}
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
