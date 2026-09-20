@@ -3,6 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Contact from "@/components/Contact.astro";
 import ArticleBody from "@/components/ArticleBody.astro";
+import OfferMedia from "@/components/OfferMedia.astro";
 import ProjectCta from "@/components/ProjectCta.astro";
 import FragmentMotion from "@/components/FragmentMotion.astro";
 import { capabilities } from "@/content/capabilities";
@@ -23,6 +24,12 @@ export function getStaticPaths() {
 
 const { capability } = Astro.props;
 const offer = getOfferByKey(capability.offerKey)!;
+if (!offer.image.video) {
+  throw new Error(
+    `[capability] Missing master video for "${capability.offerKey}". Refusing to build a sales/SEO page without its pillar video.`
+  );
+}
+
 const path = `/what-we-do/${offer.slug}/${capability.slug}`;
 const canonical = `${global.domain}${path}`;
 const trail = await breadcrumbsFor(path);
@@ -46,12 +53,6 @@ const relatedPath = (href: string): string => {
   }
 };
 
-/**
- * Keep the curated sales-page graph first. During staged publishing, fill any
- * slots whose curated target is still future-dated with public content from
- * the same commercial pillar. Once the intended targets go live they
- * automatically replace the temporary fallbacks.
- */
 const curatedPublic = capability.relatedGuides
   .map((item) => ({ ...item, href: relatedPath(item.href) }))
   .filter((item) => publicByPath.has(item.href));
@@ -110,6 +111,19 @@ const contextLinks: EditorialGraphLink[] = [
       </div>
     </div>
   </header>
+
+  <section class="px-[var(--gutter)] pb-16 md:pb-20">
+    <OfferMedia
+      offer={offer.key}
+      src={offer.image.src}
+      alt={offer.image.alt}
+      video={offer.image.video}
+      poster={offer.image.poster}
+      class="mx-auto aspect-[4/5] min-h-[380px] w-full md:max-w-md md:min-h-0"
+      label={`${offer.shortTitle} project footage`}
+      eager
+    />
+  </section>
 
   <section class="px-[var(--gutter)] pb-24 md:pb-32">
     <ArticleBody body={body} contextLinks={contextLinks} />
