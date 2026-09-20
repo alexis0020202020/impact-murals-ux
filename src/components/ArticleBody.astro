@@ -15,8 +15,6 @@ function splitForContext(html: string): [string, string] {
   let cursor = 0;
   let splitAt = -1;
 
-  // Put contextual internal links into the reading flow after two real
-  // paragraphs when possible, rather than bolting them onto the end.
   for (let i = 0; i < 2; i += 1) {
     const next = html.indexOf("</p>", cursor);
     if (next === -1) break;
@@ -65,10 +63,10 @@ const relatedLinks = contextLinks.filter((link) => link.relation === "related");
     <Fragment set:html={bodyBeforeContext} />
 
     {contextLinks.length > 0 && (
-      <p class="editorial-context-links">
+      <p class="my-7 border-l border-stone-line/70 pl-4 font-body text-[15px] leading-[1.75] text-stone">
         {parentLink && (
           <>
-            This page sits within <a href={parentLink.href}>{parentLink.title}</a>.
+            This page sits within <a class="underline underline-offset-[3px] transition-colors hover:text-ink" href={parentLink.href}>{parentLink.title}</a>.
           </>
         )}
         {childLinks.length > 0 && (
@@ -77,7 +75,7 @@ const relatedLinks = contextLinks.filter((link) => link.relation === "related");
             {childLinks.map((link, index) => (
               <>
                 {index > 0 && (index === childLinks.length - 1 ? " and " : ", ")}
-                <a href={link.href}>{link.title}</a>
+                <a class="underline underline-offset-[3px] transition-colors hover:text-ink" href={link.href}>{link.title}</a>
               </>
             ))}.
           </>
@@ -88,7 +86,7 @@ const relatedLinks = contextLinks.filter((link) => link.relation === "related");
             {relatedLinks.map((link, index) => (
               <>
                 {index > 0 && (index === relatedLinks.length - 1 ? " and " : ", ")}
-                <a href={link.href}>{link.title}</a>
+                <a class="underline underline-offset-[3px] transition-colors hover:text-ink" href={link.href}>{link.title}</a>
               </>
             ))}.
           </>
@@ -99,19 +97,3 @@ const relatedLinks = contextLinks.filter((link) => link.relation === "related");
     <Fragment set:html={bodyAfterContext} />
   </div>
 </div>
-
-<style>
-  .editorial-context-links {
-    margin-block: 1.75rem;
-    border-left: 1px solid rgb(var(--stone-line, 130 130 130) / 0.7);
-    padding-left: 1rem;
-    font-family: var(--font-body);
-    font-size: 0.95rem;
-    line-height: 1.75;
-  }
-
-  .editorial-context-links a {
-    text-decoration: underline;
-    text-underline-offset: 0.18em;
-  }
-</style>
