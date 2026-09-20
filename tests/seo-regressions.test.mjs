@@ -8,7 +8,8 @@ import { runImport, toFields, validateImport, checkImportCollisions } from "../s
 import { runConfirmation, planConfirmations } from "../scripts/confirm-deploy.mjs";
 import { BASE_ID, TABLE_ID, parseSlugHistory } from "../scripts/lib/editorial-scope.mjs";
 import { createAirtableClient } from "../scripts/lib/airtable-http.mjs";
-import { checkPreBuild, confirmationEnabled, onPreBuild, onSuccess } from "../netlify/plugins/editorial-confirm/index.js";
+import { onPreBuild, onSuccess } from "../netlify/plugins/editorial-confirm/index.js";
+import { checkPreBuild, confirmationEnabled } from "../netlify/plugins/editorial-confirm/logic.mjs";
 import { TRACKING_FIELDS } from "../scripts/lib/tracking-fields.mjs";
 
 register("./ts-loader.mjs", pathToFileURL("./tests/"));
