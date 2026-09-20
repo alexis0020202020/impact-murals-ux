@@ -67,3 +67,5 @@ Si un outil ou l'installation est bloqué, noter précisément la limite et cont
 - La connexion réelle à Airtable et les services externes n'ont pas été vérifiés pour préparer ce pack.
 - Les images restent provisoires. Leur remplacement n'est pas un prérequis à cette passe UX.
 - Le design de cette nouvelle passe et les 15 cycles n'ont pas encore été réalisés.
+
+<!-- production rebuild trigger: 2026-09-20 -->
