@@ -4,55 +4,55 @@ import { getOfferByKey } from "@/content/offers";
 import { editorialCommercial } from "@/content/editorial-commercial";
 
 interface Props {
-  offer?: OfferKey;
+  offer: OfferKey;
 }
 
 const { offer } = Astro.props;
-const ctaHref = offer
-  ? `${editorialCommercial.ctaHref}?offer=${offer}`
-  : editorialCommercial.ctaHref;
+const ctaHref = `${editorialCommercial.ctaHref}?offer=${offer}`;
 
 /**
- * Every Airtable-driven guide/insight reuses the master media asset from its
- * commercial pillar. There is no per-page video field: the record's existing
- * `offer` value selects one of the three validated videos in offers.ts.
+ * Every Airtable-driven guide/insight MUST render the master video assigned to
+ * its validated commercial pillar. Missing media is a build error, never a
+ * silent partial page.
  */
-const familyOffer = offer ? getOfferByKey(offer) : undefined;
-if (offer && !familyOffer) {
-  console.warn(
-    `[EditorialCommercialIntro] Unrecognised offer "${offer}" — rendering without a video instead of guessing one.`
+const familyOffer = getOfferByKey(offer);
+if (!familyOffer) {
+  throw new Error(
+    `[EditorialCommercialIntro] Unknown offer "${offer}". Editorial pages must resolve to one of the three pillars.`
   );
 }
 
-const videoSrc = familyOffer?.image.video || editorialCommercial.video.src;
-const videoPoster = familyOffer?.image.poster || editorialCommercial.video.poster;
-const hasVideo = Boolean(videoSrc);
+const videoSrc = familyOffer.image.video;
+const videoPoster = familyOffer.image.poster;
+if (!videoSrc) {
+  throw new Error(
+    `[EditorialCommercialIntro] Missing master video for "${offer}". Refusing to build an editorial page without its pillar video.`
+  );
+}
 ---
 
 <section class="px-[var(--gutter)]" aria-label="Impact Murals">
   <div class="max-w-5xl border-y border-stone-line/50 py-7 md:py-9">
-    {hasVideo && (
-      <div
-        class="mx-auto w-full overflow-hidden bg-ink md:max-w-md"
-        data-editorial-family-video={offer || "fallback"}
+    <div
+      class="mx-auto w-full overflow-hidden bg-ink md:max-w-md"
+      data-editorial-family-video={offer}
+    >
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        poster={videoPoster || undefined}
+        data-autoplay-video
+        aria-label={`${familyOffer.shortTitle} project footage`}
+        class="aspect-[4/5] w-full object-cover"
       >
-        <video
-          autoplay
-          muted
-          loop
-          playsinline
-          preload="metadata"
-          poster={videoPoster || undefined}
-          data-autoplay-video
-          aria-label={familyOffer ? `${familyOffer.shortTitle} project footage` : "Impact Murals overview"}
-          class="aspect-[4/5] w-full object-cover"
-        >
-          <source src={videoSrc} type="video/mp4" />
-        </video>
-      </div>
-    )}
+        <source src={videoSrc} type="video/mp4" />
+      </video>
+    </div>
 
-    <div class:list={["grid grid-cols-1 gap-5 md:grid-cols-12 md:items-end md:gap-x-10", hasVideo && "mt-6"]}>
+    <div class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-12 md:items-end md:gap-x-10">
       <div class="md:col-span-8">
         <p class="notation text-[10px] text-stone/70">{editorialCommercial.eyebrow}</p>
         <h2 class="headline-display mt-3 max-w-3xl text-[6vw] sm:text-[4.2vw] md:text-[2.25vw] lg:text-[2vw]">
@@ -71,9 +71,7 @@ const hasVideo = Boolean(videoSrc);
   </div>
 </section>
 
-{hasVideo && (
-  <script>
-    import { initAutoplayVideo } from "@/lib/media-autoplay";
-    initAutoplayVideo(document);
-  </script>
-)}
+<script>
+  import { initAutoplayVideo } from "@/lib/media-autoplay";
+  initAutoplayVideo(document);
+</script>
