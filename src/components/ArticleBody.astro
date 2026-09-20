@@ -1,21 +1,45 @@
 ---
 import type { RenderedBody } from "@/lib/content-source/markdown";
 import { shouldShowToc } from "@/lib/content-source/markdown";
+import type { EditorialGraphLink } from "@/lib/relations";
 
 interface Props {
   body: RenderedBody;
+  contextLinks?: EditorialGraphLink[];
 }
 
-const { body } = Astro.props;
+const { body, contextLinks = [] } = Astro.props;
 const showToc = shouldShowToc(body);
+
+function splitForContext(html: string): [string, string] {
+  let cursor = 0;
+  let splitAt = -1;
+
+  // Put contextual internal links into the reading flow after two real
+  // paragraphs when possible, rather than bolting them onto the end.
+  for (let i = 0; i < 2; i += 1) {
+    const next = html.indexOf("</p>", cursor);
+    if (next === -1) break;
+    splitAt = next + 4;
+    cursor = splitAt;
+  }
+
+  if (splitAt === -1) {
+    const firstSection = html.indexOf("</h2>");
+    splitAt = firstSection === -1 ? 0 : firstSection + 5;
+  }
+
+  return [html.slice(0, splitAt), html.slice(splitAt)];
+}
+
+const [bodyBeforeContext, bodyAfterContext] =
+  contextLinks.length > 0 ? splitForContext(body.html) : [body.html, ""];
+
+const parentLink = contextLinks.find((link) => link.relation === "parent");
+const childLinks = contextLinks.filter((link) => link.relation === "child");
+const relatedLinks = contextLinks.filter((link) => link.relation === "related");
 ---
 
-<!--
-  Imported Markdown, laid out automatically with the site's own type and
-  spacing. The HTML was sanitised at build time in markdown.ts, so `set:html`
-  here receives content that cannot carry a script, an iframe or an event
-  handler.
--->
 <div class="grid grid-cols-1 gap-y-10 md:grid-cols-12 md:gap-x-10">
   {showToc && (
     <nav class="md:col-span-3 md:order-2" aria-labelledby="toc-heading">
@@ -38,6 +62,56 @@ const showToc = shouldShowToc(body);
   )}
 
   <div class:list={["article-body", showToc ? "md:col-span-8 md:order-1" : "md:col-span-8"]}>
-    <Fragment set:html={body.html} />
+    <Fragment set:html={bodyBeforeContext} />
+
+    {contextLinks.length > 0 && (
+      <p class="editorial-context-links">
+        {parentLink && (
+          <>
+            This page sits within <a href={parentLink.href}>{parentLink.title}</a>.
+          </>
+        )}
+        {childLinks.length > 0 && (
+          <>
+            {" "}Continue deeper with{" "}
+            {childLinks.map((link, index) => (
+              <>
+                {index > 0 && (index === childLinks.length - 1 ? " and " : ", ")}
+                <a href={link.href}>{link.title}</a>
+              </>
+            ))}.
+          </>
+        )}
+        {relatedLinks.length > 0 && (
+          <>
+            {" "}Related guidance includes{" "}
+            {relatedLinks.map((link, index) => (
+              <>
+                {index > 0 && (index === relatedLinks.length - 1 ? " and " : ", ")}
+                <a href={link.href}>{link.title}</a>
+              </>
+            ))}.
+          </>
+        )}
+      </p>
+    )}
+
+    <Fragment set:html={bodyAfterContext} />
   </div>
 </div>
+
+<style>
+  .editorial-context-links {
+    margin-block: 1.75rem;
+    border-left: 1px solid rgb(var(--stone-line, 130 130 130) / 0.7);
+    padding-left: 1rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.75;
+  }
+
+  .editorial-context-links a {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+</style>
