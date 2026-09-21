@@ -13,9 +13,19 @@
  * data regardless of the `preload` hint, so playing everything on load would
  * download every below-the-fold video before it is ever seen. One already in
  * view on load still starts right away — the observer fires immediately for
- * an already-intersecting element. `preload` stays "none" in markup so a
- * panel far below the fold never opens a network connection before this
- * observer decides it should.
+ * an already-intersecting element. `preload="metadata"` in markup lets the
+ * browser fetch just the small header (dimensions/duration, not the video
+ * body) up front without this observer's involvement; the real body fetch
+ * still only starts once this observer decides a panel is worth it.
+ *
+ * `rootMargin` is deliberately generous (an approximate viewport-height's
+ * worth) rather than the visible viewport itself: a below-the-fold section
+ * scrolled towards at ordinary reading speed needs real lead time for its
+ * multi-megabyte master clip to fetch and decode a first frame before the
+ * section is actually on screen, or the visitor sees the poster hang past
+ * the point they expected the loop to already be running. It stays well
+ * short of "the whole page", so a video several screens down still waits
+ * for genuine scroll intent before it opens a connection.
  *
  * A FractureReveal panel shows exactly one `<video data-fracture-video>` on
  * top of its (now video-less) poster shards — see FractureReveal.astro. It
@@ -109,7 +119,7 @@ function getObserver(): IntersectionObserver {
           startVideo(video);
         }
       },
-      { rootMargin: "600px" }
+      { rootMargin: "1200px" }
     );
   }
   return observer;
