@@ -5,11 +5,12 @@ import StrikeRule from "@/components/StrikeRule.astro";
 import ProjectCta from "@/components/ProjectCta.astro";
 import ArticleBody from "@/components/ArticleBody.astro";
 import EditorialCommercialIntro from "@/components/EditorialCommercialIntro.astro";
+import EditorialGraphNav from "@/components/EditorialGraphNav.astro";
 import { loadContentRecords } from "@/lib/content-source";
 import { renderMarkdown } from "@/lib/content-source/markdown";
 import { filterPublic } from "@/lib/publishing";
 import { breadcrumbsFor, routeFor } from "@/lib/routes";
-import { relatedEditorial } from "@/lib/relations";
+import { editorialGraph } from "@/lib/relations";
 import { offers } from "@/content/offers";
 import { global } from "@/content/global";
 import { toJsonLd } from "@/lib/json-ld";
@@ -32,16 +33,12 @@ const offer = offers.find((o) => o.key === entry.offer);
 const commercialHub = commercialHubFor(entry.commercialHubCode);
 const path = `/insights/${entry.slug}`;
 const trail = await breadcrumbsFor(path);
-// Indexation is read from the route registry, so this tag and the sitemap
-// always express the same decision.
 const route = await routeFor(path);
-const related = await relatedEditorial(entry);
+const graph = await editorialGraph(entry);
 const body = renderMarkdown(entry.body);
 
 const published = new Date(entry.publishAt);
 const updated = entry.updatedAt ? new Date(entry.updatedAt) : null;
-// Only shown when it is genuinely later than publication, so an edit made
-// before going live never reads as an update.
 const showUpdated = updated && updated.getTime() > published.getTime() + 86_400_000;
 
 const dateFormat = new Intl.DateTimeFormat("en-GB", {
@@ -50,7 +47,6 @@ const dateFormat = new Intl.DateTimeFormat("en-GB", {
   year: "numeric"
 });
 
-/** Structured data reflects only what is actually present. No invented fields. */
 const articleSchema: Record<string, unknown> = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -133,6 +129,7 @@ if (entry.image?.src) articleSchema.image = entry.image.src;
 
     <div class="mt-12 px-[var(--gutter)] md:mt-16">
       <ArticleBody body={body} />
+      <EditorialGraphNav graph={graph} />
     </div>
 
     {offer && (
@@ -160,24 +157,6 @@ if (entry.image?.src) articleSchema.image = entry.image.src;
             </a>
           </div>
         </div>
-      </div>
-    )}
-
-    {related.length > 0 && (
-      <div class="mt-16 px-[var(--gutter)] md:mt-20">
-        <p class="notation text-[10px] text-stone/70">RELATED GUIDES &amp; INSIGHTS</p>
-        <ul class="mt-4 flex flex-col">
-          {related.map((item) => (
-            <li class="border-t border-stone-line/50 last:border-b last:border-stone-line/50">
-              <a href={item.href} class="group block py-4">
-                <span class="block font-body text-[16px] text-stone transition-colors duration-200 group-hover:text-ink">
-                  {item.title}
-                </span>
-                <span class="notation mt-1.5 block text-[10px] text-stone/60">{item.kind}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
       </div>
     )}
   </article>

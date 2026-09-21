@@ -3,6 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import Contact from "@/components/Contact.astro";
 import ArticleBody from "@/components/ArticleBody.astro";
+import OfferMedia from "@/components/OfferMedia.astro";
 import ProjectCta from "@/components/ProjectCta.astro";
 import FragmentMotion from "@/components/FragmentMotion.astro";
 import { capabilities } from "@/content/capabilities";
@@ -12,12 +13,8 @@ import { breadcrumbsFor, LANDING_SEGMENT } from "@/lib/routes";
 import { loadContentRecords } from "@/lib/content-source";
 import { renderMarkdown } from "@/lib/content-source/markdown";
 import { filterPublic } from "@/lib/publishing";
+import type { EditorialGraphLink } from "@/lib/relations";
 
-/**
- * The 20 "WHAT WE CAN CREATE" sales pages, one level under their parent offer.
- * One extra path segment versus what-we-do/[slug].astro, so the two routes
- * never collide: /what-we-do/{offer} vs /what-we-do/{offer}/{capability}.
- */
 export function getStaticPaths() {
   return capabilities.map((capability) => ({
     params: { offer: capability.offerKey, capability: capability.slug },
@@ -27,23 +24,25 @@ export function getStaticPaths() {
 
 const { capability } = Astro.props;
 const offer = getOfferByKey(capability.offerKey)!;
+if (!offer.image.video) {
+  throw new Error(
+    `[capability] Missing master video for "${capability.offerKey}". Refusing to build a sales/SEO page without its pillar video.`
+  );
+}
+
 const path = `/what-we-do/${offer.slug}/${capability.slug}`;
 const canonical = `${global.domain}${path}`;
 const trail = await breadcrumbsFor(path);
 const body = renderMarkdown(capability.body);
 
-/**
- * Sales-page links may point to nodes that already exist in the master graph
- * but are scheduled for later. Keep the architecture now, render the link only
- * once its target is actually public.
- */
 const publishedEditorial = filterPublic(await loadContentRecords());
-const publicEditorialPaths = new Set(
-  publishedEditorial.map((record) =>
+const publicByPath = new Map(
+  publishedEditorial.map((record) => [
     record.type === "guide"
       ? `/${LANDING_SEGMENT}/${record.slug}`
-      : `/insights/${record.slug}`
-  )
+      : `/insights/${record.slug}`,
+    record
+  ])
 );
 
 const relatedPath = (href: string): string => {
@@ -54,9 +53,45 @@ const relatedPath = (href: string): string => {
   }
 };
 
-const visibleRelatedGuides = capability.relatedGuides
+const curatedPublic = capability.relatedGuides
   .map((item) => ({ ...item, href: relatedPath(item.href) }))
-  .filter((item) => publicEditorialPaths.has(item.href));
+  .filter((item) => publicByPath.has(item.href));
+
+const curatedPaths = new Set(curatedPublic.map((item) => item.href));
+const fallbackRelated = publishedEditorial
+  .filter((record) => record.offer === capability.offerKey)
+  .map((record) => ({
+    title: record.title,
+    href:
+      record.type === "guide"
+        ? `/${LANDING_SEGMENT}/${record.slug}`
+        : `/insights/${record.slug}`,
+    rank: record.globalRank ?? Number.MAX_SAFE_INTEGER
+  }))
+  .filter((item) => !curatedPaths.has(item.href))
+  .sort((a, b) => a.rank - b.rank);
+
+const visibleRelatedGuides = [
+  ...curatedPublic,
+  ...fallbackRelated
+].slice(0, 6);
+
+const contextLinks: EditorialGraphLink[] = [
+  {
+    href: `/what-we-do/${offer.slug}`,
+    title: offer.title,
+    description: offer.summary,
+    kind: "service",
+    relation: "parent"
+  },
+  ...visibleRelatedGuides.slice(0, 3).map((item) => ({
+    href: item.href,
+    title: item.title,
+    description: "",
+    kind: (item.href.startsWith("/insights/") ? "insight" : "guide") as "insight" | "guide",
+    relation: "related" as const
+  }))
+];
 ---
 
 <BaseLayout title={capability.title} description={capability.tagline} canonical={canonical}>
@@ -76,6 +111,19 @@ const visibleRelatedGuides = capability.relatedGuides
       </div>
     </div>
   </header>
+
+  <section class="px-[var(--gutter)] pb-16 md:pb-20">
+    <OfferMedia
+      offer={offer.key}
+      src={offer.image.src}
+      alt={offer.image.alt}
+      video={offer.image.video}
+      poster={offer.image.poster}
+      class="mx-auto aspect-[4/5] min-h-[380px] w-full md:max-w-md md:min-h-0"
+      label={`${offer.shortTitle} project footage`}
+      eager
+    />
+  </section>
 
   <section class="px-[var(--gutter)] pb-24 md:pb-32">
     <ArticleBody body={body} />

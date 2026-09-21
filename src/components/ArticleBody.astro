@@ -12,9 +12,8 @@ const showToc = shouldShowToc(body);
 
 <!--
   Imported Markdown, laid out automatically with the site's own type and
-  spacing. The HTML was sanitised at build time in markdown.ts, so `set:html`
-  here receives content that cannot carry a script, an iframe or an event
-  handler.
+  spacing. Internal SEO architecture is rendered after the article by the
+  page template, not injected into the reading flow.
 -->
 <div class="grid grid-cols-1 gap-y-10 md:grid-cols-12 md:gap-x-10">
   {showToc && (
