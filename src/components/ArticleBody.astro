@@ -1,43 +1,20 @@
 ---
 import type { RenderedBody } from "@/lib/content-source/markdown";
 import { shouldShowToc } from "@/lib/content-source/markdown";
-import type { EditorialGraphLink } from "@/lib/relations";
 
 interface Props {
   body: RenderedBody;
-  contextLinks?: EditorialGraphLink[];
 }
 
-const { body, contextLinks = [] } = Astro.props;
+const { body } = Astro.props;
 const showToc = shouldShowToc(body);
-
-function splitForContext(html: string): [string, string] {
-  let cursor = 0;
-  let splitAt = -1;
-
-  for (let i = 0; i < 2; i += 1) {
-    const next = html.indexOf("</p>", cursor);
-    if (next === -1) break;
-    splitAt = next + 4;
-    cursor = splitAt;
-  }
-
-  if (splitAt === -1) {
-    const firstSection = html.indexOf("</h2>");
-    splitAt = firstSection === -1 ? 0 : firstSection + 5;
-  }
-
-  return [html.slice(0, splitAt), html.slice(splitAt)];
-}
-
-const [bodyBeforeContext, bodyAfterContext] =
-  contextLinks.length > 0 ? splitForContext(body.html) : [body.html, ""];
-
-const parentLink = contextLinks.find((link) => link.relation === "parent");
-const childLinks = contextLinks.filter((link) => link.relation === "child");
-const relatedLinks = contextLinks.filter((link) => link.relation === "related");
 ---
 
+<!--
+  Imported Markdown, laid out automatically with the site's own type and
+  spacing. Internal SEO architecture is rendered after the article by the
+  page template, not injected into the reading flow.
+-->
 <div class="grid grid-cols-1 gap-y-10 md:grid-cols-12 md:gap-x-10">
   {showToc && (
     <nav class="md:col-span-3 md:order-2" aria-labelledby="toc-heading">
@@ -60,40 +37,6 @@ const relatedLinks = contextLinks.filter((link) => link.relation === "related");
   )}
 
   <div class:list={["article-body", showToc ? "md:col-span-8 md:order-1" : "md:col-span-8"]}>
-    <Fragment set:html={bodyBeforeContext} />
-
-    {contextLinks.length > 0 && (
-      <p class="my-7 border-l border-stone-line/70 pl-4 font-body text-[15px] leading-[1.75] text-stone">
-        {parentLink && (
-          <>
-            This page sits within <a class="underline underline-offset-[3px] transition-colors hover:text-ink" href={parentLink.href}>{parentLink.title}</a>.
-          </>
-        )}
-        {childLinks.length > 0 && (
-          <>
-            {" "}Continue deeper with{" "}
-            {childLinks.map((link, index) => (
-              <>
-                {index > 0 && (index === childLinks.length - 1 ? " and " : ", ")}
-                <a class="underline underline-offset-[3px] transition-colors hover:text-ink" href={link.href}>{link.title}</a>
-              </>
-            ))}.
-          </>
-        )}
-        {relatedLinks.length > 0 && (
-          <>
-            {" "}Related guidance includes{" "}
-            {relatedLinks.map((link, index) => (
-              <>
-                {index > 0 && (index === relatedLinks.length - 1 ? " and " : ", ")}
-                <a class="underline underline-offset-[3px] transition-colors hover:text-ink" href={link.href}>{link.title}</a>
-              </>
-            ))}.
-          </>
-        )}
-      </p>
-    )}
-
-    <Fragment set:html={bodyAfterContext} />
+    <Fragment set:html={body.html} />
   </div>
 </div>
