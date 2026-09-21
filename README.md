@@ -69,3 +69,5 @@ Si un outil ou l'installation est bloqué, noter précisément la limite et cont
 - Le design de cette nouvelle passe et les 15 cycles n'ont pas encore été réalisés.
 
 <!-- production rebuild trigger: 2026-09-20 -->
+
+<!-- scheduled SEO rebuild trigger: 2026-09-21 day-2 -->
