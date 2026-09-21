@@ -71,3 +71,5 @@ Si un outil ou l'installation est bloqué, noter précisément la limite et cont
 <!-- production rebuild trigger: 2026-09-20 -->
 
 <!-- scheduled SEO rebuild trigger: 2026-09-21 day-2 -->
+
+<!-- editorial QA rebuild trigger: 2026-09-21 -->
