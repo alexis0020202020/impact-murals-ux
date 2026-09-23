@@ -1,0 +1,35 @@
+name: Daily SEO publish rebuild
+
+on:
+  schedule:
+    # 09:10 Asia/Dubai (UTC+4). GitHub cron uses UTC.
+    - cron: "10 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  trigger-netlify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Update daily build marker
+        run: |
+          printf '%s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .seo-daily-build
+
+      - name: Commit and push
+        run: |
+          git config user.name "alexis0020202020"
+          git config user.email "alexis@impactmurals.ae"
+          git add .seo-daily-build
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Daily SEO publishing rebuild"
+          git push origin main
