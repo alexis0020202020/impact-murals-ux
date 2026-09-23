@@ -11,6 +11,9 @@ on:
   schedule:
     # 09:10 Asia/Dubai (UTC+4). GitHub cron uses UTC.
     - cron: "10 5 * * *"
+    # One-time bootstrap for 23 Sep 2026 at 14:40 Dubai / 10:40 UTC.
+    # The script below no-ops this annual expression after 2026.
+    - cron: "40 10 23 9 *"
   workflow_dispatch:
 
 permissions:
@@ -28,6 +31,9 @@ jobs:
 
       - name: Update daily build marker
         run: |
+          if [ "${{ github.event.schedule }}" = "40 10 23 9 *" ] && [ "$(date -u +'%Y')" != "2026" ]; then
+            exit 0
+          fi
           printf '%s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .seo-daily-build
 
       - name: Commit and push
