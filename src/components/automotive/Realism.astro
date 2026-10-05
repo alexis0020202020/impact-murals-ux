@@ -5,58 +5,69 @@ import AutoMedia from "./AutoMedia.astro";
 import Tight from "./Tight.astro";
 
 /*
-  Automotive realism and detail: one heading and one text for the section, and
-  the realistic artworks beside them. The text speaks of the section, not of any
+  Automotive realism and detail: one heading and one text for the section, and a
+  wall of realistic pieces under them. The text speaks of the section, not of any
   one artwork, so no picture is captioned or described here (the descriptions in
   src/content/automotive.ts are for screen readers only).
 
-  The artworks come from `realism.art`, in reading order; each is a figure that
-  is a direct child of the layout grid, so the composition is set by CSS alone
-  (src/styles/automotive.css, ".auto-real-item--lead" and "--side"). On screens
-  the two stand on one line at different heights, so they read as a pair and not
-  as two equal tiles, with the type in a column of its own at the right: the
-  heading at its head, the text at its foot. To show another realistic piece, add
-  an entry to `realism.art` and a file for its slot, then give it a place in the
-  grid (see docs/AUTOMOTIVE-MEDIA.md).
+  The pieces come from `realism.art`, in reading order, and are set by role, not
+  by what they show (src/styles/automotive.css, ".auto-real-item--lead" and its
+  three companions). The point of the section is proof per screen, not length:
+    - on screens the four pieces stand in one row on one baseline at the same
+      height, each taking a share of the row equal to its own proportion (which
+      is what makes the heights match at every width), under the text set in
+      three columns;
+    - on tablets they are recomposed (see the stylesheet);
+    - on a phone the vertical process clip stands beside the lead line, the wide
+      piece and the pair of portrait pieces run edge to edge, so nothing is a
+      thumbnail and nothing is stacked mechanically.
+  `--r-art` is a picture's own proportion; the wide piece is shown in a different
+  cut at each size (an art-directed crop through `object-fit`), so the layout
+  reads `--rw`, set in the stylesheet. To show another realistic piece, add an
+  entry to `realism.art` and a file for its slot, then give it a role in the
+  stylesheet (see docs/AUTOMOTIVE-MEDIA.md).
 */
 const art = await Promise.all(
-  realism.art.map(async (piece) => ({ ...piece, media: await resolveMedia(piece.slot) }))
+  realism.art.map(async (piece) => {
+    const media = await resolveMedia(piece.slot);
+    return { ...piece, media, ratio: Number((media.image.width / media.image.height).toFixed(4)) };
+  })
 );
 
-/** What width each placement really occupies at each breakpoint, for the responsive image. */
+/** What width each role really occupies at each breakpoint, for the responsive image. */
 const sizes: Record<(typeof realism.art)[number]["place"], string> = {
-  lead: "(min-width: 1024px) 26vw, (min-width: 768px) 40vw, 84vw",
-  side: "(min-width: 1024px) 24vw, (min-width: 768px) 34vw, 64vw"
+  lead: "(min-width: 1024px) 42vw, (min-width: 600px) min(48rem, 90vw), 100vw",
+  tall: "(min-width: 1024px) 18vw, (min-width: 600px) 28vw, 48vw",
+  side: "(min-width: 1024px) 18vw, (min-width: 600px) 28vw, 48vw",
+  aside: "(min-width: 1024px) 18vw, (min-width: 600px) 28vw, 44vw"
 };
 ---
 
 <section class="auto-section auto-real" aria-labelledby="auto-real-title">
   <div class="auto-wrap">
     <div class="auto-real-layout">
-      <div class="auto-real-text" data-auto-reveal>
-        <h2 id="auto-real-title" class="auto-caption auto-real-head">
-          <span class="auto-eyebrow">{realism.eyebrow}</span>{" "}
-          <span class="headline-display auto-title-md">{realism.headline}</span>
-        </h2>
-        <div class="auto-real-body">
-          <p class="auto-lead"><Tight text={realism.body[0]} /></p>
-          <p class="auto-body"><Tight text={realism.body[1]} /></p>
-        </div>
-      </div>
+      <h2 id="auto-real-title" class="auto-caption auto-real-head" data-auto-reveal>
+        <span class="auto-eyebrow">{realism.eyebrow}</span>{" "}
+        <span class="headline-display auto-title-md">{realism.headline}</span>
+      </h2>
+      <p class="auto-lead auto-real-lead" data-auto-reveal><Tight text={realism.body[0]} /></p>
+      <p class="auto-body auto-real-body" data-auto-reveal><Tight text={realism.body[1]} /></p>
 
-      {art.map((piece) => (
-        <figure class={`auto-real-item auto-real-item--${piece.place}`} data-auto-reveal>
-          <div data-auto-scale>
-            <AutoMedia
-              media={piece.media}
-              mediaSlot={piece.slot}
-              alt={piece.alt}
-              class="auto-tall"
-              sizes={sizes[piece.place]}
-            />
-          </div>
-        </figure>
-      ))}
+      <div class="auto-real-wall">
+        {art.map((piece) => (
+          <figure class={`auto-real-item auto-real-item--${piece.place}`} style={`--r-art:${piece.ratio}`} data-auto-reveal>
+            <div data-auto-scale>
+              <AutoMedia
+                media={piece.media}
+                mediaSlot={piece.slot}
+                alt={piece.alt}
+                class="auto-tall"
+                sizes={sizes[piece.place]}
+              />
+            </div>
+          </figure>
+        ))}
+      </div>
     </div>
   </div>
 </section>

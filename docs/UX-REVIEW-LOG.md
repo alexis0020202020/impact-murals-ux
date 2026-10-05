@@ -1192,3 +1192,85 @@ Sixth brief on the route, and a controlled copy update: the visual design is a s
 - Evidence: `docs/ux-evidence/automotive-copy-desktop-1920x945-sequence.jpg` (ten captures, every section) and `automotive-copy-mobile-390x844-sequence.jpg` (twelve captures); the Part 17 images show the previous copy and are kept for history.
 - Outcome: PASS for everything verifiable here. BLOCKED, not passed: iOS Safari and real-device behaviour of the clips, Firefox and Safari rendering (only Chromium was available), analytics, smoothness of the entrance animations (the headless browser cannot render smoothly), the owner's approval of the points listed in the handoff.
 - Cycles completed in this part: 15 (the 15-cycle minimum of the overall pass was met in earlier parts; nothing here was added to fill a count: cycles 04, 09, 11, 12 and 14 confirmed correct behaviour or left decisions to the owner and led to no layout change).
+
+---
+
+# Part 19: /automotive media-density pass (brief received 5 October 2026)
+
+Seventh brief on the route and a deliberately narrow one: the page is "close to the intended direction", so no redesign and no new or rewritten copy. The goal is more visual proof early, less empty space and less scrolling: the supplied picture in What we do (its clip leaves), the supplied Ferrari picture and that clip in a compact mixed-media wall for the realism section, the homepage's studio clip in About, the section order, Hero, BMW, exterior and Jetour / iCAUR untouched, and nothing published without approval. Two pictures were attached; the brief also mentions "additional realism images" that did not arrive.
+
+## Baseline and decisions
+
+- **Baseline.** The production build of the Part 18 page, measured before any change: 7,869 px at 1440 x 900 (offers 1,217, realism 911, About 455, BMW starting at 3,028), 9,658 at 390 (a 390 px desktop window), and four more widths. The offers clip stood in a three-column slot with about 430 px of empty paper under it, the realism section showed two 410 px pieces, About was text only with empty paper under its heading.
+- **Which picture where.** The first attachment (a Porsche and cherry blossom photograph) to What we do and the second (the Ferrari mural, byte for byte the file `THE DETAILS CAR PEOPLE NOTICE.` saved in the owner's folder, named after the section) to the realism wall, by the order of the brief. No other "additional realism image" arrived, so the wall uses the existing realism media. Recorded as a decision to confirm.
+- **The homepage clip was identified from the code, not from a file name.** `src/components/home/StudioMoment.astro` plays `studio.media.video` (`src/content/studio.ts`) beside "ARTIST-LED. PROJECT-DRIVEN.", through the shared player; the new section reads the same property.
+- **No wording added.** Alt texts are for screen readers and name no client; nothing is captioned.
+- **Kept on purpose:** the Hero, BMW, exterior and Jetour / iCAUR sections and their media, the section order, the video and motion scripts, `AutoMedia`, the homepage.
+
+## Cycles
+
+### Cycle 01: The media that arrived, and the clip to reuse
+
+- Observation: the offers photograph is a 744 x 1280 phone picture taken through a glass panel (a diagonal glass edge and reflections at the left, the sign and the plate in the middle); the Ferrari picture is 1080 x 1152 with a ceiling band and a staircase around the painted wall; the homepage clip is HEVC with audio, 9.4 MB, 11.3 s, native 16:9, with its index at the end and a 400 x 225 poster (frames read in the browser: a hand spraying a blue and green mural, a worker on a ladder, the artist talking, crowds, the finished wall).
+- Decision: keep the photograph byte for byte; cut the Ferrari to the painted wall with a coordinate grid (0, 165, 1038 x 760: both wheels whole, the ceiling band, the stairs and the lit signature out; a few pixels of glass rail and hazard tape remain in one corner because cropping them cuts the wheel, and I did not retouch the owner's picture); reuse the homepage clip by address (no copy) and give it a poster of its own, its first frame at full size; give the moved clip a stronger poster (the painting almost finished, not the pencil sketch).
+- Verification: masters are 2000 px or less and under 800 KB (tested); the shared clip is read from the same module as the homepage; the homepage files are untouched.
+- Outcome: PASS (the clip's weight and codec recorded as a decision).
+
+### Cycle 02: What we do, first composition and its defects
+
+- Observation: at 1440 the three-column table (heading over the names, introduction over the texts, the picture beside) is balanced and the section is 194 px shorter. Defects found while checking other widths: below 1280 a picture taller than the introduction opened gaps between the heading, the lead and the support paragraph (the spanned rows stretched equally); the plate was clipped at the panel's right edge; at 700 px the phone layout put a 318 x 548 picture beside two lines of text (1,651 px).
+- Change: the spare height goes to the last spanned row (under the introduction), the cut is shifted to the right (plate and sign whole), and the picture-beside-introduction layout starts at 600 px (the two-column list at 768).
+- Verification: renders at 1920, 1440, 1280, 1024, 768, 700 and 390; 1,217 to 1,023 at 1440.
+- Outcome: PASS.
+
+### Cycle 03: The realism wall, the composition decision
+
+- Observation: three of the four pieces are portrait (9:16 clips and a 0.6 poster) and one is wide, with a text block of about 400 px. Any arrangement of two rows is 1,100 px or more at 1440 (the portrait pieces are at least 500 px tall at 290 px wide), which is longer than the old section; only one row at one height is shorter, and each piece taking a share equal to its own proportion (the Launch pair's technique) makes the heights match at every width.
+- Change: a flex row; the text above it set in three columns (heading, lead, second paragraph) so it is 160 px tall; first render inside the page margins: 750 px tall, pieces 230 to 260 px wide, readable but small; extending the row to the page edges makes every piece about a tenth larger (the wide piece 604 x 442, the tall ones 249 to 263 wide at 1440) and is kept, with the text above on the margins.
+- Verification: 782 px at 1440 against 911; the four pieces and the heading in one 900 px screen.
+- Outcome: PASS (the edge-to-edge row is a decision to confirm).
+
+### Cycle 04: The wall below 1440, tablets and large phones
+
+- Observation: with the margins the row is 150 to 160 px per tall piece at 1024 and at 900, too small; two rows (the wide piece across, the three tall pieces under it) give 250 px pieces at 900 but are 1,370 px at 1023; the phone layout stretched to 700 px put a clip as tall as the screen beside two lines (2,020 px).
+- Change: one row from 1024 px (173 to 183 px at 1024, 220 to 232 at 1280); from 600 to 1023 the two rows, capped at 48 rem and on the text's left edge; the phone layout only below 600; the reading order is the wide still, the process clip, the workshop clip, the portrait (stills at the ends, the clips between), so the two pause buttons are in the same order as on screen at every size; every media query is a `min-width` one (a `max-width` partner leaves a gap at fractional widths such as 767.5).
+- Verification: 640, 700, 767, 768, 1000, 1023, 1024 and 1440 measured; no horizontal overflow at any of the six audit widths.
+- Outcome: PASS (the smaller pieces at 1024 recorded).
+
+### Cycle 05: About with the clip
+
+- Observation: with the clip at the left of a 5-column text the tablet layouts left 200 to 260 px of empty paper under a 16:9 clip; from 640 to 767 px "PROJECT-DRIVEN." broke after its hyphen in a six-column heading (three lines).
+- Change: from 640 px the heading over the clip at the left and the words at the right; from 1280 the clip at the left and the heading with the words at the right, as on the homepage; a hair smaller heading between 640 and 767.
+- Verification: the heading on two lines from 640 to 1023; 455 to 579 at 1440; the clip stays 16:9.
+- Outcome: PASS.
+
+### Cycle 06: Phones
+
+- Observation: at 390 x 844 one screen shows the wide piece and both portrait pieces together; the process clip stands beside the lead line (as the clip did in What we do), the wide piece and the pair run edge to edge; at 320 the lead column is narrow but nothing overlaps. About's clip adds about 210 px, the wall and the offers give back about 175.
+- Verification: renders at 320, 360, 390, 430, 600 and 700; the page is 9,697 px at 390 against 9,658 (+0.4%).
+- Outcome: PASS (the small increase recorded).
+
+### Cycle 07: Loading and playback
+
+- Method: the production build, real wheel input, a cold context.
+- Verification: before any scroll 13 requests and no clip (the same count as before); the wall's clips are attached while the visitor is still in What we do and play together on a large screen (two at most; one on a phone); the studio clip is attached when About is near (three range requests, the start, the index at the end and the rest, 9.4 MB in all), plays and is paused as soon as it leaves; six clips, six named pause buttons; layout shift 0.00 at 1440 and at 390 at 3x; no console message; reduced motion loads no clip and the posters are the pictures; the keyboard order matches the visual order.
+- Not observed: a browser without HEVC support (this Chromium decodes it); the script's error path (one retry, then the poster stays) is the one every clip uses.
+- Outcome: PASS.
+
+### Cycle 08: Large default text
+
+- Method: the browser's default text size raised to 150 and 200 per cent at 1440, 1280, 1024, 768, 600, 390 and 320 wide, checking every heading, paragraph and frame of the three sections for overflow, text wider than its box and overlap.
+- Result: clean at 100 per cent everywhere and at 150 per cent at 1440, 1280, 1024, 768 and 600; the lead beside a clip overhangs its column by 2 to 11 px at 390 (inside the gap) and a few px more at 320 (captured: nothing touches the picture), as the offers lead already did; at 200 per cent the Part 18 corners remain, and at 1024 the wall's right edge is clipped because the rem-sized gaps of the twelve-column grid exceed the content width.
+- Outcome: PASS for normal use and for 150 per cent; the 200 per cent corners are documented, not fixed.
+
+### Cycle 09: Copy and tests
+
+- Verification: the content module holds the approved copy exactly (the route's test pins it and fails on any other visible string); on the production build 53 of 53 strings found in order at four widths and the rest of the page's text is the functional labels; tests: three new (the offers picture and no clip, the wall's pieces and layout, the shared clip), four updated; 118 of 118 in the whole suite.
+- Outcome: PASS.
+
+### Cycle 10: Final regression on the last build
+
+- Verification after the last stylesheet edit, on a fresh production build: `npm test` 118 of 118; `npx astro check` 0 errors, 0 warnings, 10 hints; `CONTENT_SOURCE=fixtures npm run build` exit 0, 29 pages, sitemap unchanged at 27 URLs, "No problems found"; heights at six widths (above and in the handoff: -2.5 per cent at 1440, +0.4 per cent at 390); no horizontal overflow; HTML 39.8 KB (11.1 KB gzipped), route stylesheet 21.3 KB (4.6 KB gzipped). The protected files are unchanged (`Hero`, `Bmw`, `Exterior`, `Launch`, `Process`, `ContactCta`, `AutoMedia`, the video and motion scripts, `BaseLayout`, the homepage, `validate-content`, routes, the sitemap code, `global`).
+- Evidence: `docs/ux-evidence/automotive-density-desktop-1440x900-sequence.jpg` and `automotive-density-mobile-390x844-sequence.jpg` (end states: the headless browser renders at about 1.5 frames per second, so the entrances were forced to their end).
+- Outcome: PASS for everything verifiable here. BLOCKED, not passed: Lighthouse (the DevTools connector timed out), iOS Safari and real-device clips, Firefox and Safari rendering, HEVC playback on a browser without HEVC support, analytics, smoothness of the entrance animations, the owner's answers to the decisions in the handoff.
+- Cycles completed in this part: 10 (the 15-cycle minimum of the overall pass was met in earlier parts; nothing here was added to fill a count).

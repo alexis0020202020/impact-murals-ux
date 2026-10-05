@@ -25,9 +25,12 @@
  * AUTOMOTIVE_HERO_MOBILE is the same artwork as AUTOMOTIVE_HERO cut for a
  * phone (art direction, not a second picture): the opening picture is the Ferrari
  * mural, wide on screens and a squarer crop of the same wall on phones.
- * WORKSHOP_MURAL_MAIN and PORSCHE_PORTRAIT are the two realistic artworks shown
- * under "THE DETAILS CAR PEOPLE NOTICE." (see `realism.art`); their names are
- * file names, not captions.
+ * WHAT_WE_DO_MAIN is the one picture that supports the whole offers section.
+ * FERRARI_REALISM, WORKSHOP_MURAL_MAIN, PORSCHE_PORTRAIT and CANVAS_PROCESS are
+ * the four pieces of the wall under "THE DETAILS CAR PEOPLE NOTICE." (see
+ * `realism.art`); their names are file names, not captions.
+ * STUDIO_AT_WORK is the studio clip shared with the homepage's "ARTIST-LED.
+ * PROJECT-DRIVEN." section: only its poster is a file of this page.
  *
  * Slots the supplied material did not need are not listed: there is no
  * photograph of the summit booth, no close-up of the workshop mural and no
@@ -37,14 +40,17 @@ export const automotiveSlots = [
   "AUTOMOTIVE_HERO",
   "AUTOMOTIVE_HERO_MOBILE",
   "WHAT_WE_DO_MAIN",
+  "FERRARI_REALISM",
   "WORKSHOP_MURAL_MAIN",
   "PORSCHE_PORTRAIT",
+  "CANVAS_PROCESS",
   "BMW_BINANCE_MAIN",
   "BMW_BINANCE_DETAIL",
   "EXTERIOR_MURAL_MAIN",
   "EXTERIOR_MURAL_BEFORE",
   "JETOUR_LAUNCH",
-  "ICAUR_LAUNCH"
+  "ICAUR_LAUNCH",
+  "STUDIO_AT_WORK"
 ] as const;
 
 export type AutomotiveSlot = (typeof automotiveSlots)[number];
@@ -111,18 +117,21 @@ export const whatWeDo = {
       ]
     }
   ],
-  alt: "A vintage car painted on a small canvas, from the first pencil lines to the finished artwork held up to the camera"
+  /** The one picture beside the offers: it supports the whole section, so it describes none of the four. */
+  alt: "A white classic Porsche 911 painted on a pale wall beneath cherry blossom branches, with a glowing script sign above it"
 } as const;
 
 /**
  * 03. Realism and detail. One heading and one text for the whole section, not
  * for any one artwork: nothing here captions or describes a single piece.
  *
- * `art` is the list of realistic artworks shown beside the text, in reading
- * order. It holds only what each picture needs (its slot and its description
- * for screen readers); to show another realistic piece, add an entry and a file
- * for its slot. `place` says how the current composition sets it: the larger,
- * taller piece (`lead`) or the smaller companion (`side`).
+ * `art` is the list of realistic pieces that make the wall under the text, in
+ * reading order. It holds only what each picture needs (its slot and its
+ * description for screen readers); to show another realistic piece, add an entry
+ * and a file for its slot. `place` says how the composition sets it, by role and
+ * never by what it shows: the widest piece that anchors the wall (`lead`), the
+ * two portrait pieces beside it, the larger (`tall`) and the smaller (`side`),
+ * and the vertical process clip (`aside`) that stands beside the text on phones.
  */
 export const realism = {
   eyebrow: "AUTOMOTIVE REALISM",
@@ -133,8 +142,18 @@ export const realism = {
   ],
   art: [
     {
-      slot: "WORKSHOP_MURAL_MAIN",
+      slot: "FERRARI_REALISM",
       place: "lead",
+      alt: "Black-and-white photoreal mural of a woman in a long white dress between a white horse and a black horse at two stone windows, with the front of a Ferrari on each side"
+    },
+    {
+      slot: "CANVAS_PROCESS",
+      place: "aside",
+      alt: "A vintage car painted on a small canvas, from the first pencil lines to the finished artwork held up to the camera"
+    },
+    {
+      slot: "WORKSHOP_MURAL_MAIN",
+      place: "tall",
       alt: "An artist airbrushing a photoreal classic car mural on the wall of an automotive workshop"
     },
     {
@@ -196,14 +215,20 @@ export const launch = {
   }
 } as const;
 
-/** 07. About Impact Murals. The first paragraph is the lead, the others follow it. */
+/**
+ * 07. About Impact Murals. The first paragraph is the lead, the others follow it.
+ * The clip beside it is the one on the homepage's "ARTIST-LED. PROJECT-DRIVEN."
+ * section (the same file, see `sharedClips` in src/lib/automotive-media.ts); it
+ * has no caption and no project named around it.
+ */
 export const about = {
   headline: "ARTIST-LED. PROJECT-DRIVEN.",
   body: [
     "Impact Murals is a Dubai-based art studio led by Alexis, a French artist and creative director with 15 years of hands-on experience.",
     "We bring together a carefully selected team of artists and production specialists according to the style, technique and scale of each project.",
     "Alexis leads the creative direction and remains involved throughout production, whether painting himself or directing a larger team."
-  ]
+  ],
+  alt: "The studio at work: an artist spray-painting a large mural, then the finished wall, with the people gathered around it"
 } as const;
 
 /** 08. How we work. Budget is mentioned here, in the proposal step, and nowhere else. */

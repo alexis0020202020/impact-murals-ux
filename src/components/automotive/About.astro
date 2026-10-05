@@ -1,13 +1,20 @@
 ---
 import { about } from "@/content/automotive";
+import { resolveMedia } from "@/lib/automotive-media";
+import AutoMedia from "./AutoMedia.astro";
 import Tight from "./Tight.astro";
 
 /*
-  Who is behind the work, in type only: no portrait was supplied and none is
-  invented. The studio's own words carry it: the first paragraph as the lead and
-  the two that follow as body text (who leads the studio, how the team is
-  chosen, how the creative direction is held).
+  Who is behind the work: the studio's own words, and the studio at work. The clip
+  is the one the homepage shows beside the same heading (the same file, reused by
+  address: see `sharedClips` in src/lib/automotive-media.ts), kept at its native
+  16:9 and set beside the text like the homepage does, not around it: it supports
+  the words, it is not a project and carries no caption or client name. No
+  portrait of the founder was supplied and none is invented. The first paragraph
+  is the lead and the two that follow are body text (who leads the studio, how
+  the team is chosen, how the creative direction is held).
 */
+const media = await resolveMedia("STUDIO_AT_WORK");
 const [lead, ...rest] = about.body;
 ---
 
@@ -15,6 +22,17 @@ const [lead, ...rest] = about.body;
   <div class="auto-wrap">
     <div class="auto-about-layout">
       <h2 id="auto-about-title" class="headline-display auto-title-lg auto-about-head" data-auto-reveal>{about.headline}</h2>
+
+      <div class="auto-about-media" data-auto-reveal>
+        <div data-auto-scale>
+          <AutoMedia
+            media={media}
+            mediaSlot="STUDIO_AT_WORK"
+            alt={about.alt}
+            sizes="(min-width: 1280px) 52vw, (min-width: 640px) 46vw, 90vw"
+          />
+        </div>
+      </div>
 
       <div class="auto-about-copy" data-auto-reveal>
         <p class="auto-lead"><Tight text={lead} /></p>

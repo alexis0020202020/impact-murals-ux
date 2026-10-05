@@ -1304,3 +1304,113 @@ Evidence: `docs/ux-evidence/automotive-copy-desktop-1920x945-sequence.jpg` (ten 
 1. Open the page on a laptop and a phone and answer "Decisions to confirm" (the About order, the hero credit line, the BEFORE tag, the open space beside the offers).
 2. Change words only in `src/content/automotive.ts`; the approved copy is also pinned in `tests/automotive.test.mjs`, so a deliberate copy change updates both.
 3. Play it on an iPhone (and Low Power Mode) and in Safari and Firefox; commit and push when you are happy (nothing is committed).
+
+---
+
+# Part 19: `/automotive` media-density pass (brief received 5 October 2026)
+
+Brief: the page is close to the intended direction, so no redesign and no rewriting of the approved copy. Show more visual proof early, remove empty space and make the page convincing with less scrolling: the supplied picture in What we do (the clip that stood there leaves it), the supplied Ferrari picture and that clip in a compact mixed-media wall for "THE DETAILS CAR PEOPLE NOTICE.", the homepage's studio clip in "ARTIST-LED. PROJECT-DRIVEN.", the section order, the Hero, BMW, exterior and Jetour / iCAUR untouched, and nothing published without approval.
+
+## State
+
+- Implementation: **COMPLETE** on the working tree. Nothing was committed, pushed or deployed by this pass (the previous version, Parts 17 and 18, is the one already on `main`).
+- The page's text on the production build is still exactly the approved copy: 53 of 53 strings found in order at 1440, 1024, 768 and 390 wide, and the only other visible text is the same functional labels as before (skip link, CONTACT, BEFORE, 01 to 04, the WhatsApp and email rows, "Dubai, UAE", "EXPLORE IMPACT MURALS →"). The pass adds no wording.
+- Page height: 7,670 px at 1440 x 900 (it was 7,869: minus 2.5 per cent) and 9,697 px at 390 (it was 9,658: plus 0.4 per cent), while the page shows four more pieces of media than before (two new, two moved). BMW now starts at 2,705 px at 1440 (it was 3,028), on the third screen instead of the fourth.
+- Needs your eye (details under "Decisions to confirm"): which of the two supplied pictures went where, the "additional realism images" that did not arrive, the Ferrari mural shown twice, the weight of the homepage clip.
+- Not verifiable here: iOS Safari and real-device behaviour, Firefox and Safari rendering, a browser without HEVC support, Lighthouse (the DevTools connector timed out in this session, so it was not run: BLOCKED, not passed), analytics.
+- Parts 17 and 18 below still hold, except where this part supersedes them: the offers section has no clip any more (`WHAT_WE_DO_MAIN` is a photograph), the realism section is a wall of four pieces (it was two), About has a clip (it was text only), and the "open space beside the offers" decision of Part 18 is gone because the layout changed.
+
+## 1. What was supplied, where it went, what it looks like now
+
+Two pictures came with the brief. The first (a photograph of a white classic Porsche painted on a pale wall under cherry blossom, with an illuminated script sign above it, 744 x 1280) went to What we do. The second is the Ferrari mural "THE DETAILS CAR PEOPLE NOTICE." (1080 x 1152, byte for byte the file saved in your folder `landing page autommotive`) and went to the realism wall. The brief also speaks of "additional realism images": none was attached, so the wall uses the realism media already on the page (the workshop clip and the McQueen portrait) and the clip moved from What we do. The first picture is assigned to What we do by the order of the brief; if it was meant for the realism wall, swapping is a file rename plus the `realism.art` list (see the media guide).
+
+| Section | Before | Now | Height at 1440 |
+| --- | --- | --- | --- |
+| What we do | the four offers as a ruled list, a 297 x 530 clip at the right and about 430 px of empty paper under it | the supplied photograph as one tall panel level with the heading and about as tall as the list; no clip, no image per offer, no icon | 1,217 to 1,023 |
+| Realism and detail | two portrait pieces (410 px wide each) and a text column | four pieces in one row at one height (the supplied Ferrari mural, the moved process clip, the workshop clip, the McQueen portrait), under the text set in three columns | 911 to 782 |
+| About | text only, with empty paper under the heading | the homepage's studio clip beside the heading and the words, as on the homepage | 455 to 579 |
+| Page | | | 7,869 to 7,670 |
+
+**What we do.** From 1280 px the section is one table in three columns: the heading stands over the names, the two introduction paragraphs over the texts (the same 5 : 7 tracks and the same gap as the list rows, so they match to the pixel), and the picture is a tall panel at the right, level with the heading (28 rem at most, cut to 0.52 and shifted to the right so the plate and the sign stay whole; the crop falls on the left, where the glass reflects). From 600 px the picture stands beside the introduction and the list runs the full width under both, in two columns from 768 (so there is no tall empty column beside a long list); on a phone it stands beside the lead line, as the clip did. The text, the four offers and the visual identity are unchanged; the section is 194 px shorter at 1440 because the paddings and the list rows are a little tighter and the introduction shares the list's columns.
+
+**The realism wall.** The text above it keeps the page's margins (heading, lead and second paragraph in three columns from 1280, two from 768, stacked below); the wall is the news. On screens of 1024 px and more the four pieces stand in one row on one baseline at one height, edge to edge, each taking a share of the row equal to its own proportion (which is what makes the heights match at every width, the Launch pair's technique): at 1440 the wide piece is 604 x 442 and the three tall ones 249 to 263 wide; at 1920, 770 x 564 and 317 to 336; at 1280, 533 x 390 and 220 to 232; at 1024, 420 x 307 and 173 to 183. The reading order is the supplied Ferrari mural, the process clip, the workshop clip, the portrait: a black-and-white still at each end and the two clips between, which is also the tab order of the two pause buttons on every size. From 600 to 1023 px the wide piece spans the width (48 rem at most) and the three tall pieces share the row under it. On a phone the section is recomposed, not stacked: the process clip stands beside the lead line (as the clip did in What we do), the wide piece and the pair of portrait pieces run edge to edge, and one screen at 390 x 844 shows the wide piece and both portrait pieces together. The section is shorter than it was with two pieces (782 px at 1440 against 911; 1,339 at 390 against 1,488). The Ferrari picture is the supplied one cut to the painted wall (recipe in the media guide), a different photograph and a different cut from the opening picture, and nothing here captions or describes a piece.
+
+**About.** The clip is the homepage's own: the same file `/videos/impact-murals-studio.mp4`, read from the same content module (`studio.media.video` in `src/content/studio.ts`, which the homepage's `StudioMoment.astro` plays beside the same heading), reused by address in `sharedClips` of `src/lib/automotive-media.ts`: no copy of the file, and the homepage is untouched. It is set at its native 16:9 beside the approved words (left on screens, as on the homepage, the heading and the words at the right; the heading over the clip on tablets; between the heading and the words on phones), inside the existing section, with no caption, no project name and no separate block. Its poster is a file of this page (`studio-at-work.jpg`, the clip's own first frame at 1280 x 720, a hand spraying a blue and green mural: the homepage's own poster is only 400 x 225).
+
+## 2. Assets
+
+| Slot | File | What it is |
+| --- | --- | --- |
+| `WHAT_WE_DO_MAIN` | `src/assets/automotive/what-we-do-main.jpg` | the supplied photograph, kept byte for byte (744 x 1280, 81 KB); it was the poster of the clip that left |
+| `FERRARI_REALISM` (new) | `ferrari-realism.jpg` | the supplied Ferrari mural cut to the painted wall: 1038 x 760 from (0, 165), without the ceiling band at the top, the stairs and the lit signature at the foot (90 KB) |
+| `CANVAS_PROCESS` (new, was `WHAT_WE_DO_MAIN`) | `canvas-process.mp4` (renamed, not re-encoded) + `canvas-process.jpg` | the process clip; its poster is now the frame at 3 s (the painting almost finished) instead of the pencil sketch |
+| `STUDIO_AT_WORK` (new) | `studio-at-work.jpg` (poster only) + the homepage's clip | 1280 x 720, the clip's first frame (89 KB) |
+
+Every master is 2000 px or less and under 800 KB (a test enforces it); the clips of this page are still H.264, index first, no audio and under 3 MB. The shared studio clip is not one of them (see the decisions).
+
+## 3. Loading and playback (production build, real wheel input)
+
+- Before any scroll: 13 requests (the same count as before), 422 KB at 1440 and 455 KB at 390, no clip, one picture below the opening one (the offers photograph, 26 and 37 KB).
+- Scrolling: the clips of the wall are attached while the visitor is still in What we do (the load-ahead of four fifths of a screen) and play together on a large screen (two at most); the studio clip is attached when About is near, and its three range requests (the start, the index at the end of the file, the rest) total its 9.4 MB; everything that is off screen is paused, the studio clip included; six clips and six pause buttons in all, each named (the new one reads "Pause video: The studio at work").
+- On a phone at most one clip plays at a time; layout shift 0.00 at 1440 and at 390 at 3x; no console message; reduced motion loads no clip (the posters stay).
+- Keyboard: skip link, CONTACT, the workshop and process clips' buttons, BMW's, the AGMC link, Jetour's, iCAUR's, the studio's, WhatsApp, email, the closing link, each with a visible ring.
+
+## 4. Page height, before and after (production build, reveals forced to their end state)
+
+| Width | Before | After | Change | Offers | Realism | About |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1920 x 945 | 8,764 | 8,634 | -130 (-1.5%) | 1,376 to 1,170 | 1,048 to 941 | 509 to 690 |
+| 1440 x 900 | 7,869 | 7,670 | -199 (-2.5%) | 1,217 to 1,023 | 911 to 782 | 455 to 579 |
+| 1280 x 720 | 7,129 | 7,007 | -122 (-1.7%) | 1,195 to 1,025 | 795 to 729 | 421 to 534 |
+| 1024 x 768 | 6,563 | 6,488 | -75 (-1.1%) | 1,241 to 1,068 | 610 to 673 | 393 to 426 |
+| 768 x 1024 | 6,951 | 7,045 | +94 (+1.4%) | 1,130 to 1,190 | 1,132 to 1,218 | 448 to 396 |
+| 390 x 844 (a 390 px desktop window, as in the earlier runs) | 9,658 | 9,697 | +39 (+0.4%) | 1,653 to 1,627 | 1,488 to 1,339 | 527 to 739 |
+
+On a real phone (no scrollbar, so 390 px of width) the new page is 9,637 px; there is no matching number for the old page. No width has horizontal overflow. HTML 39.8 KB (11.1 KB gzipped, +3.0 KB), route stylesheet 21.3 KB (4.6 KB gzipped, +2.0 KB), no new dependency.
+
+## 5. Files
+
+New: `src/assets/automotive/ferrari-realism.jpg`, `canvas-process.jpg`, `studio-at-work.jpg`, `public/videos/automotive/canvas-process.mp4` (the old `what-we-do-main.mp4`, renamed), `docs/ux-evidence/automotive-density-desktop-1440x900-sequence.jpg` and `automotive-density-mobile-390x844-sequence.jpg` (the end states: the text entrances were forced, because the headless browser renders at about 1.5 frames per second).
+
+Replaced: `src/assets/automotive/what-we-do-main.jpg` (the supplied photograph).
+
+Changed: `src/content/automotive.ts` (three new slots, the offers picture's description, `realism.art` is four pieces with the roles `lead`, `aside`, `tall`, `side`, About's description; not one word of copy), `src/lib/automotive-media.ts` (`sharedClips`), `src/components/automotive/WhatWeDo.astro`, `Realism.astro`, `About.astro`, `src/styles/automotive.css` (the three sections), `tests/automotive.test.mjs` (29 tests, was 26: three new ones for the offers picture, the wall and the shared clip, and four updated), `docs/AUTOMOTIVE-MEDIA.md`, this file and `docs/UX-REVIEW-LOG.md`.
+
+Unchanged: `Hero`, `Bmw`, `Exterior`, `Launch`, `Process`, `ContactCta`, `AutoMedia`, `Tight`, `automotive-video.ts`, `automotive-motion.ts`, `BaseLayout`, the homepage (`StudioMoment.astro`, `OfferMedia.astro`, `src/content/studio.ts`, `public/videos/impact-murals-studio*`), `scripts/validate-content.mjs`, `routes.ts`, the sitemap code, `global.ts`, every other route.
+
+## Decisions to confirm
+
+- **Which picture went where.** The Porsche and cherry blossom photograph is in What we do and the Ferrari mural in the realism wall (by the order of the brief). The "additional realism images" never arrived: send them and each is one file, one slot and one entry in `realism.art` (a fifth piece joins the row and makes every piece smaller, so decide whether the wall should become two rows).
+- **The Ferrari mural is on the page twice**: the opening picture and a piece of the wall are the same artwork from two different photographs and cuts. The wall's cut shows both wheels and both cars, not the opening picture's composition, and it is a quarter of the screen. If it still feels repeated, the alternatives are a tighter cut on a wheel and its badge (the source is only 1080 px, so it would be soft) or another realistic piece.
+- **The homepage clip is heavy for this page**: HEVC with an audio track, 9.4 MB, 11.3 s, with its index at the end of the file (the page's own clips are H.264, 1 to 2.8 MB, index first, silent). It was reused as it is because the brief asked for the exact existing video and no duplicate file. A browser that cannot decode HEVC (some Windows and Linux setups) keeps the poster, which is why the poster is a strong frame; where it can, the clip starts a little later than the others. A light H.264 re-encode (about 2 MB) would start sooner and play everywhere, but it would be a second file and the homepage should then use it too: your call.
+- **The wall runs edge to edge from 1024 px**, while the text above keeps the margins. It makes every piece about a tenth larger and the section about 40 px taller than it would be inside the margins; to put it back inside the margins, delete `margin-inline` (and `width: auto; max-width: none`) in the `min-width: 1024px` block of `.auto-real-wall`.
+- **Small screens**: the single row is as small as the width allows: at 1024 the tall pieces are 173 to 183 px wide, at 1280 about 225. Below 1024 the wall becomes two rows (large pieces, a taller section: 1,218 px at 768 against 1,132). That is the price of four pieces; say if you prefer a smaller wall of two rows on laptops too.
+- **A corner of the Ferrari picture**: the bottom-left corner shows a few pixels of the glass rail and its hazard tape, as in your original; it cannot be cropped without cutting the wheel and I did not retouch your picture.
+- **The process clip's poster changed**: the painting almost finished (a red car with chrome, blue sky) instead of the pencil sketch, because the wall is about realism. The clip itself still starts with the sketch.
+- **Phones**: About's clip adds about 210 px to the page at 390 (the offers and the wall give back about 175), so the phone page is 0.4 per cent longer, not shorter.
+- **The offers heading is on two lines** ("WHAT / WE DO.") on screens from 1280 up, because it sits over the names column; the empty paper under the picture is about 70 px at 1440 and about 170 px at 1280 (the list is longer there).
+- **Large default text**: at 150 per cent the three sections are clean at 1440, 1280, 768 and 600 wide; on a phone the lead beside a clip overhangs its column by 2 to 11 px at 390 (inside the gap, no overlap) and a few pixels more at 320, as the offers lead already did in Part 18; at 200 per cent the Part 18 corners remain, and at 1024 the wall's right edge is clipped because the rem-sized gaps of the twelve-column grid exceed the content width (the same family of corners). Not fixed: far outside normal use.
+
+## Local checks (final run, after the last edit)
+
+- `npm test`: 118 of 118 (115 before: 26 route tests became 29).
+- `npx astro check`: 0 errors, 0 warnings, 10 hints (unchanged).
+- `CONTENT_SOURCE=fixtures npm run build`: exit 0, 29 pages, sitemap unchanged at 27 URLs ("2 page(s) marked noindex and excluded"), "all reachable from the homepage: true (1 noindex outreach page exempt: /automotive)", "No problems found".
+- Real contexts on the production build: the page's text against the approved copy (53 of 53, in order, at four widths); heights at six widths (above); no horizontal overflow; the wall's sizes at 1920, 1440, 1280 and 1024 and the two-row layout at 1023 and below; the About heading on two lines from 640 px; the phone widths 320, 360, 390, 430, 600 and 700; the browser's default text size at 150 and 200 per cent (a box and overlap check at seven widths); loading and playback (above); layout shift 0.00; the tab order; no console message.
+
+## Blocked or not verified
+
+- Lighthouse (the DevTools connector timed out in this session) and therefore the audit scores of Part 18 were not re-run; the accessibility checks above were done by hand (names, alt text, focus order and rings).
+- iOS Safari and real-device clips (autoplay, Low Power Mode, decoder limits), Firefox and Safari rendering (only Chromium was available), and above all HEVC playback on a browser without HEVC support: this Chromium decodes it, so the poster-only fallback is by design and by reading the script, not observed.
+- Analytics: there is no system to verify against. Smoothness of the entrance animations (end state only). The development and preview servers run on localhost, so absolute timings are lower bounds.
+
+## Housekeeping
+
+- `public/videos/automotive/what-we-do-main.mp4` was renamed to `canvas-process.mp4` (not re-encoded). Frames for the new posters were captured in the browser (no ffmpeg on this machine) and cut with `sharp`; no tool, dependency or lockfile changed.
+- Nothing was committed, pushed or deployed. `.github/workflows/scheduled-rebuild.yml` (untracked before this pass) and `.impeccable/hook.cache.json` are not part of this work.
+
+## Exact next action
+
+1. Open the page on a laptop and a phone and answer "Decisions to confirm" (above all the two pictures' places and the Ferrari mural shown twice).
+2. Send the realism pictures that did not arrive, if any (`realism.art` takes them).
+3. Decide on the homepage clip (keep as is, or a light H.264 copy used by both pages), then commit and push when you are happy (nothing is committed).

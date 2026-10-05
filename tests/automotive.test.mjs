@@ -200,11 +200,16 @@ const briefSlots = [
   "ICAUR_LAUNCH"
 ];
 /**
- * Added for the supplied material: the deck's tall picture beside the offers, the
- * wall before the exterior mural, the Porsche portrait, and the phone crop of the
- * opening picture (the same artwork, cut for a phone).
+ * Added for the supplied material: the picture beside the offers, the wall before
+ * the exterior mural, the Porsche portrait, the phone crop of the opening picture
+ * (the same artwork, cut for a phone), and, for the media-density pass, the
+ * supplied Ferrari picture and the process clip of the realism wall, and the
+ * studio clip shared with the homepage.
  */
-const addedSlots = ["WHAT_WE_DO_MAIN", "EXTERIOR_MURAL_BEFORE", "PORSCHE_PORTRAIT", "AUTOMOTIVE_HERO_MOBILE"];
+const addedSlots = [
+  "WHAT_WE_DO_MAIN", "EXTERIOR_MURAL_BEFORE", "PORSCHE_PORTRAIT", "AUTOMOTIVE_HERO_MOBILE",
+  "FERRARI_REALISM", "CANVAS_PROCESS", "STUDIO_AT_WORK"
+];
 
 const stills = readdirSync("src/assets/automotive");
 const clips = readdirSync("public/videos/automotive").filter((file) => file.endsWith(".mp4"));
@@ -467,26 +472,102 @@ test("section 03 is about automotive realism, not about one artwork: one text, n
   assert.match(markup, /realism\.art\.map/);
   assert.match(markup, /<figure class=\{`auto-real-item auto-real-item--\$\{piece\.place\}`\}/);
   assert.ok(Array.isArray(realism.art) && realism.art.length >= 2);
+  const roles = ["lead", "tall", "side", "aside"];
   for (const piece of realism.art) {
     assert.deepEqual(Object.keys(piece).sort(), ["alt", "place", "slot"], "an artwork is a slot, a place and a description for screen readers");
     assert.ok(automotive.automotiveSlots.includes(piece.slot), `${piece.slot} is a real slot`);
-    assert.ok(["lead", "side"].includes(piece.place));
+    assert.ok(roles.includes(piece.place), `${piece.place} is a role the stylesheet places`);
   }
-  // Placed by role in the stylesheet, at every breakpoint.
-  for (const role of ["lead", "side"]) {
+  // Every role is placed by the stylesheet (on a phone, in the layout grid), and the wide piece at every size.
+  for (const role of roles) {
     const rules = [...css.matchAll(new RegExp(`\\.auto-real-item--${role}\\s*\\{([^}]*)\\}`, "g"))].map((match) => match[1]);
-    assert.ok(rules.length >= 3, `.auto-real-item--${role} is placed at phone, tablet and screen sizes`);
+    assert.ok(rules.some((rule) => /grid-column/.test(rule)), `.auto-real-item--${role} is placed in the stylesheet`);
   }
-  // The pictures themselves are unchanged by the copy pass: the same two pieces, in the same slots.
-  assert.deepEqual(realism.art.map((piece) => piece.slot), ["WORKSHOP_MURAL_MAIN", "PORSCHE_PORTRAIT"]);
-  assert.equal(automotive.automotiveSlots.length, 11);
+  const lead = [...css.matchAll(/\.auto-real-item--lead\s*\{([^}]*)\}/g)].map((match) => match[1]);
+  assert.ok(lead.length >= 3, "the wide piece is set for phones, tablets and screens");
+  // The media-density pass: four pieces (the supplied Ferrari picture first, then the workshop clip, the portrait and the moved process clip).
+  // Reading order = row order on screens = tab order of the two clips on every size: the wide still, the process clip, the workshop clip, the portrait.
+  assert.deepEqual(realism.art.map((piece) => piece.slot), ["FERRARI_REALISM", "CANVAS_PROCESS", "WORKSHOP_MURAL_MAIN", "PORSCHE_PORTRAIT"]);
+  assert.deepEqual(realism.art.map((piece) => piece.place), ["lead", "aside", "tall", "side"]);
+  assert.equal(automotive.automotiveSlots.length, 14);
+});
+
+test("what we do is one picture that supports the whole section: no clip, no per-offer image, nothing added to the copy", async () => {
+  const markup = read("src/components/automotive/WhatWeDo.astro");
+  // One frame for the section, set apart from the four offers (which are plain text).
+  assert.equal([...markup.matchAll(/<AutoMedia/g)].length, 1, "one picture for the whole section");
+  assert.match(markup, /mediaSlot="WHAT_WE_DO_MAIN"/);
+  const list = markup.match(/<ul class="auto-wwd-list"[\s\S]*?<\/ul>/)?.[0] ?? "";
+  assert.ok(list && !/AutoMedia|<img|<picture|<svg|<video/.test(list), "no offer has its own picture or icon");
+  // The video that stood here moved to the realism wall: the slot is a still now, and its old clip is gone.
+  assert.ok(!clips.includes("what-we-do-main.mp4"), "the clip left the offers section");
+  assert.ok(clips.includes("canvas-process.mp4"), "the clip is the realism wall's process clip");
+  // The picture is the supplied portrait photograph, kept as supplied (744x1280).
+  const picture = stills.find((file) => file.startsWith("what-we-do-main"));
+  assert.ok(picture, "the picture of the section exists");
+  const { width, height } = await sharp(`src/assets/automotive/${picture}`).metadata();
+  assert.equal(`${width}x${height}`, "744x1280");
+  // The pass adds no wording: the visible copy is still exactly the approved copy (see the test above).
+  assert.ok(automotive.whatWeDo.alt.length > 20);
+});
+
+test("the realism wall shows the supplied Ferrari picture and the moved clip, and does not repeat the opening picture", async () => {
+  const { realism } = automotive;
+  const slots = realism.art.map((piece) => piece.slot);
+  for (const slot of ["FERRARI_REALISM", "CANVAS_PROCESS", "WORKSHOP_MURAL_MAIN", "PORSCHE_PORTRAIT"]) assert.ok(slots.includes(slot), `${slot} is on the wall`);
+  // Two clips (the workshop and the moved process clip) and two stills (the supplied Ferrari picture and the portrait).
+  const stems = (list) => list.map((slot) => automotive.slotStem(slot));
+  for (const stem of stems(["WORKSHOP_MURAL_MAIN", "CANVAS_PROCESS"])) assert.ok(clips.includes(`${stem}.mp4`), `${stem}.mp4 is a clip`);
+  for (const stem of stems(["FERRARI_REALISM", "PORSCHE_PORTRAIT"])) assert.ok(!clips.includes(`${stem}.mp4`), `${stem} is a still`);
+  // The Ferrari picture is its own file, cut apart from the opening picture (not the hero's crop and not the hero's file).
+  const own = await sharp("src/assets/automotive/ferrari-realism.jpg").metadata();
+  const hero = await sharp("src/assets/automotive/automotive-hero.jpg").metadata();
+  assert.ok(Math.abs(own.width / own.height - hero.width / hero.height) > 0.2, "a different cut from the opening picture");
+  assert.ok(!/ferrari-realism|FERRARI_REALISM/.test(read("src/components/automotive/Hero.astro")), "the opening picture does not use it");
+  assert.ok(!/AUTOMOTIVE_HERO/.test(read("src/components/automotive/Realism.astro")), "the wall does not reuse the opening picture");
+  // The poster of the moved clip shows the painting, not the pencil sketch: it is the clip's own 9:16 frame.
+  const poster = await sharp("src/assets/automotive/canvas-process.jpg").metadata();
+  assert.equal(`${poster.width}x${poster.height}`, "720x1280");
+  // The wall is one row of four on screens (about as tall as the old two pieces), and recomposed, not stacked, on phones.
+  assert.match(css, /\.auto-real-wall\s*\{[^}]*display:\s*flex;[^}]*flex-wrap:\s*wrap/, "tablets wrap the wall into two rows");
+  assert.match(css, /@media \(min-width: 1024px\) \{\s*\.auto-real-wall \{[^}]*flex-wrap:\s*nowrap/, "screens keep the four pieces in one row");
+  assert.match(css, /\.auto-real-wall\s*\{\s*display:\s*contents;/, "on phones the pieces are items of the layout grid");
+  assert.match(css, /\.auto-real-item--aside\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*2;/, "on phones the process clip stands beside the lead line");
+  assert.match(css, /\.auto-real-item--lead\s*\{[^}]*margin-inline:\s*calc\(var\(--gutter\) \* -1\)/, "the wide piece runs edge to edge on phones");
+  // In a row each piece takes a share equal to its own proportion, which is what makes the heights match.
+  assert.match(css, /\.auto-real-item\s*\{[^}]*flex:\s*var\(--r-art\) 1 0/);
+});
+
+test("the about section reuses the homepage's studio clip by address: one file, no copy, a poster of its own", async () => {
+  const { studio } = await import("../src/content/studio.ts");
+  const { about } = automotive;
+  const lib = read("src/lib/automotive-media.ts");
+  // The very source the homepage section reads (src/content/studio.ts, drawn by StudioMoment.astro), not a path written twice.
+  assert.match(lib, /import \{ studio \} from "@\/content\/studio"/);
+  assert.match(lib, /sharedClips[\s\S]*STUDIO_AT_WORK:\s*studio\.media\.video/);
+  assert.match(read("src/components/home/StudioMoment.astro"), /video=\{studio\.media\.video\}/, "the homepage still plays it");
+  assert.equal(studio.media.video, "/videos/impact-murals-studio.mp4");
+  assert.ok(statSync(`public${studio.media.video}`).size > 0, "the shared file exists");
+  // It was not duplicated into this page's folder, and the homepage's file was not touched.
+  assert.ok(!clips.includes("studio-at-work.mp4") && !clips.some((file) => /studio/.test(file)), "no second copy of the clip");
+  assert.match(read("src/components/OfferMedia.astro"), /data-autoplay-video/, "the homepage's own player is unchanged");
+  // Its poster is a file of this page (the homepage's is only 400x225), at the clip's native 16:9.
+  const poster = await sharp("src/assets/automotive/studio-at-work.jpg").metadata();
+  assert.equal(`${poster.width}x${poster.height}`, "1280x720");
+  // It sits inside the existing section, beside the approved words, as a muted deferred clip like the others, with no caption.
+  const markup = read("src/components/automotive/About.astro");
+  assert.match(markup, /mediaSlot="STUDIO_AT_WORK"/);
+  assert.ok(!/<figcaption|<figure/.test(markup), "no caption or project block around the clip");
+  assert.ok(about.alt.length > 20 && !/finance/i.test(about.alt), "the description names no client");
+  assert.deepEqual([...about.body], approved.about.body, "the approved copy is untouched");
+  assert.ok(markup.indexOf("auto-about-head") < markup.indexOf("auto-about-media") && markup.indexOf("auto-about-media") < markup.indexOf("auto-about-copy"), "heading, clip, words");
 });
 
 test("every picture on the page has alt text that describes it, and only the opening picture is eager", () => {
-  const { hero, whatWeDo, realism, bmw, exterior, launch } = automotive;
+  const { hero, whatWeDo, realism, bmw, exterior, launch, about } = automotive;
   const alts = [
     hero.alt, whatWeDo.alt, ...realism.art.map((piece) => piece.alt), bmw.alt, bmw.detailAlt,
-    exterior.alt, exterior.beforeAlt, launch.jetour.alt, launch.icaur.alt
+    exterior.alt, exterior.beforeAlt, launch.jetour.alt, launch.icaur.alt, about.alt
   ];
   // One description per picture; the phone crop of the opening picture is the same picture and shares its description.
   assert.equal(alts.length, automotive.automotiveSlots.length - 1, "one description per picture");
@@ -619,8 +700,9 @@ test("the artwork leads: titles stay modest, and the longer approved headlines a
     const source = read(`src/components/automotive/${file}`);
     assert.match(source, new RegExp(`class="headline-display auto-title-md">\\{${headline.replace(".", "\\.")}\\}`), `${file} sets its headline at project-title size`);
   }
-  // Every media section sets its own height cap on a portrait frame, so nothing is taller than the screen allows.
-  for (const selector of [".auto-wwd-media", ".auto-real-item--lead", ".auto-bmw-stage", ".auto-exterior-layout", ".auto-launch-layout"]) {
+  // Every media section that sizes a portrait frame from its column sets its own height cap, so nothing is taller than the screen allows.
+  // (The realism wall is the exception: its pieces share one row whose height is the row's width divided by the pieces' proportions.)
+  for (const selector of [".auto-wwd-media", ".auto-bmw-stage", ".auto-exterior-layout", ".auto-launch-layout"]) {
     assert.ok(new RegExp(`${selector.replaceAll(".", "\\.")}\\s*\\{[^}]*--cap:`).test(css), `${selector} sets a height cap`);
   }
 });

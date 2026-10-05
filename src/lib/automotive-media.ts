@@ -3,6 +3,7 @@ import { join } from "node:path";
 import type { ImageMetadata } from "astro";
 import { getImage } from "astro:assets";
 import { slotStem, type AutomotiveSlot } from "@/content/automotive";
+import { studio } from "@/content/studio";
 
 /**
  * Media lookup for /automotive.
@@ -21,6 +22,17 @@ import { slotStem, type AutomotiveSlot } from "@/content/automotive";
  * bmw-binance-main. A slot with no still throws, so the build fails loudly
  * instead of shipping a hole.
  */
+
+/**
+ * Clips that already live elsewhere on the site are reused by address, never
+ * copied: one file, one place. STUDIO_AT_WORK is the clip of the homepage's
+ * "ARTIST-LED. PROJECT-DRIVEN." section, read from the same content module that
+ * section reads (`studio.media.video`), so the two can never drift apart. Only
+ * its poster (the still of the slot) is a file of this page.
+ */
+const sharedClips: Partial<Record<AutomotiveSlot, string>> = {
+  STUDIO_AT_WORK: studio.media.video
+};
 
 const stills = import.meta.glob<{ default: ImageMetadata }>(
   "/src/assets/automotive/*.{jpg,jpeg,png,webp,avif}",
@@ -56,7 +68,9 @@ export async function resolveMedia(slot: AutomotiveSlot): Promise<ResolvedMedia>
     throw new Error(`/automotive: ${slot} has no image. Add src/assets/automotive/${stem}.jpg (see docs/AUTOMOTIVE-MEDIA.md).`);
   }
 
-  const video = publicFile(`videos/automotive/${stem}.mp4`) ? { src: `/videos/automotive/${stem}.mp4` } : undefined;
+  const shared = sharedClips[slot];
+  const own = publicFile(`videos/automotive/${stem}.mp4`) ? { src: `/videos/automotive/${stem}.mp4` } : undefined;
+  const video = shared ? { src: shared } : own;
 
   return { slot, image, video };
 }

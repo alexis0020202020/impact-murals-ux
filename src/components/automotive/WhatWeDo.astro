@@ -6,13 +6,16 @@ import Tight from "./Tight.astro";
 
 /*
   Four formats, scannable in one glance: a ruled list, each line a name in
-  display type beside its text. No icons, no cards, no boxes. The short clip is
-  the one moving thing this high on the page and it is a supporting piece, not
-  the lead: a car drawn and painted by hand on a canvas, from the first pencil
-  lines to the finished artwork, which is what "custom artwork" means. On large
-  screens it stands at the right edge of the list; on a phone it sits beside the
-  lead line. The introduction is two paragraphs (the lead, then the sentence that
-  explains it) and an offer is one or two: each takes the height it needs.
+  display type beside its text. No icons, no cards, no boxes. One tall picture
+  supports the whole section (it is not a fifth offer, and it is not captioned):
+  an automotive space with a painted car on its wall. On large screens it stands
+  at the right of the list, level with the heading, and the introduction sits in
+  the same two columns as the list (the heading over the names, the two
+  paragraphs over the texts) so the section reads as one table; on tablets it
+  sits beside the introduction and the list runs full width under both; on a
+  phone it sits beside the lead line. The introduction is two paragraphs (the
+  lead, then the sentence that explains it) and an offer is one or two: each
+  takes the height it needs.
 */
 const media = await resolveMedia("WHAT_WE_DO_MAIN");
 const [lead, support] = whatWeDo.intro;
@@ -34,7 +37,7 @@ const [lead, support] = whatWeDo.intro;
           mediaSlot="WHAT_WE_DO_MAIN"
           alt={whatWeDo.alt}
           class="auto-tall"
-          sizes="(min-width: 1024px) 24vw, (min-width: 768px) 34vw, 50vw"
+          sizes="(min-width: 1280px) 30vw, (min-width: 1024px) 20vw, (min-width: 600px) 28vw, 48vw"
         />
       </div>
 
