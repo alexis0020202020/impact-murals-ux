@@ -1420,3 +1420,9 @@ Unchanged: `Hero`, `Bmw`, `Exterior`, `Launch`, `Process`, `ContactCta`, `AutoMe
 - Removed `noindex` (no robots meta is now emitted); canonical `https://www.impactmurals.ae/automotive/` (`AUTOMOTIVE_CANONICAL` in `src/lib/routes.ts`, shared by the page and its sitemap entry); the route is in the registry, so `sitemap-core.xml` lists it (28 URLs).
 - One internal link: "Automotive Murals, Vehicle Art & Live Painting" in the related list of `/what-we-do/art-for-brands/branded-murals` (`relatedPages` in `src/content/capabilities.ts`); not in the main navigation. The build check no longer exempts any orphan page.
 - Title, description, H1 and Open Graph unchanged and checked. Not deployed until pushed.
+
+## Addendum: global host aligned to www (5 October 2026)
+
+- `site` in `astro.config.mjs` and `domain` in `src/content/global.ts` are now `https://www.impactmurals.ae` (the apex 301s to www on Netlify). `global.domain` is what builds canonicals, the sitemap, `robots.txt` and JSON-LD.
+- Reviewed before/after on a fixtures build: same 29 pages and 28 sitemap URLs, same paths, titles, descriptions and bodies; only the host changed. `AUTOMOTIVE_CANONICAL` is kept (the generated canonical would lack the trailing slash).
+- Known and deliberately untouched: canonicals other than the homepage and `/automotive/` have no trailing slash and the live site 301s them to the slash form. To handle separately.

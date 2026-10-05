@@ -4,7 +4,7 @@
  */
 export const global = {
   name: "Impact Murals",
-  domain: "https://impactmurals.ae",
+  domain: "https://www.impactmurals.ae",
   locale: "en_AE",
   areaServed: "United Arab Emirates",
 

@@ -7,7 +7,7 @@ import { loadEnvFile } from "./scripts/lib/load-env.mjs";
 loadEnvFile();
 
 export default defineConfig({
-  site: "https://impactmurals.ae",
+  site: "https://www.impactmurals.ae",
   integrations: [slugRedirects()],
   vite: {
     plugins: [tailwindcss()]
