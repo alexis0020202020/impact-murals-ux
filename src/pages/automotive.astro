@@ -14,11 +14,11 @@
  * final copy, kept word for word in src/content/automotive.ts, in the order of
  * its nine blocks.
  *
- * Deliberately outside the route registry (src/lib/routes.ts): that registry is
- * the single source for the sitemap, so a page that is not in it is never
- * listed. It is also `noindex, follow` and has no site header or footer, so a
- * visitor sent this link sees one focused page that ends in the contact block,
- * with the site one link away.
+ * Indexable: it is in the route registry (src/lib/routes.ts, so in the core
+ * sitemap), canonical on the www host (AUTOMOTIVE_CANONICAL), and linked
+ * from the Murals & Branded Environments page (not from the main navigation).
+ * It has no site header or footer, so a visitor sent this link sees one focused
+ * page that ends in the contact block, with the site one link away.
  *
  * Every picture and clip is a real file; where each lives and how it was
  * prepared is in docs/AUTOMOTIVE-MEDIA.md.
@@ -37,6 +37,7 @@ import Process from "@/components/automotive/Process.astro";
 import ContactCta from "@/components/automotive/ContactCta.astro";
 import { automotiveSeo } from "@/content/automotive";
 import { resolveMedia } from "@/lib/automotive-media";
+import { AUTOMOTIVE_CANONICAL } from "@/lib/routes";
 
 /*
   Link preview. This page travels by message, so the picture a messenger shows
@@ -58,8 +59,8 @@ const preview = await getImage({
 <BaseLayout
   title={automotiveSeo.title}
   description={automotiveSeo.description}
+  canonical={AUTOMOTIVE_CANONICAL}
   ogImage={preview.src}
-  noindex
   minimal
 >
   <div class="auto-page">

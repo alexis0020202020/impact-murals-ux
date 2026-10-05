@@ -31,6 +31,8 @@ export interface RouteEntry {
    */
   inSitemap: boolean;
   group: SitemapGroup;
+  /** Absolute canonical URL when it is not `canonicalBase` + path (the page sets the same value itself). */
+  canonicalUrl?: string;
   /** Drives the meta robots tag. Same source as `inSitemap`, so they agree. */
   noIndex: boolean;
   /**
@@ -56,11 +58,15 @@ export const INSIGHTS_SEGMENT = "insights";
  */
 export const PER_PAGE = 12;
 
+/** The one page canonical on the www host (the live site serves www); set on the page and in its sitemap entry from here. */
+export const AUTOMOTIVE_CANONICAL = "https://www.impactmurals.ae/automotive/";
+
 const staticRoutes: Array<Omit<RouteEntry, "group" | "noIndex" | "inSitemap">> = [
   { path: "/", label: "Home" },
   { path: "/what-we-do", label: "What We Do", parent: "/" },
   { path: "/studio", label: "Studio", parent: "/" },
-  { path: "/discuss-a-project", label: "Discuss a Project", parent: "/" }
+  { path: "/discuss-a-project", label: "Discuss a Project", parent: "/" },
+  { path: "/automotive", label: "Automotive", parent: "/", canonicalUrl: AUTOMOTIVE_CANONICAL }
 ];
 
 /** `/insights`, then `/insights/page/2`. Page one keeps the bare URL. */

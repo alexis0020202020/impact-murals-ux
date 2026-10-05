@@ -72,6 +72,7 @@ const fallbackRelated = publishedEditorial
   .sort((a, b) => a.rank - b.rank);
 
 const visibleRelatedGuides = [
+  ...(capability.relatedPages ?? []),
   ...curatedPublic,
   ...fallbackRelated
 ].slice(0, 6);

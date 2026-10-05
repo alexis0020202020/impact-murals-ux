@@ -226,13 +226,22 @@ function maxRem(selector, atWidth = "wide") {
   return atWidth === "wide" ? sizes[sizes.length - 1] : sizes[0];
 }
 
-test("the outreach page is not in the route registry or any sitemap", async () => {
-  assert.ok(!(await sitemapRoutes()).some((path) => path.startsWith("/automotive")));
-  assert.ok(!(await buildRoutes()).some((route) => route.path.startsWith("/automotive")));
+test("the page is indexable: in the registry and the sitemap, canonical on the www address, linked from a crawlable page", async () => {
+  assert.ok((await sitemapRoutes()).includes("/automotive"));
+  const entry = (await buildRoutes()).find((route) => route.path === "/automotive");
+  assert.equal(entry.noIndex, false);
+  assert.equal(entry.inSitemap, true);
+  assert.equal(entry.canonicalUrl, "https://www.impactmurals.ae/automotive/");
+  assert.match(page, /canonical=\{AUTOMOTIVE_CANONICAL\}/);
+  assert.ok(!/\bnoindex\b/.test(page.replace(/\/\*[\s\S]*?\*\//g, "")), "no noindex on the page");
+  // One normal internal link, from the branded murals page's related list, and none in the main navigation.
+  const capabilities = read("src/content/capabilities.ts");
+  assert.match(capabilities, /relatedPages: \[\{ title: "[^"]+", href: "\/automotive\/" \}\]/);
+  assert.ok(!/automotive/i.test(read("src/components/Header.astro")));
 });
 
-test("the page template asks for noindex and drops the site chrome", () => {
-  assert.match(page, /<BaseLayout[\s\S]*\bnoindex\b[\s\S]*\bminimal\b[\s\S]*>/);
+test("the page template drops the site chrome", () => {
+  assert.match(page, /<BaseLayout[\s\S]*\bminimal\b[\s\S]*>/);
   const layout = read("src/layouts/BaseLayout.astro");
   assert.match(layout, /\{!minimal && <Header \/>\}/);
   assert.match(layout, /\{!minimal && <Footer \/>\}/);
@@ -813,9 +822,8 @@ test("playback is deferred, capped, paused when away, and off for reduced motion
   assert.ok(!/media-autoplay/.test(read("src/components/automotive/AutoMedia.astro")));
 });
 
-test("the build check exempts only the explicit, noindex outreach page", () => {
+test("the build check no longer exempts any page from the orphan rule", () => {
   const script = read("scripts/validate-content.mjs");
-  assert.match(script, /OUTREACH_ROUTES = new Set\(\["\/automotive"\]\)/);
-  assert.match(script, /outreach page is unlinked by design, so it must be noindex/);
+  assert.ok(!/OUTREACH_ROUTES|exemptOutreach/.test(script));
   assert.match(script, /orphan\. No path of links reaches it from the homepage/);
 });

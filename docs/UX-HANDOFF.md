@@ -1414,3 +1414,9 @@ Unchanged: `Hero`, `Bmw`, `Exterior`, `Launch`, `Process`, `ContactCta`, `AutoMe
 1. Open the page on a laptop and a phone and answer "Decisions to confirm" (above all the two pictures' places and the Ferrari mural shown twice).
 2. Send the realism pictures that did not arrive, if any (`realism.art` takes them).
 3. Decide on the homepage clip (keep as is, or a light H.264 copy used by both pages), then commit and push when you are happy (nothing is committed).
+
+## Addendum: /automotive made indexable (5 October 2026)
+
+- Removed `noindex` (no robots meta is now emitted); canonical `https://www.impactmurals.ae/automotive/` (`AUTOMOTIVE_CANONICAL` in `src/lib/routes.ts`, shared by the page and its sitemap entry); the route is in the registry, so `sitemap-core.xml` lists it (28 URLs).
+- One internal link: "Automotive Murals, Vehicle Art & Live Painting" in the related list of `/what-we-do/art-for-brands/branded-murals` (`relatedPages` in `src/content/capabilities.ts`); not in the main navigation. The build check no longer exempts any orphan page.
+- Title, description, H1 and Open Graph unchanged and checked. Not deployed until pushed.

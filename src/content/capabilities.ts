@@ -30,6 +30,8 @@ export interface Capability {
   body: string;
   relatedIntro: string;
   relatedGuides: RelatedGuideLink[];
+  /** Static pages (not editorial records) to list with the related guides, by path. */
+  relatedPages?: RelatedGuideLink[];
   closingHeading: string;
   closingBody: string;
 }
@@ -653,6 +655,7 @@ For larger walls or multi-location programmes, production planning may also invo
 
 The objective is a finished mural that still feels like the approved creative direction once it exists at full scale.`,
     relatedIntro: "For sector-specific branded mural applications, see:",
+    relatedPages: [{ title: "Automotive Murals, Vehicle Art & Live Painting", href: "/automotive/" }],
     relatedGuides: [
       { title: "Retail Murals in Dubai", href: "https://impactmurals.ae/guides/retail-murals-in-dubai" },
       { title: "Showroom Murals in Dubai", href: "https://impactmurals.ae/guides/showroom-murals-in-dubai" },

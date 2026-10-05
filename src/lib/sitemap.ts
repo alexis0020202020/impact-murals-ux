@@ -56,7 +56,7 @@ export function renderUrlset(entries: RouteEntry[]): string {
     .map((entry) => {
       // Omitted rather than faked: see reliableLastmod in routes.ts.
       const lastmod = entry.lastmod ? `<lastmod>${entry.lastmod}</lastmod>` : "";
-      return `  <url><loc>${absolute(entry.path)}</loc>${lastmod}</url>`;
+      return `  <url><loc>${entry.canonicalUrl ? escapeXml(entry.canonicalUrl) : absolute(entry.path)}</loc>${lastmod}</url>`;
     })
     .join("\n");
 
