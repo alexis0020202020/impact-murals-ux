@@ -1426,3 +1426,95 @@ Unchanged: `Hero`, `Bmw`, `Exterior`, `Launch`, `Process`, `ContactCta`, `AutoMe
 - `site` in `astro.config.mjs` and `domain` in `src/content/global.ts` are now `https://www.impactmurals.ae` (the apex 301s to www on Netlify). `global.domain` is what builds canonicals, the sitemap, `robots.txt` and JSON-LD.
 - Reviewed before/after on a fixtures build: same 29 pages and 28 sitemap URLs, same paths, titles, descriptions and bodies; only the host changed. `AUTOMOTIVE_CANONICAL` is kept (the generated canonical would lack the trailing slash).
 - Known and deliberately untouched: canonicals other than the homepage and `/automotive/` have no trailing slash and the live site 301s them to the slash form. To handle separately.
+
+---
+
+# Part 20: `/automotive` final refinement pass (brief received 5 October 2026)
+
+Brief: the page is structurally approved, so no redesign, no rewriting and no change to the visual language. Integrate the last conversion elements: reverse the hero's hierarchy ("ART FOR CAR LOVERS." becomes the strongest statement, "MURALS, VEHICLE ART & LIVE PAINTING." a restrained secondary title under it), add a discreet strip of five supplied logos directly under the hero (BMW, Majid Al Futtaim, Louis Vuitton, Jetour, iCAUR, in that order, no heading, no card, no carousel), and add an investment note ("AED 8,000–25,000+" with the owner's three sentences) directly before How we work. The brief did not ask to publish, so nothing was.
+
+## State
+
+- Implementation: **COMPLETE** on the working tree. Nothing was committed, pushed or deployed by this pass. What is live is `0d87e2e` (Parts 17 to 19, the indexability change and the `www` host); this pass is on top of it.
+- Page text on the production build: every string of the content module (58, including the four sentences of the investment note) is found in order at 1440, 1024, 768 and 390 wide, and the only other visible text is the same functional labels as before (CONTACT, BEFORE, 01 to 04, WHATSAPP and EMAIL rows, "Dubai, UAE", arrows). The logos carry no visible wording.
+- Parts 17 to 19 still hold, except where this part supersedes them: the hero's small label is now the page's largest type; the page now states a price range (Part 18's "no price or range is stated anywhere" and "budget is mentioned in one place" are replaced by the investment note, and `tests/automotive.test.mjs` says so); the section order has two new entries (the strip after the hero, the note before How we work).
+- Needs your eye (details under "Decisions to confirm"): the H1's wording, the BMW logo being "BMW GROUP" (no AGMC mark was supplied), permission to show BMW and Louis Vuitton marks, the five "SVG" files being PNG images inside SVG wrappers, the opening being shorter on screens so the strip is on the first screen.
+- Not verifiable here: Lighthouse (the DevTools connector still times out: BLOCKED, not passed), Safari and iOS, Firefox, real devices, analytics.
+
+## 1. What changed
+
+**The hero.** One H1 now holds two voices. "ART FOR CAR LOVERS." is two lines at every width ("ART FOR" over "CAR LOVERS.", `hero.statementLines`), in the display face: on phones it follows the width between the page margins (56 px at 390, so "CAR LOVERS." never reaches the screen edge; 4.9 rem at most), on tablets 10.4 vw (80 px at 768; 6.9 rem at most) and on screens 7.7 vw (9.5 rem at most): 111 px at 1440 and 148 px at 1920, against 73 px for the old headline at 1440. Under it, "MURALS, VEHICLE ART & LIVE PAINTING." is the secondary title: the same face at a third of the size (34 px at 1440), a touch lighter and looser, on one line from large phones up and on two lines on a phone. Then the existing sentence. The words are unchanged (the old label `hero.eyebrow` became `hero.statementLines`, the old headline lines are the secondary title); the animated logo, the CONTACT link, the picture, the veil and the entrance animation are untouched. On screens the opening is exactly as tall as the screen minus the strip (`--brands-h`, 128 px), so the Ferrari, the type and the strip fill the first screen (hero 772 + strip 128 = 900 at 1440 x 900); the Ferrari's crop barely moves (the picture is scaled to the width, 1.78 against 1.87).
+
+**The logo strip** (`Brands.astro`, `.auto-brands` in the stylesheet). Five white marks on the hero's own ink, so it reads as the foot of the opening (a one pixel overlap hides the hairline the page behind would show where the opening ends between two pixels). On screens one row on the page's margins, the free width shared evenly (equal gaps, about 183 px at 1440); from 768 up the same row, a little smaller; below 768 three marks then two, each row flush to both margins (a single row of five would make every mark a few pixels tall). Each mark is trimmed to its ink and sized by hand (`--h` in px: BMW 35, Majid Al Futtaim 28, Louis Vuitton 50, Jetour 32, iCAUR 20, then scaled together by screen), so no mark dominates by proportion: the long thin ones are not shrunk, the solid iCAUR is held smallest, the thin Louis Vuitton monogram is held tall. 84 per cent opacity so the row sits back. No heading and no label; the section is a labelled region for assistive technology only ("Brands we have worked with") and each mark has its name as alt text. Lazy like every picture below the opening (a test keeps `eager` for the opening alone).
+
+**The investment note** (`Investment.astro`, `.auto-invest`). Between About and How we work, ruled off by a hairline at its head exactly like the process section under it (so the two rules and the note between them read as one ledger), on the page's paper (no card, no tier, no list, no button, no gradient). The figure is the section's heading and the anchor: "AED" small (0.36 em) before "8,000–25,000+" large (78 px at 1440, 5.4 vw on screens, 8.2 vw on tablets, 10.6 vw on phones); the range uses the owner's en dash. At the right, on the column where About's words begin, the sentence that explains it, the one about a defined budget, and the deposit: the deposit is set under a ruled line with the logo's signal tick, at 15 to 16 px (the explanation is 19 to 22 px), in the same dark grey as the body text (7:1 on the paper), so it is quieter and fully readable. Tablets: the figure across the page, the explanation at the left and the two qualifying sentences at the right; phones: one column. 393 px tall at 1440, 415 at 390.
+
+## 2. The five "SVG" files
+
+They are not vector drawings. Each is one grayscale PNG (a white mark on black) embedded twice in an SVG wrapper that turns brightness into transparency with a mask and an `feColorMatrix` filter: 34 to 127 KB each (400 KB for the five), at the resolution of the embedded PNG (BMW GROUP 676 x 455, Majid Al Futtaim 482 x 334, Louis Vuitton 820 x 820, Jetour 1280 x 692, iCAUR 2144 x 532). The strip uses the very pixels: extracted, brightness turned into alpha (a white mark on a transparent ground, the same picture), trimmed to the ink, capped at 560 px wide and written as lossless WebP: **52 KB for the five**, in `src/assets/automotive-brands/` (not in `src/assets/automotive/`, whose files the slot tests treat as pictures of the page). Nothing was redrawn or retouched. The recipe, the sizes and how to swap or add a mark are in `docs/AUTOMOTIVE-MEDIA.md` ("The brand strip"). Sharpness was checked on cropped captures at 2x (desktop) and 3x (phone): crisp, the Arabic script and the Jetour line legible. The one limit is Majid Al Futtaim (the mark is 80 px tall in its source): a 3x display at 1440 would stretch it by about 13 per cent; a phone shows it at 24 px, inside its resolution. If you have real vector versions, a file per mark replaces the matching WebP with no layout change.
+
+## 3. Page height, before and after (production build, reveals forced to their end state)
+
+| Width | Before | After | Change | Opening | Strip | Note | Strip on the first screen |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1920 x 1080 | 8,991 | 9,504 | +513 | 992 to 952 | 128 | 427 | whole |
+| 1440 x 900 | 7,670 | 8,063 | +393 | 900 to 772 | 128 | 393 | whole |
+| 1280 x 720 | 7,007 | 7,371 | +364 | 720 to 592 | 128 | 366 | whole |
+| 1024 x 768 | 6,488 | 6,825 | +337 | 768 to 640 | 128 | 338 | whole |
+| 768 x 1024 | 7,045 | 7,537 | +492 | 793 to 843 | 106 | 338 | whole |
+| 390 x 844 (a phone: no scrollbar) | 9,637 | 10,159 | +522 | 797 to 745 | 161 | 415 | its first row |
+| 320 x 640 | 9,636 | 10,197 | +561 | 665 to 614 | 161 | 452 | below |
+
+On screens the strip costs nothing (the opening gives up its height: What we do starts at 899 px instead of 900 at 1440) and the page grows by the note alone. No width has horizontal overflow. HTML 41.7 KB (11.5 KB gzipped, +1.9 KB raw, +0.4 KB gzipped), route stylesheet 24.8 KB (5.3 KB gzipped, +3.5 KB raw, +0.7 KB gzipped), five more requests (the marks, 52 KB), no new dependency.
+
+## 4. Quality checks (production build unless said)
+
+- **Loading.** Before any scroll: 18 requests (13 before: the five marks), no clip; the opening picture is still the largest paint; layout shift 0.00 at 1440 and at 390 at 3x through a full scroll with real wheel input (the marks carry their width and height, the strip has a fixed height on screens); every reveal completes, the note's included; no console message.
+- **Contrast** (measured on the rendered pixels with the type hidden, at six widths): on phones and tablets the campaign line is 8.5:1 or better; on screens its fifth percentile is 4.6 to 5.3:1 and 0.0 to 0.2 per cent of the pixels behind it fall below the 3:1 that large type needs (the brightest highlights of the painted dress); the secondary title is 4.3:1 or better and the sentence under it 5.7:1 or better.
+- **Outline and SEO.** One H1, reading "ART FOR CAR LOVERS. MURALS, VEHICLE ART & LIVE PAINTING." (it was the discipline words alone: the keywords stay in the heading and the title tag still says them); the title, description, canonical, robots (indexable, no meta), Open Graph and sitemap entry are unchanged. The note's heading is an H2 ("AED 8,000–25,000+"), so the outline reads the same as the page's. The strip is a region with a list of five images, nothing focusable; the tab order is unchanged.
+- **Large default text.** 100, 150 and 200 per cent at 1440, 1280, 1024, 768, 600, 390 and 320 wide: no horizontal overflow and no text outside the screen anywhere. The marks are px, so a larger text size cannot push them into each other; the campaign line wraps instead of overflowing (its smallest size is 2.1 rem); the range may break after its dash and the currency drops above it when the line is too narrow. One corner remains and is not fixed: 200 per cent on a 320 px screen (effectively a 160 px layout), where the "BMW GROUP" and Majid Al Futtaim marks overlap by about 5 px.
+- **Reduced motion and no script.** Reduced motion: the type, the strip and the note are fully visible, no animation runs, no clip loads. Without script: everything is visible (the only motion scripts are the reveals and the clips).
+- **Tests.** `npm test` 121 of 121 (118 before: three new, five updated). The new ones pin the hero (one H1 holding both lines with a real space between them, the statement at least 2.5 times the secondary title at every size, sized from the width on phones), the strip (order, no heading, link, caption, card or carousel, files white, transparent, trimmed and under 25 KB, one size per mark in px, three and two on phones, one row from 768, the opening giving up the strip's height) and the note (the owner's words and en dash, directly before How we work, no tier, button or list, no gradient, no panel, the figure larger than a section title and the deposit at body size or smaller). The approved-copy fixture now includes the note and says money is spoken of only there and in the proposal step.
+
+## 5. Files
+
+New: `src/components/automotive/Brands.astro`, `src/components/automotive/Investment.astro`, `src/assets/automotive-brands/` (`bmw-group.webp`, `majid-al-futtaim.webp`, `louis-vuitton.webp`, `jetour.webp`, `icaur.webp`), `docs/ux-evidence/automotive-final-desktop-1440x900.jpg` and `automotive-final-mobile-390x844.jpg` (the first screen and the note; the entrances were forced to their end state because the headless browser renders at about 1.5 frames per second).
+
+Changed: `src/content/automotive.ts` (`hero.statementLines` replaces `hero.eyebrow`, `brands`, `investment`), `src/components/automotive/Hero.astro`, `src/pages/automotive.astro` (the two new sections), `src/styles/automotive.css` (the hero's type, the strip, the note, `--brands-h`), `src/components/automotive/Process.astro` (a comment), `tests/automotive.test.mjs`, `docs/AUTOMOTIVE-MEDIA.md`, this file and `docs/UX-REVIEW-LOG.md`.
+
+Unchanged: `WhatWeDo`, `Realism`, `Bmw`, `Exterior`, `Launch`, `About`, `Process` (markup), `ContactCta`, `AutoMedia`, `Tight`, `HeroLogo`, the veil and the opening picture, the video and motion scripts, `BaseLayout`, `global.css`, every other route, the copy of every existing block, the sitemap, canonical and internal link.
+
+## Decisions to confirm
+
+- **The H1 changed.** It was the discipline words alone; it now reads the campaign line first and the discipline words after it (one heading, two voices), so the positioning leads and the keywords stay in the H1. The alternative (the campaign line as the H1 and the discipline words as a paragraph) loses the keywords from the H1; the opposite (the old H1 and the campaign line as a decorative paragraph) puts the strongest statement outside the heading. Say if you want either.
+- **"BMW / AGMC".** The file supplied is the BMW GROUP wordmark; no AGMC mark was supplied, so AGMC is not on the strip (it is still named, as the activation partner and publisher, in the BMW section). Its alt text is "BMW Group".
+- **Showing the marks.** BMW, Louis Vuitton and Majid Al Futtaim are shown as clients; whether you may display their marks is your call and was not checked here (large brands often have rules).
+- **A claim in the strip's label.** The region is named "Brands we have worked with" for screen readers, because the strip shows them as proof; if any of the five is not that, the label is one line in `brands.ariaLabel`.
+- **The strip is dark.** The supplied marks are white, so they sit on the hero's ink and read as the foot of the opening; a light strip would need dark versions of the marks (an inverted copy works technically, but it would flatten any colour, and the five supplied are white only).
+- **The opening is shorter on screens** (by the strip's 128 px) so the strip is on the first screen; to restore the full-screen opening and have the strip appear on the first scroll, delete `- var(--brands-h)` from `.auto-hero-layout`.
+- **Where the note sits.** Immediately before How we work, as asked, which is after About ("ARTIST-LED. PROJECT-DRIVEN."); About is the one block between the projects and the note. To put the note between the projects and About, move `<Investment />` one line up in `src/pages/automotive.astro`.
+- **Typography of the copy.** "you're" has a straight apostrophe, like every other approved sentence on the page (the brief had a typographic one); the range has the en dash as supplied, never an em dash.
+- **Two things you did not ask for**, both for accessibility: the strip's label and its marks' alt text, and the stricter text-size behaviour above.
+
+## Local checks (final run, after the last edit)
+
+- `npm test`: 121 of 121.
+- `npx astro check` (run by the build): 0 errors, 0 warnings, 10 hints (unchanged).
+- `CONTENT_SOURCE=fixtures npm run build`: exit 0, 29 pages, sitemap unchanged at 28 URLs ("1 page(s) marked noindex and excluded", the 404), "all reachable from the homepage: true", "No problems found".
+- Real contexts on the production build and the dev server: text against the content module (58 of 58, in order, at four widths); heights at seven widths (above); no horizontal overflow at 100, 150 and 200 per cent text at seven widths; the strip at 320, 360, 390, 600, 650, 720, 768, 1024, 1280, 1440 and 1920; sharpness at 2x and 3x; contrast on the rendered pixels; loading, layout shift and console; reduced motion; no script.
+
+## Blocked or not verified
+
+- Lighthouse (the DevTools connector timed out again), so no audit score was produced for this pass; the accessibility checks above were done by reading the page's roles, names, alt text and outline and by measuring contrast.
+- Safari, iOS and Firefox rendering (only Chromium was available) and real devices: the strip and the note use plain flex, grid, `clamp()` and `calc()`, but they were not seen there. Analytics: nothing to verify against. The headless browser renders at about 1.5 frames per second, so the hero's entrance and the reveals were checked at their end state, not for smoothness.
+
+## Housekeeping
+
+- The marks were prepared with `sharp` (already in the project) from the files in `landing page autommotive` (outside the project, read-only, untouched); no tool, dependency or lockfile changed.
+- Nothing was committed, pushed or deployed. `.github/workflows/scheduled-rebuild.yml` (untracked) and `.impeccable/hook.cache.json` are not part of this work.
+
+## Exact next action
+
+1. Open the page on a laptop and a phone: the first screen (campaign line, strip), then scroll to the note before How we work, and answer "Decisions to confirm" (above all the H1 and the right to show the marks).
+2. Send real vector logos if they exist (each replaces one file).
+3. When you are happy, commit and push (nothing is committed); the live page will then change in three places: the hero's type, the strip and the note.

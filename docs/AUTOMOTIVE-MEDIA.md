@@ -88,6 +88,37 @@ All are re-encoded as progressive JPEG at quality 88, so the build's WebP step s
 
 `Hero.astro` writes it as one `<picture>`: a `<source media="(max-width: 767px)">` for the phone crop and an `<img>` for everything else, each with its own real width and height (so nothing shifts), `loading="eager"` and `fetchpriority="high"` on the `<img>`, both lists of WebP files built by `responsiveSet()` in `src/lib/automotive-media.ts`. On screens the picture fills the hero and is steered by `object-position` in `src/styles/automotive.css` (`.auto-hero-art img`, per breakpoint). A soft shade (`.auto-hero-veil`) sits under the type and the logo; the contrast of every line over it was measured on the rendered pixels at four widths.
 
+## The brand strip (five logos under the opening)
+
+`Brands.astro` draws five marks in the owner's order (BMW Group, Majid Al Futtaim, Louis Vuitton, Jetour, iCAUR) in one discreet row on the hero's own ink. They are **not media slots**: they live in `src/assets/automotive-brands/` (not in `src/assets/automotive/`, whose files the slot tests treat as pictures of the page), named `bmw-group.webp`, `majid-al-futtaim.webp`, `louis-vuitton.webp`, `jetour.webp` and `icaur.webp`, and `brands.items` in `src/content/automotive.ts` lists them (`id` = the file name without its extension, `alt` = the name a screen reader announces; neither is visible text).
+
+**What was supplied.** Five files called `bmw group logo.svg`, `maf logo.svg`, `lv logo.svg`, `jetour logo.svg` and `icaur logo.svg` (folder `landing page autommotive`, outside the project, read-only). They are not vector drawings: each is one **grayscale PNG (a white mark on black) embedded twice** in an SVG wrapper that turns the picture's brightness into transparency with a mask and an `feColorMatrix` filter. 34 to 127 KB each (400 KB in all), and the resolution is that of the embedded PNG:
+
+| Mark | Embedded PNG | The mark itself (after trimming) |
+| --- | --- | --- |
+| BMW Group (the supplied file reads "BMW GROUP"; there is no AGMC logo in the set) | 676 x 455 | 634 x 303 |
+| Majid Al Futtaim | 482 x 334 | 444 x 80 |
+| Louis Vuitton | 820 x 820 | 681 x 660 |
+| Jetour (with its "Drive Your Future" line, as supplied) | 1280 x 692 | 688 x 167 |
+| iCAUR | 2144 x 532 | 1994 x 355 |
+
+**What ships.** The very pixels, nothing redrawn or retouched: the PNG is extracted, its brightness becomes the alpha channel (so the result is a white mark on a transparent ground, the same picture the SVG painted), the empty margins are trimmed to the ink (threshold 6 of 255), the width is capped at 560 px with a Lanczos resample (only BMW, Louis Vuitton, Jetour and iCAUR were larger) and the file is written as **lossless WebP with alpha: 52 KB for the five** (BMW 17 KB, Louis Vuitton 16, Majid Al Futtaim 8, Jetour 6, iCAUR 4). It was not shipped as the supplied SVG because the SVG is a heavier container for the same raster (double the bytes, painted through a mask and a filter chain whose rendering in Safari could not be tested here), so a plain transparent image is lighter and has nothing to render differently from one browser to the next. If vector versions exist, send them: a real SVG per mark, trimmed to its ink, replaces the matching file without any layout change (sizes are set per mark in the stylesheet).
+
+```js
+// sharp, run from the project (the recipe for one mark; the five files differ only in name)
+const png = Buffer.from(svg.match(/data:image\/png;base64,([A-Za-z0-9+/=]+)/)[1], "base64");
+const { data, info } = await sharp(png).greyscale().raw().toBuffer({ resolveWithObject: true });
+// box = the rectangle of pixels brighter than 6 / 255 (the ink)
+const white = await sharp({ create: { width: info.width, height: info.height, channels: 3, background: "#ffffff" } })
+  .joinChannel(data, { raw: { width: info.width, height: info.height, channels: 1 } }).png().toBuffer();
+await sharp(white).extract(box).resize({ width: Math.min(box.width, 560), kernel: "lanczos3" })
+  .webp({ lossless: true, effort: 6 }).toFile(`src/assets/automotive-brands/${id}.webp`);
+```
+
+**Sharpness.** The marks are shown from 17 to 54 CSS px tall, which is two to three times denser than any screen in use: crisp on a 2x desktop and a 3x phone (checked on cropped captures at both). The thinnest source is Majid Al Futtaim (the mark is 80 px tall): it is 30 px tall on a 1440 px screen, so a 3x display would stretch it by about 13 per cent (a phone shows it 24 px tall, which is inside its resolution); nothing else comes close to a limit.
+
+**Sizing.** The five are sized one by one, in px, by `--h` in `src/styles/automotive.css` (the height of the mark itself, because each file is trimmed to its ink): BMW 35, Majid Al Futtaim 28, Louis Vuitton 50, Jetour 32, iCAUR 20, then scaled together by `--k` (0.86 on phones, 0.92 on large phones and tablets, 1 on screens, 1.08 from 1440 px, 1.2 from 1920 px). One common height would let the long marks dominate and one common area would blow up the square monogram; the sizes were chosen so that the weight of the five matches (iCAUR is a dense solid mark and is held the smallest; Louis Vuitton is a thin monogram and is held tall). They are px and not rem on purpose: a mark is a picture, and a larger default text size must not push five of them into each other. To add or replace a mark: put the trimmed file in the folder, add `{ id, alt }` to `brands.items`, import the file in `Brands.astro`, add a `.auto-brand--<id>` rule with its `--h`, and mind the phone layout (three marks on the first row, then two). Tests check the order, that each file is white, transparent, trimmed and under 25 KB, and that each mark has its own size.
+
 ## Video loading and playback
 
 All of it is `src/lib/automotive-video.ts`; the markup is `AutoMedia.astro`. There is no `autoplay` attribute and no `src` in the markup: a clip is a `<video muted loop playsinline preload="none">` with its URL in `data-src`, over its poster.

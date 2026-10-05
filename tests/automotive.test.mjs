@@ -38,7 +38,7 @@ const strings = [];
  */
 const approved = {
   hero: {
-    eyebrow: "ART FOR CAR LOVERS.",
+    statement: "ART FOR CAR LOVERS.",
     headline: "MURALS, VEHICLE ART & LIVE PAINTING.",
     intro: "Art-led projects for automotive spaces, brands, events and private collections."
   },
@@ -125,6 +125,16 @@ const approved = {
       "Alexis leads the creative direction and remains involved throughout production, whether painting himself or directing a larger team."
     ]
   },
+  /**
+   * Added after the nine blocks, at the owner's request: one editorial note between
+   * About and How we work. The range is written with an en dash, as supplied.
+   */
+  investment: {
+    figure: "AED 8,000–25,000+",
+    body: "Typical project investment, depending on scale, artistic complexity and production requirements.",
+    flexible: "If you're working within a defined budget, we can usually shape the format and scope around it.",
+    deposit: "A deposit is required to secure the project and begin creative development, typically 50%."
+  },
   process: {
     headline: "HOW WE WORK.",
     steps: [
@@ -174,13 +184,13 @@ const approvedStrings = [];
 const functionalLabels = ["CONTACT", "WHATSAPP", "EMAIL", "Dubai, UAE", "BEFORE", "→"];
 
 /** The words a visitor can read (alt text, addresses and technical keys are not among them). */
-const technicalKeys = new Set(["alt", "detailAlt", "beforeAlt", "href", "slot", "place"]);
+const technicalKeys = new Set(["alt", "detailAlt", "beforeAlt", "href", "slot", "place", "ariaLabel", "id"]);
 const visible = [];
 (function collectVisible(value, key = "") {
   if (typeof value === "string") {
     if (!technicalKeys.has(key)) visible.push(flat(value));
   } else if (Array.isArray(value)) {
-    if (key === "headlineLines") visible.push(flat(value.join(" ")));
+    if (key === "headlineLines" || key === "statementLines") visible.push(flat(value.join(" ")));
     else value.forEach((item) => collectVisible(item, key));
   } else if (value && typeof value === "object") {
     // A link is its label and its arrow, which read as one string.
@@ -247,8 +257,8 @@ test("the page template drops the site chrome", () => {
   assert.match(layout, /\{!minimal && <Footer \/>\}/);
 });
 
-test("the sections run in the approved copy's order, with no budget, range, Ferrari or workshop section", () => {
-  const order = ["Hero", "WhatWeDo", "Realism", "Bmw", "Exterior", "Launch", "About", "Process", "ContactCta"];
+test("the sections run in the approved copy's order, with the brand strip under the hero and the investment note before How we work", () => {
+  const order = ["Hero", "Brands", "WhatWeDo", "Realism", "Bmw", "Exterior", "Launch", "About", "Investment", "Process", "ContactCta"];
   const positions = order.map((name) => page.indexOf(`<${name} />`));
   positions.forEach((position, index) => assert.ok(position >= 0, `<${order[index]} /> is missing from the page`));
   assert.deepEqual([...positions].sort((a, b) => a - b), positions, "sections are out of order");
@@ -256,7 +266,8 @@ test("the sections run in the approved copy's order, with no budget, range, Ferr
   const used = new Set([...order, "AutoMedia", "Tight"]);
   for (const file of components) assert.ok(used.has(file.replace(".astro", "")), `${file} is not part of the page`);
   // The Ferrari is the opening picture, not a section of its own further down; there is no standalone range,
-  // no workshop / portraits section, no photoreal-only section and no project budgets section.
+  // no workshop / portraits section, no photoreal-only section and no project scope section. (Budget is the
+  // investment note, which sits directly before How we work: see the investment test.)
   for (const gone of ["Ferrari", "Range", "Workshop", "Photoreal", "Scope"]) {
     assert.ok(!components.includes(`${gone}.astro`), `${gone}.astro should not exist`);
     assert.ok(!page.includes(`<${gone} />`), `<${gone} /> should not be on the page`);
@@ -270,7 +281,7 @@ test("the copy is the approved copy, word for word, and nothing else is visible"
   const { hero, whatWeDo, realism, bmw, exterior, launch, about, process, contact } = automotive;
 
   // Block by block, in the content module.
-  assert.equal(hero.eyebrow, approved.hero.eyebrow);
+  assert.equal(flat(hero.statementLines.join(" ")), approved.hero.statement);
   assert.equal(flat(hero.headlineLines.join(" ")), approved.hero.headline);
   assert.equal(hero.intro, approved.hero.intro);
 
@@ -306,6 +317,8 @@ test("the copy is the approved copy, word for word, and nothing else is visible"
   assert.equal(about.headline, approved.about.headline);
   assert.deepEqual([...about.body], approved.about.body);
 
+  assert.deepEqual({ ...automotive.investment }, approved.investment);
+
   assert.equal(process.headline, approved.process.headline);
   assert.deepEqual(process.steps.map((step) => ({ title: step.title, body: step.body })), approved.process.steps);
 
@@ -329,13 +342,15 @@ test("the copy is the approved copy, word for word, and nothing else is visible"
 
 test("every approved block is drawn by its section, and no other wording is written into a template", () => {
   const drawn = {
-    "Hero.astro": ["hero.eyebrow", "hero.headlineLines", "hero.intro", "hero.jump"],
+    "Hero.astro": ["hero.statementLines", "hero.headlineLines", "hero.intro", "hero.jump"],
+    "Brands.astro": ["brands.items", "brands.ariaLabel", "brand.alt"],
     "WhatWeDo.astro": ["whatWeDo.headline", "whatWeDo.intro", "whatWeDo.offers", "offer.title", "offer.body"],
     "Realism.astro": ["realism.eyebrow", "realism.headline", "realism.body[0]", "realism.body[1]", "realism.art"],
     "Bmw.astro": ["bmw.eyebrow", "bmw.title", "bmw.body[0]", "bmw.body[1]", "bmw.also", "bmw.article.label", "bmw.article.arrow", "bmw.article.href"],
     "Exterior.astro": ["exterior.eyebrow", "exterior.title", "exterior.body", "exterior.beforeLabel"],
     "Launch.astro": ["launch.eyebrow", "launch.headline", "launch.jetour.name", "launch.jetour.body", "launch.icaur.name", "launch.icaur.body"],
     "About.astro": ["about.headline", "about.body"],
+    "Investment.astro": ["investment.figure", "investment.body", "investment.flexible", "investment.deposit"],
     "Process.astro": ["process.headline", "process.steps", "step.title", "step.body"],
     "ContactCta.astro": ["contact.headline", "contact.body[0]", "contact.body[1]", "contact.site.label", "contact.site.arrow", "contact.whatsapp", "contact.email", "contact.location"]
   };
@@ -373,7 +388,7 @@ test("paragraph text keeps its hyphenated words whole across lines, without chan
   }
   assert.equal(tightRuns("No compound here.").length, 1);
   // Every paragraph of the page goes through it (headlines do not: a long compound must stay free to wrap on a phone).
-  for (const file of ["Hero", "WhatWeDo", "Realism", "Bmw", "Exterior", "Launch", "About", "Process", "ContactCta"]) {
+  for (const file of ["Hero", "WhatWeDo", "Realism", "Bmw", "Exterior", "Launch", "About", "Investment", "Process", "ContactCta"]) {
     const source = read(`src/components/automotive/${file}.astro`);
     assert.match(source, /import Tight from "\.\/Tight\.astro"/, `${file} imports Tight`);
     assert.ok(!/<p[^>]*class="[^"]*auto-(?:lead|body|hero-intro)[^"]*"[^>]*>\{[^}]*\}<\/p>/.test(source), `${file} draws a paragraph without Tight`);
@@ -381,7 +396,7 @@ test("paragraph text keeps its hyphenated words whole across lines, without chan
   assert.match(css, /\.auto-tight\s*\{[^}]*white-space:\s*nowrap/);
 });
 
-test("no obsolete copy remains: no workshop heading, no budget section, no old pricing, no range", () => {
+test("no obsolete copy remains: no workshop heading, no old pricing or scope section, and money is spoken of only where the owner put it", () => {
   const joined = visible.join("\n");
   const sources = [...components.map((file) => read(`src/components/automotive/${file}`)), page, css].join("\n");
   for (const old of [
@@ -396,10 +411,12 @@ test("no obsolete copy remains: no workshop heading, no budget section, no old p
   // No visible text about workshops or Porsche (only the descriptions for screen readers speak of the pictures).
   assert.ok(!/porsche/i.test(joined), "a visible text names the Porsche artwork");
   assert.ok(!/workshop mural|workshop clip/i.test(joined), "a visible text names the workshop artwork");
-  // Budget is mentioned in one place, the proposal step; no price, range or currency is stated anywhere.
+  // Budget is spoken of in two places: the investment note (a defined budget) and the proposal step. The range
+  // and the currency are stated once, in the investment note, and nowhere else; no template or stylesheet writes one.
   const budget = visible.filter((text) => /budget/i.test(text));
-  assert.deepEqual(budget, [approved.process.steps[1].body], "budget is mentioned only in the proposal step");
-  assert.ok(!/\b(?:AED|USD|EUR|price|prices|pricing|investment)\b|\d,\d{3}|\$\d/i.test(joined), "no pricing is stated in any text");
+  assert.deepEqual(budget, [approved.investment.flexible, approved.process.steps[1].body], "budget is mentioned only in the investment note and the proposal step");
+  const money = visible.filter((text) => /\b(?:AED|USD|EUR|price|prices|pricing|investment)\b|\d,\d{3}|\$\d/i.test(text));
+  assert.deepEqual(money, [approved.investment.figure, approved.investment.body], "the range is stated only in the investment note");
   assert.ok(!/\bAED\b|\d,\d{3}\b/.test(sources), "no price or currency is written in a template or stylesheet");
 });
 
@@ -605,7 +622,7 @@ test("the opening picture is the Ferrari mural: wide for screens, a squarer crop
   assert.match(hero, /<img[\s\S]*width=\{wide\.image\.width\}[\s\S]*height=\{wide\.image\.height\}/);
   // The picture fills the screen on large displays, with the type over it.
   assert.match(css, /\.auto-hero-art\s*\{[^}]*position:\s*absolute;[^}]*inset:\s*0/);
-  // The approved hero is the eyebrow, the headline and the intro: no credit line sits over the artwork.
+  // The approved hero is the campaign line, the secondary title and the intro: no credit line sits over the artwork.
   assert.ok(!/hero\.credit|auto-hero-credit/.test(hero), "the old credit line is gone");
 });
 
@@ -826,4 +843,112 @@ test("the build check no longer exempts any page from the orphan rule", () => {
   const script = read("scripts/validate-content.mjs");
   assert.ok(!/OUTREACH_ROUTES|exemptOutreach/.test(script));
   assert.match(script, /orphan\. No path of links reaches it from the homepage/);
+});
+
+test("the hero reads the campaign line first: one H1 with both lines, the statement far larger than the secondary title", () => {
+  const hero = read("src/components/automotive/Hero.astro");
+  // One heading holds the campaign line and then the discipline words, so the H1 keeps the page's own keywords.
+  assert.equal([...hero.matchAll(/<h1\b/g)].length, 1);
+  const h1 = hero.match(/<h1[\s\S]*?<\/h1>/)?.[0] ?? "";
+  assert.ok(h1.includes("hero.statementLines") && h1.includes("hero.headlineLines"), "the heading draws both lines");
+  assert.ok(h1.indexOf("hero.statementLines") < h1.indexOf("hero.headlineLines"), "the campaign line comes first");
+  assert.match(h1, /class="[^"]*auto-hero-statement[^"]*"/);
+  assert.match(h1, /class="[^"]*auto-hero-sub[^"]*"/);
+  assert.ok(!/auto-eyebrow/.test(hero), "the campaign line is no longer a small label");
+  // The two block lines are separated by a real space, so the heading reads "ART FOR CAR LOVERS." (not "ART FORCAR LOVERS.") to assistive technology and search engines.
+  assert.match(h1, /hero\.statementLines\.map\(\(line, index\)[\s\S]*index < hero\.statementLines\.length - 1 && " "/);
+  // It is set in two lines at every width, and it is the largest type on the page.
+  assert.match(css, /\.auto-hero-statement \.auto-line\s*\{[^}]*display:\s*block/, "two lines at every width");
+  const sizes = (selector) =>
+    [...css.matchAll(new RegExp(`(?:^|\\n)\\s*${selector.replaceAll(".", "\\.")}\\s*\\{([^}]*)\\}`, "g"))]
+      .map((match) => match[1].match(/font-size:\s*clamp\([^,]+,[^,]+,\s*([\d.]+)rem\)/)?.[1])
+      .filter(Boolean)
+      .map(Number);
+  const statement = sizes(".auto-hero-statement");
+  const secondary = sizes(".auto-hero-sub");
+  assert.equal(statement.length, 3, "the campaign line is sized for phones, tablets and screens");
+  assert.equal(secondary.length, 3, "and so is the secondary title");
+  statement.forEach((size, step) => assert.ok(size >= secondary[step] * 2.5, `step ${step}: ${size}rem is not clearly larger than ${secondary[step]}rem`));
+  assert.ok(Math.max(...statement) > maxRem(".auto-title-lg"), "the campaign line is larger than any section title");
+  // On a phone the size follows the width between the page margins, so "CAR LOVERS." never reaches the screen edge.
+  assert.match(css, /\.auto-hero-statement\s*\{[^}]*calc\(\(100vw - 2 \* var\(--gutter\)\) \/ [\d.]+\)/);
+});
+
+test("the brand strip is five trimmed logos in the owner's order: no heading, link, caption, card or carousel, and on the first screen", async () => {
+  const { brands } = automotive;
+  assert.deepEqual(brands.items.map((brand) => brand.id), ["bmw-group", "majid-al-futtaim", "louis-vuitton", "jetour", "icaur"]);
+  assert.equal(new Set(brands.items.map((brand) => brand.alt)).size, brands.items.length, "each logo has its own name for screen readers");
+  const markup = read("src/components/automotive/Brands.astro");
+  const body = markup.replace(/^---[\s\S]*?---/, "").replace(/<!--[\s\S]*?-->/g, "");
+  assert.ok(!/<h[1-6]|<a\b|<svg|<video|<figcaption|<p\b|<button/.test(body), "the marks are the whole strip: no heading, link, caption or text");
+  assert.match(body, /<ul class="auto-brands-list" role="list">/);
+  assert.match(body, /alt=\{brand\.alt\}/);
+  assert.match(body, /loading="lazy"/);
+  assert.ok(!/loading="eager"/.test(body), "only the opening picture is eager");
+  // The files are the supplied marks: white on a transparent ground, trimmed to the ink (so a height is the mark's own height) and light.
+  for (const { id } of brands.items) {
+    const path = `src/assets/automotive-brands/${id}.webp`;
+    assert.ok(statSync(path).size <= 25 * 1024, `${id} is over 25 KB`);
+    const { data, info } = await sharp(path).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    const alpha = (x, y) => data[(y * info.width + x) * 4 + 3];
+    let top = false;
+    let bottom = false;
+    let left = false;
+    let right = false;
+    for (let x = 0; x < info.width; x++) {
+      top ||= alpha(x, 0) > 6;
+      bottom ||= alpha(x, info.height - 1) > 6;
+    }
+    for (let y = 0; y < info.height; y++) {
+      left ||= alpha(0, y) > 6;
+      right ||= alpha(info.width - 1, y) > 6;
+    }
+    assert.ok(top && bottom && left && right, `${id} is trimmed to its ink: the mark touches all four edges`);
+    for (let at = 0; at < data.length; at += 4) {
+      if (data[at + 3] > 200) assert.ok(data[at] >= 250 && data[at + 1] >= 250 && data[at + 2] >= 250, `${id} is white where it is opaque`);
+    }
+    // Each mark is sized on its own (never one common height), by a `--h` the stylesheet sets for it.
+    assert.match(css, new RegExp(`\\.auto-brand--${id}\\s*\\{[^}]*--h:\\s*[\\d.]+px`), `${id} has its own size, in px: a mark does not grow with the default text size`);
+  }
+  // No card, box, rule, shadow or filter around a mark; nothing moves.
+  const marks = [...css.matchAll(/(?:^|\n)\.auto-brand(?: img)?\s*\{([^}]*)\}/g)].map((match) => match[1]).join("\n");
+  assert.ok(marks.length > 50 && !/background|border|padding|shadow|radius|filter|animation|transition/.test(marks), "a mark has no box around it");
+  const stripCss = css.slice(css.indexOf("/* ----------------------------------------------------------------- brands */"), css.indexOf("/* ------------------------------------------------------------ what we do */"));
+  assert.ok(stripCss.length > 500 && !/overflow-x|scroll|@keyframes|animation/.test(stripCss), "no carousel and nothing that moves");
+  // Phones: three and two, never one row of five; tablets and screens: one row.
+  assert.match(css, /\.auto-brands-list\s*\{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*repeat\(3, auto\)/);
+  assert.match(css, /@media \(min-width: 768px\) \{\s*\.auto-brands-list \{[^}]*display:\s*flex;[^}]*justify-content:\s*space-between/);
+  // On screens the opening gives up the strip's height, so the strip is on the first screen.
+  assert.match(css, /--brands-h:\s*[\d.]+px/);
+  assert.match(css, /\.auto-hero-layout\s*\{[^}]*min-height:\s*max\(34rem, min\(calc\(100svh - var\(--brands-h\)\), 62rem\)\)/);
+  assert.match(css, /\.auto-brands\s*\{[^}]*min-height:\s*var\(--brands-h\)/);
+});
+
+test("the investment note is the owner's words directly before How we work: a ruled editorial note, not a pricing card", () => {
+  const { investment } = automotive;
+  assert.equal(investment.figure, "AED 8,000\u201325,000+");
+  assert.ok(!/\u2014/.test(Object.values(investment).join(" ")), "no em dash: the range uses an en dash");
+  assert.match(investment.deposit, /typically 50%\.$/);
+  // Directly before How we work, after About, with nothing between the note and the process.
+  const note = page.indexOf("<Investment />");
+  const process = page.indexOf("<Process />");
+  assert.ok(page.indexOf("<About />") < note && note < process);
+  assert.equal(page.slice(note + "<Investment />".length, process).trim(), "", "the note is immediately before How we work");
+  const markup = read("src/components/automotive/Investment.astro");
+  const body = markup.replace(/^---[\s\S]*?---/, "").replace(/<!--[\s\S]*?-->/g, "");
+  assert.ok(!/<a\b|<button|<form|<ul|<ol|<li\b|<table|<svg|<img|<picture/.test(body), "no tier, feature list, button, link or picture");
+  // The figure is the section's heading, in two parts (a small currency and the large range); the sentences are paragraphs.
+  assert.match(body, /<h2 id="auto-invest-title"[^>]*>[\s\S]*auto-invest-unit[\s\S]*auto-invest-amount[\s\S]*<\/h2>/);
+  assert.equal([...body.matchAll(/<p\b/g)].length, 3, "the explanation, the defined-budget sentence and the deposit");
+  const section = css.slice(css.indexOf("/* ------------------------------------------------------------- investment */"), css.indexOf("/* ---------------------------------------------------------------- process */"));
+  assert.ok(section.length > 500);
+  assert.ok(!/gradient|box-shadow|border-radius|background-image/.test(section), "no gradient, shadow or card");
+  assert.ok(!/\.auto-invest\s*\{[^}]*background/.test(section), "the note sits on the page's own paper");
+  // The figure is the anchor and the deposit is the quietest line of the note.
+  const rems = (pattern) => [...section.matchAll(pattern)].map((match) => Number(match[1]));
+  const figure = rems(/\.auto-invest-figure\s*\{[^}]*font-size:\s*clamp\([^,]+,[^,]+,\s*([\d.]+)rem\)/g);
+  const deposit = rems(/\.auto-invest-deposit\s*\{[^}]*font-size:\s*([\d.]+)rem/g);
+  assert.ok(figure.length >= 3 && Math.max(...figure) > maxRem(".auto-title-lg"), "the figure is larger than a section title");
+  assert.ok(deposit.length >= 2 && Math.max(...deposit) <= 1, "the deposit is set at body size or smaller, under the explanation");
+  assert.match(section, /\.auto-invest-unit\s*\{[^}]*font-size:\s*0\.\d+em/, "the currency is smaller than the figure");
 });

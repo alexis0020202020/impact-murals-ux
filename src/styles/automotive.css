@@ -34,6 +34,8 @@
   --surface-soft: color-mix(in srgb, var(--color-sand) 55%, var(--color-paper));
   /* Distance from the content edge to the edge of the page, for a picture that bleeds. */
   --bleed: calc(max(0px, (100vw - 1800px) / 2) + var(--gutter));
+  /* The brand strip's height on screens (px, like the marks in it): the opening is that much shorter, so the strip is on the first screen. */
+  --brands-h: 128px;
   position: relative;
   /* clip, not hidden: nothing bleeds sideways, and nothing here is sticky. */
   overflow-x: clip;
@@ -526,8 +528,35 @@
   padding: 0 var(--gutter) clamp(2.5rem, 9vw, 4rem);
 }
 
-.auto-hero-title {
-  margin-top: 1.1rem;
+/*
+  One heading in two voices. The campaign line is the strongest statement on the
+  page, two lines at every width ("ART FOR" over "CAR LOVERS."). Under it, the
+  discipline words are a secondary title: the same display face at a fraction of
+  the size, a touch lighter and looser, so it reads as a title and not a caption.
+*/
+.auto-hero-heading {
+  margin: 0;
+}
+
+.auto-hero-statement {
+  display: block;
+  /* "CAR LOVERS." is about 5.9 em wide: the size follows the width between the page margins (with a little spare), so it never reaches the screen edge. */
+  font-size: clamp(2.1rem, calc((100vw - 2 * var(--gutter)) / 6.3), 4.9rem);
+}
+
+.auto-hero-statement .auto-line {
+  display: block;
+}
+
+.auto-hero-sub {
+  display: block;
+  margin-top: 1rem;
+  font-size: clamp(1.2rem, 5.6vw, 1.55rem);
+  font-weight: 560;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: color-mix(in srgb, var(--color-paper-bright) 92%, transparent);
+  text-wrap: balance;
 }
 
 .auto-hero-intro {
@@ -537,11 +566,6 @@
   font-size: 1.0625rem;
   line-height: 1.55;
   color: color-mix(in srgb, var(--color-paper) 88%, transparent);
-}
-
-/* Small type over a photograph: full paper, so it holds on the lightest part of the picture. */
-.auto-hero .auto-eyebrow {
-  color: var(--color-paper-bright);
 }
 
 @media (min-width: 768px) {
@@ -561,6 +585,15 @@
     margin-top: -6rem;
   }
 
+  .auto-hero-statement {
+    font-size: clamp(4.2rem, 10.4vw, 6.9rem);
+  }
+
+  .auto-hero-sub {
+    margin-top: 1.15rem;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+  }
+
   .auto-hero-intro {
     margin-top: 1.5rem;
     font-size: 1.25rem;
@@ -574,7 +607,7 @@
 */
 @media (min-width: 1024px) {
   .auto-hero-layout {
-    min-height: max(34rem, min(100svh, 62rem));
+    min-height: max(34rem, min(calc(100svh - var(--brands-h)), 62rem));
     justify-content: space-between;
     padding: 1.75rem var(--bleed) clamp(2.25rem, 6svh, 4.5rem);
   }
@@ -653,14 +686,13 @@
     );
   }
 
-  .auto-hero-title {
-    margin-top: 1.4rem;
-    font-size: clamp(3.2rem, 5.1vw, 7rem);
+  .auto-hero-statement {
+    font-size: clamp(4.6rem, 7.7vw, 9.5rem);
   }
 
-  .auto-hero-title .auto-line {
-    display: block;
-    white-space: nowrap;
+  .auto-hero-sub {
+    margin-top: 1.3rem;
+    font-size: clamp(1.55rem, 2.35vw, 3.1rem);
   }
 
   .auto-hero-intro {
@@ -686,6 +718,136 @@
 .auto-open {
   animation: auto-rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   animation-delay: calc(var(--i, 0) * 90ms + 60ms);
+}
+
+/* ----------------------------------------------------------------- brands */
+
+/*
+  The credits under the opening frame: five white marks in one quiet row on the
+  hero's own ink, so the strip reads as the foot of the opening and not as a
+  section of its own. No boxes, cards, shadows or rules around the marks, no
+  heading, nothing that moves.
+
+  Each file is trimmed to its ink, so `--h` is the height of the mark itself. The
+  five are sized one by one (never one common height, never one common area): the
+  tall, square and heavy marks are held smaller than the long, thin ones, which
+  is what makes their weight match. `--k` scales all five together by screen.
+  Sizes are in px, not rem: a mark is a picture, and a larger default text size
+  must not push five of them into each other (browser zoom still scales them).
+  The marks keep a little transparency so they sit back from the type above.
+*/
+.auto-brands {
+  position: relative;
+  /* One pixel over the opening's foot: two blocks of one colour can show a hairline of the page behind them when the opening ends between two pixels. */
+  margin-top: -1px;
+  padding-block: clamp(30px, 3.6vw, 48px);
+  background: var(--color-ink);
+  color: var(--color-paper-bright);
+  /* White marks on ink stay as drawn in Windows high contrast (the system would swap the ink for a canvas that may be white). */
+  forced-color-adjust: none;
+}
+
+/*
+  Phones: three marks, then two, each row flush to both margins (a single row of
+  five would make every mark a few pixels tall).
+*/
+.auto-brands-list {
+  --k: 0.86;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: space-between;
+  align-items: center;
+  row-gap: 30px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.auto-brand {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.auto-brand img {
+  display: block;
+  width: auto;
+  max-width: none;
+  height: calc(var(--h) * var(--k));
+  opacity: 0.84;
+}
+
+.auto-brand--bmw-group {
+  --h: 35px;
+  justify-self: start;
+}
+
+.auto-brand--majid-al-futtaim {
+  --h: 28px;
+  justify-self: center;
+}
+
+.auto-brand--louis-vuitton {
+  --h: 50px;
+  justify-self: end;
+}
+
+.auto-brand--jetour {
+  --h: 32px;
+  grid-column: 1;
+  justify-self: start;
+}
+
+.auto-brand--icaur {
+  --h: 20px;
+  grid-column: 3;
+  justify-self: end;
+}
+
+/* Large phones: the same three and two, a little larger. */
+@media (min-width: 600px) {
+  .auto-brands-list {
+    --k: 0.92;
+  }
+}
+
+/* Tablets: one row of five, the free width shared evenly between the marks (below this width the gaps would be about a third of a mark's own width). */
+@media (min-width: 768px) {
+  .auto-brands-list {
+    display: flex;
+    justify-content: space-between;
+    row-gap: 0;
+  }
+}
+
+/* Screens: the strip is a fixed height, which the opening above gives up (`--brands-h`), so it is on the first screen. */
+@media (min-width: 1024px) {
+  .auto-brands {
+    display: flex;
+    align-items: center;
+    min-height: var(--brands-h);
+    padding-block: 0;
+  }
+
+  .auto-brands .auto-wrap {
+    flex: 1;
+  }
+
+  .auto-brands-list {
+    --k: 1;
+  }
+}
+
+@media (min-width: 1440px) {
+  .auto-brands-list {
+    --k: 1.08;
+  }
+}
+
+@media (min-width: 1920px) {
+  .auto-brands-list {
+    --k: 1.2;
+  }
 }
 
 /* ------------------------------------------------------------ what we do */
@@ -1564,6 +1726,149 @@
   .auto-about-copy {
     grid-column: 8 / span 5;
     grid-row: 2;
+  }
+}
+
+/* ------------------------------------------------------------- investment */
+
+/*
+  An editorial note between About and How we work, ruled off at its head like the
+  process section under it, so the two rules and the note between them read as
+  three lines of one ledger. The range is the anchor; the three sentences are
+  set quietly beside it (under it on a phone). No card, tier, list or button.
+*/
+.auto-invest {
+  padding-block: calc(var(--pad) * 0.5);
+}
+
+.auto-invest-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 1.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--hair);
+}
+
+/* The currency is set small and the figure large; the currency may drop above the figure when the line is too narrow for both. */
+.auto-invest-figure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.32em;
+  font-size: clamp(2rem, 10.6vw, 4rem);
+  line-height: 1;
+}
+
+.auto-invest-unit {
+  font-size: 0.36em;
+  font-weight: 560;
+  letter-spacing: 0.06em;
+  color: var(--color-paper-dim);
+}
+
+/*
+  Looser than the display default: at this size the commas and the dash of a
+  tightly tracked range touch the digits. It stays on one line at every normal
+  size; with a very large default text size it may break after its dash.
+*/
+.auto-invest-amount {
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+.auto-invest-copy {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.auto-invest-copy .auto-body {
+  max-width: 40ch;
+}
+
+/* The deposit: a footnote to the figure, under a ruled line with the logo's signal tick. */
+.auto-invest-deposit {
+  position: relative;
+  max-width: 40ch;
+  margin-top: 0.6rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--hair);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--color-paper-dim);
+  text-wrap: pretty;
+}
+
+.auto-invest-deposit::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 2.25rem;
+  height: 2px;
+  background: var(--color-signal);
+}
+
+/* Tablets: the figure across the page, the sentence that explains it at the left and the two that qualify it at the right. */
+@media (min-width: 768px) {
+  .auto-invest-layout {
+    padding-top: clamp(1.75rem, 3vw, 2.75rem);
+    row-gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .auto-invest-figure {
+    font-size: clamp(3.4rem, 8.2vw, 6rem);
+  }
+
+  .auto-invest-copy {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--gap);
+    row-gap: 1rem;
+  }
+
+  .auto-invest-copy .auto-lead {
+    grid-row: 1 / span 2;
+  }
+
+  .auto-invest-copy .auto-body,
+  .auto-invest-deposit {
+    grid-column: 2;
+  }
+
+  .auto-invest-deposit {
+    margin-top: 0.6rem;
+    font-size: 1rem;
+  }
+}
+
+/* Screens: the figure at the left, the words beside it on the same 12 columns as the rest of the page. */
+@media (min-width: 1024px) {
+  .auto-invest-layout {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    row-gap: 0;
+    align-items: start;
+  }
+
+  .auto-invest-figure {
+    grid-column: 1 / span 7;
+    font-size: clamp(3.2rem, 5.4vw, 7.25rem);
+  }
+
+  /* On the column where the words of About begin, so the two sections share an edge; one column of sentences again. */
+  .auto-invest-copy {
+    grid-column: 8 / span 5;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .auto-invest-copy .auto-lead {
+    grid-row: auto;
+  }
+
+  .auto-invest-copy .auto-body,
+  .auto-invest-deposit {
+    grid-column: auto;
   }
 }
 

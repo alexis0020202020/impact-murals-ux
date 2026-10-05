@@ -13,6 +13,11 @@
  * a private commission, never a client; AGMC is named only as the activation
  * partner and the publisher of the linked article.
  *
+ * Two things were added to the nine blocks afterwards, at the owner's request:
+ * the brand strip under the hero (five logos and no wording: `brands` only holds
+ * what a screen reader announces) and the investment note between About and How
+ * we work (`investment`, the owner's own words).
+ *
  * Every slot below is backed by a real file (see src/lib/automotive-media.ts and
  * docs/AUTOMOTIVE-MEDIA.md). A slot with no file fails the build, so a page can
  * never ship with a hole where a picture should be.
@@ -68,17 +73,41 @@ export const automotiveSeo = {
 
 /** 01. Hero */
 export const hero = {
-  eyebrow: "ART FOR CAR LOVERS.",
   /**
-   * The headline as three short lines (a list of the three disciplines). The
-   * non-breaking spaces keep "VEHICLE ART" and "& LIVE" together when a narrow
-   * phone has to wrap them.
+   * The campaign line, the strongest statement on the page, as two lines so it
+   * breaks the same way at every width ("ART FOR" over "CAR LOVERS."). Read
+   * together it is the approved line "ART FOR CAR LOVERS.".
+   */
+  statementLines: ["ART FOR", "CAR LOVERS."],
+  /**
+   * The three disciplines, set directly under it as the secondary title (one run
+   * of words that wraps by itself). The non-breaking spaces keep "VEHICLE ART"
+   * and "& LIVE" together when a narrow phone has to wrap them.
    */
   headlineLines: ["MURALS,", "VEHICLE ART", "& LIVE PAINTING."],
   intro: "Art-led projects for automotive spaces, brands, events and private collections.",
   /** Jump link to the contact block, the only navigation on a page with no site header. */
   jump: "CONTACT",
   alt: "Ultra-realistic black-and-white Ferrari mural: a woman in a long white dress between a white horse and a black horse at two stone windows, with a sports car in front"
+} as const;
+
+/**
+ * Brand strip, directly under the hero: five logos, no heading and no caption.
+ * `id` is the file in src/assets/automotive-brands/ (see docs/AUTOMOTIVE-MEDIA.md)
+ * and `alt` is the name a screen reader announces; `ariaLabel` names the strip for
+ * assistive technology. None of these is visible text. The order is the owner's:
+ * BMW first for automotive relevance, Majid Al Futtaim and Louis Vuitton for the
+ * level of the clients, then Jetour and iCAUR back into automotive.
+ */
+export const brands = {
+  ariaLabel: "Brands we have worked with",
+  items: [
+    { id: "bmw-group", alt: "BMW Group" },
+    { id: "majid-al-futtaim", alt: "Majid Al Futtaim" },
+    { id: "louis-vuitton", alt: "Louis Vuitton" },
+    { id: "jetour", alt: "Jetour" },
+    { id: "icaur", alt: "iCAUR" }
+  ]
 } as const;
 
 /** 02. What we do */
@@ -231,7 +260,21 @@ export const about = {
   alt: "The studio at work: an artist spray-painting a large mural, then the finished wall, with the people gathered around it"
 } as const;
 
-/** 08. How we work. Budget is mentioned here, in the proposal step, and nowhere else. */
+/**
+ * Investment, between About and How we work (added after the nine approved
+ * blocks, at the owner's request). The owner's own words, kept exactly: the
+ * range is written with an en dash, as supplied. The figure is the anchor of the
+ * block; the three sentences under it are the sentence that explains it, the
+ * flexibility around a defined budget, and the deposit.
+ */
+export const investment = {
+  figure: "AED 8,000–25,000+",
+  body: "Typical project investment, depending on scale, artistic complexity and production requirements.",
+  flexible: "If you're working within a defined budget, we can usually shape the format and scope around it.",
+  deposit: "A deposit is required to secure the project and begin creative development, typically 50%."
+} as const;
+
+/** 08. How we work. The proposal step is where the budget is agreed; the range is in the investment note before it. */
 export const process = {
   headline: "HOW WE WORK.",
   steps: [

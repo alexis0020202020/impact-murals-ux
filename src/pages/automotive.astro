@@ -5,14 +5,16 @@
  * Built from the "Impact Murals: Automotive" deck and translated for the web:
  * natural scrolling, each section as tall as it needs to be, no slides. Sent
  * by email or WhatsApp to people who have not heard of the studio, so it opens
- * on the work (a Ferrari mural, edge to edge), then says what the studio does
+ * on the work (a Ferrari mural, edge to edge) under a campaign line, with a
+ * discreet strip of brand marks right under it, then says what the studio does
  * and goes through proof (automotive realism, a BMW painted live, a
- * building-scale mural, two launches), to who is behind it, how a project
- * works (budget is mentioned there, in the proposal step) and how to reach the
- * studio. The artwork leads; type supports it. The range of styles is shown by
- * the projects themselves, not by a section of its own. The copy is the approved
- * final copy, kept word for word in src/content/automotive.ts, in the order of
- * its nine blocks.
+ * building-scale mural, two launches), to who is behind it, what a project
+ * typically costs (one editorial note), how a project works and how to reach
+ * the studio. The artwork leads; type supports it. The range of styles is shown
+ * by the projects themselves, not by a section of its own. The copy is the
+ * approved final copy, kept word for word in src/content/automotive.ts, in the
+ * order of its nine blocks, plus the investment note the owner added between
+ * About and How we work.
  *
  * Indexable: it is in the route registry (src/lib/routes.ts, so in the core
  * sitemap), canonical on the www host (AUTOMOTIVE_CANONICAL), and linked
@@ -27,12 +29,14 @@ import { getImage } from "astro:assets";
 import "@/styles/automotive.css";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Hero from "@/components/automotive/Hero.astro";
+import Brands from "@/components/automotive/Brands.astro";
 import WhatWeDo from "@/components/automotive/WhatWeDo.astro";
 import Realism from "@/components/automotive/Realism.astro";
 import Bmw from "@/components/automotive/Bmw.astro";
 import Exterior from "@/components/automotive/Exterior.astro";
 import Launch from "@/components/automotive/Launch.astro";
 import About from "@/components/automotive/About.astro";
+import Investment from "@/components/automotive/Investment.astro";
 import Process from "@/components/automotive/Process.astro";
 import ContactCta from "@/components/automotive/ContactCta.astro";
 import { automotiveSeo } from "@/content/automotive";
@@ -65,12 +69,14 @@ const preview = await getImage({
 >
   <div class="auto-page">
     <Hero />
+    <Brands />
     <WhatWeDo />
     <Realism />
     <Bmw />
     <Exterior />
     <Launch />
     <About />
+    <Investment />
     <Process />
     <ContactCta />
   </div>

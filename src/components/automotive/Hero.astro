@@ -10,6 +10,12 @@ import Tight from "./Tight.astro";
   reads on any part of the photograph. One still, never a clip, so nothing but
   the title and this picture is on the critical path.
 
+  The type reads in this order: the campaign line (the strongest statement on
+  the page: this is art made for people who care about cars), then what the
+  studio does as a secondary title in a restrained size, then the sentence under
+  them. The first two are one heading, so a reader (and a search engine) meets
+  both the positioning and the discipline words in the page's one H1.
+
   Two crops of the same wall (art direction, one request each): a wide one for
   tablets and screens (the whole scene, steered by object-position), a squarer
   one for phones (the woman and both horses, which is the scene), where the
@@ -32,14 +38,24 @@ const [wideSet, narrowSet] = await Promise.all([
 
     <div class="auto-hero-foot">
       <div class="auto-hero-copy">
-        <p class="auto-eyebrow auto-open" style="--i:1">{hero.eyebrow}</p>
-        <h1 id="auto-hero-title" class="headline-display auto-title-hero auto-hero-title auto-open" style="--i:2">
-          {hero.headlineLines.map((line, index) => (
-            <>
-              <span class="auto-line">{line}</span>
-              {index < hero.headlineLines.length - 1 && " "}
-            </>
-          ))}
+        <h1 id="auto-hero-title" class="auto-hero-heading">
+          <span class="headline-display auto-title-hero auto-hero-statement auto-open" style="--i:1">
+            {hero.statementLines.map((line, index) => (
+              <>
+                <span class="auto-line">{line}</span>
+                {index < hero.statementLines.length - 1 && " "}
+              </>
+            ))}
+          </span>
+          {" "}
+          <span class="headline-display auto-hero-sub auto-open" style="--i:2">
+            {hero.headlineLines.map((line, index) => (
+              <>
+                <span class="auto-line">{line}</span>
+                {index < hero.headlineLines.length - 1 && " "}
+              </>
+            ))}
+          </span>
         </h1>
         <p class="auto-hero-intro auto-open" style="--i:3"><Tight text={hero.intro} /></p>
       </div>

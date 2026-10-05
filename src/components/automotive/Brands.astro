@@ -1,0 +1,46 @@
+---
+import type { ImageMetadata } from "astro";
+import { brands } from "@/content/automotive";
+import bmwGroup from "@/assets/automotive-brands/bmw-group.webp";
+import majidAlFuttaim from "@/assets/automotive-brands/majid-al-futtaim.webp";
+import louisVuitton from "@/assets/automotive-brands/louis-vuitton.webp";
+import jetour from "@/assets/automotive-brands/jetour.webp";
+import icaur from "@/assets/automotive-brands/icaur.webp";
+
+/*
+  A discreet credibility strip under the hero: five marks in one quiet row, in
+  the owner's order. No heading, no caption, no card, no box, no carousel; the
+  marks are the supplied logos (see docs/AUTOMOTIVE-MEDIA.md for how the files
+  were prepared), white on the hero's own ink, so the strip reads as the foot of
+  the opening and not as a section of its own.
+
+  Each file is trimmed to its ink, so the displayed height of a mark IS the
+  height of the mark, and the five are sized one by one (`--h` in the
+  stylesheet) so no logo dominates because of its proportions: the tall, square
+  and heavy marks are held smaller, the long thin ones are not made to shrink.
+  The marks are lazy like every other picture below the opening; the strip sits
+  just under the fold, so they arrive before a visitor reaches them.
+*/
+const logos: Record<(typeof brands.items)[number]["id"], ImageMetadata> = {
+  "bmw-group": bmwGroup,
+  "majid-al-futtaim": majidAlFuttaim,
+  "louis-vuitton": louisVuitton,
+  jetour,
+  icaur
+};
+---
+
+<section class="auto-brands surface-dark" aria-label={brands.ariaLabel}>
+  <div class="auto-wrap">
+    <ul class="auto-brands-list" role="list">
+      {brands.items.map((brand) => {
+        const logo = logos[brand.id];
+        return (
+          <li class={`auto-brand auto-brand--${brand.id}`}>
+            <img src={logo.src} width={logo.width} height={logo.height} alt={brand.alt} loading="lazy" decoding="async" />
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</section>

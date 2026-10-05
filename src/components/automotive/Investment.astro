@@ -1,0 +1,31 @@
+---
+import { investment } from "@/content/automotive";
+import Tight from "./Tight.astro";
+
+/*
+  The investment note: what a project typically costs, said once, plainly, between
+  who is behind the work and how a project runs. It is an editorial note, not a
+  pricing component: the range is the anchor (the currency set smaller, the
+  figure large), the sentence that explains it and the one about a defined budget
+  stand beside it, and the deposit closes the note under a ruled line, in the
+  quieter voice of a footnote. No tiers, no list of features, no button, no card.
+  The figure is the section's heading, so the outline reads the same as the page.
+*/
+const [currency, ...amount] = investment.figure.split(" ");
+---
+
+<section class="auto-section auto-invest" aria-labelledby="auto-invest-title">
+  <div class="auto-wrap">
+    <div class="auto-invest-layout">
+      <h2 id="auto-invest-title" class="headline-display auto-invest-figure" data-auto-reveal>
+        <span class="auto-invest-unit">{currency}</span>{" "}<span class="auto-invest-amount">{amount.join(" ")}</span>
+      </h2>
+
+      <div class="auto-invest-copy" data-auto-reveal>
+        <p class="auto-lead"><Tight text={investment.body} /></p>
+        <p class="auto-body"><Tight text={investment.flexible} /></p>
+        <p class="auto-invest-deposit"><Tight text={investment.deposit} /></p>
+      </div>
+    </div>
+  </div>
+</section>

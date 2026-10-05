@@ -1274,3 +1274,98 @@ Seventh brief on the route and a deliberately narrow one: the page is "close to 
 - Evidence: `docs/ux-evidence/automotive-density-desktop-1440x900-sequence.jpg` and `automotive-density-mobile-390x844-sequence.jpg` (end states: the headless browser renders at about 1.5 frames per second, so the entrances were forced to their end).
 - Outcome: PASS for everything verifiable here. BLOCKED, not passed: Lighthouse (the DevTools connector timed out), iOS Safari and real-device clips, Firefox and Safari rendering, HEVC playback on a browser without HEVC support, analytics, smoothness of the entrance animations, the owner's answers to the decisions in the handoff.
 - Cycles completed in this part: 10 (the 15-cycle minimum of the overall pass was met in earlier parts; nothing here was added to fill a count).
+
+---
+
+# Part 20: /automotive final refinement pass (brief received 5 October 2026)
+
+Eighth brief on the route and a narrow one: the page is structurally approved, so no redesign and no rewriting. Three integrations: reverse the hero's hierarchy ("ART FOR CAR LOVERS." strongest, the discipline words a restrained secondary title), a discreet strip of five supplied logos directly under the hero, and an investment note ("AED 8,000–25,000+" and three sentences) directly before How we work. The brief asked for a check at desktop, tablet and mobile widths and did not ask to publish.
+
+## Baseline and decisions
+
+- **Baseline.** The page as deployed (`0d87e2e`) served from `dist` on a preview server, measured before any change at seven widths: 7,670 px at 1440 x 900 (the opening 900 px, the title 73 px), 9,637 at 390 on a phone.
+- **The five "SVG" files were opened before anything was drawn.** They are grayscale PNGs wrapped in SVG masks, not vector paths (details in cycle 01).
+- **One H1, two voices.** The campaign line and the discipline words are two spans of the page's single H1, so the positioning leads and the keywords stay in the heading (the title tag still says them).
+- **Where the note goes.** Immediately before How we work, which is after About; the order of the rest is untouched.
+- **The strip is dark.** The supplied marks are white; on the hero's own ink they read as the foot of the opening.
+- **Not touched.** `WhatWeDo`, `Realism`, `Bmw`, `Exterior`, `Launch`, `About`, `ContactCta`, `AutoMedia`, `HeroLogo`, the veil, the opening picture, the scripts, `global.css`, every other route.
+
+## Cycles
+
+### Cycle 01: The supplied logos
+
+- Observation: each "SVG" (34 to 127 KB) holds one grayscale PNG twice, painted through a luminance mask and an `feColorMatrix` filter: a white mark on black becomes a white mark on transparent. The five embedded rasters are 676 x 455, 482 x 334, 820 x 820, 1280 x 692 and 2144 x 532 with very different margins (the Jetour mark, with its "Drive Your Future" line, fills about half of its frame; Majid Al Futtaim is 80 px tall inside 334). Ink density differs a lot too: iCAUR fills 67 per cent of its box, Majid Al Futtaim and Jetour about 26.
+- Decision: use the very pixels, but as plain transparent images trimmed to their ink (so a height is the mark's own height and the five can be sized by eye), not as the supplied wrappers (400 KB, a mask and a filter chain, a rendering path in Safari that could not be tested here). White on a transparent ground is exactly what the SVG paints.
+- Action: extracted, brightness to alpha, trimmed (threshold 6 of 255), capped at 560 px wide, lossless WebP: 52 KB for the five, in `src/assets/automotive-brands/` (a folder of its own: the slot tests treat every file of `src/assets/automotive/` as a picture of the page).
+- Verification: each file is white where opaque, touches all four edges (a test), and was seen next to the others on a contact sheet.
+- Outcome: PASS (the raster resolution is the limit of sharpness, recorded: only Majid Al Futtaim comes near it).
+
+### Cycle 02: The hero's hierarchy
+
+- Observation: the old opening was a small mono label over a three-line display headline (73 px at 1440), 557 px wide.
+- Action: one H1 with two block spans: the campaign line in two lines ("ART FOR" over "CAR LOVERS."), the display face at 8.6 vw, and the discipline words at 2.35 vw under it; the entrance animation reused (`auto-open`).
+- Verification (1440 x 900): the order reads at once. But the campaign line, 124 px, reached x = 800 and covered the white horse and the dress of the woman more than the old headline did (the owner has complained about type over the art).
+- Change: 7.7 vw (111 px at 1440, 660 px wide, 148 px at 1920).
+- Outcome: PASS (a decision to confirm: how large the campaign line may be).
+
+### Cycle 03: The strip, first pass, and where it sits
+
+- Observation: the opening is the full height of the screen (900 px at 1440 x 900), so a strip below it starts at the fold: not on the first screen.
+- Action: the strip as a fixed-height ink band under the hero (white marks, no box, no rule, space-between on the page's margins); the opening gives up the strip's height (`--brands-h`) on screens, so the Ferrari, the type and the strip fill the first screen (772 + 128 at 1440).
+- Verification: a pixel-overlap hairline appeared between the opening and the strip on a phone (the opening ends at a fractional pixel and the page behind shows through): the strip overlaps the opening by one pixel. The marks were uneven in weight (iCAUR heavy, Louis Vuitton light).
+- Outcome: PASS after the next two cycles.
+
+### Cycle 04: Phones
+
+- Observation (390 x 844): "CAR LOVERS." (5.9 em wide) was 8 px wider than the page margins at 60 px, nearly touching the screen edge; a single row of five marks would be 15 to 20 px tall.
+- Change: the campaign line is sized from the width between the margins (56 px at 390, no overflow from 320 up); the strip is three marks then two, each row flush to both margins (a grid of three auto tracks).
+- Verification: 320, 360, 390 and 600 wide: no overflow, no touching marks; the first row of marks is on the first screen of a 390 x 844 phone.
+- Outcome: PASS.
+
+### Cycle 05: Tablets
+
+- Observation: from 600 to 767 px the single row of five left gaps of 22 to 40 px between marks that are 120 px wide; the investment note's text stood in a narrow column at the left with the right half of the page empty.
+- Change: one row from 768 px (gaps of about 49 px at 768 and about 90 at 1024); three and two below. The note's explanation stands at the left and the two qualifying sentences at the right from 768, one column below.
+- Verification: 650, 720, 768, 1023 and 1024 wide.
+- Outcome: PASS.
+
+### Cycle 06: The investment note
+
+- Observation (1440): the figure and the three sentences read as an editorial note between two hairlines, not as a pricing card; the digits of the range touched at the display tracking (-0.045 em) and, at 1024, the currency dropped above the figure because the minimum size of the clamp won over the viewport width.
+- Change: the range is tracked at -0.03 em; the screen size is 5.4 vw with a lower minimum, so the currency stays on the figure's line from 1024 up; the sentences sit on the column where About's words begin (an edge shared with the section above).
+- Verification: 1440, 1280, 1024, 768, 390 and 320: the figure on one line with the currency beside it everywhere except at 320 (where the currency drops above, by design), the deposit quieter than the explanation (15 to 16 px against 19 to 22) and 7:1 on the paper.
+- Outcome: PASS.
+
+### Cycle 07: Large default text
+
+- Method: the browser's default text size at 100, 150 and 200 per cent at 1440, 1280, 1024, 768, 600, 390 and 320 wide, checking the hero's text, the strip, the note and the page for overflow, text outside the screen and touching marks.
+- Observation: at 150 and 200 per cent the rem-sized marks grew into each other at most widths; the note's figure and its two-column copy overflowed at 768, 390 and 320 (a grid track sized by the nowrap figure); the campaign line, set in `nowrap` lines, could not wrap.
+- Change: the marks and the strip are px (a picture does not grow with the text size; browser zoom still scales them); the note's layout has a `minmax(0, 1fr)` track; the range may break after its dash and the currency drops above it; the campaign line wraps (its smallest size is 2.1 rem).
+- Verification: all 21 combinations: no horizontal overflow and no text outside the screen; the only remaining contact is at 200 per cent on a 320 px screen (the "BMW GROUP" and Majid Al Futtaim marks overlap by 5 px): not fixed, far outside normal use.
+- Outcome: PASS for normal use and for 150 per cent; one extreme corner documented.
+
+### Cycle 08: What the DOM said
+
+- Observation: reading the H1's text from the page returned "ART FORCAR LOVERS. MURALS, ...": the two block lines had no space between them, so assistive technology and search engines would read "FORCAR".
+- Change: a real space between the lines (as the secondary title already had), pinned by a test.
+- Verification: the H1 reads "ART FOR CAR LOVERS. MURALS, VEHICLE ART & LIVE PAINTING." in the DOM and in `innerText` ("ART FOR" newline "CAR LOVERS." newline "MURALS, ...").
+- Outcome: PASS.
+
+### Cycle 09: Weight of the five marks
+
+- Observation: by ink (area times density) iCAUR carried about twice the weight of the others and the Louis Vuitton monogram the least.
+- Change: iCAUR 22 to 20 px, Louis Vuitton 46 to 50, Majid Al Futtaim 26 to 28.
+- Verification: contact sheets at 1440 (1x) and 390 (2x) next to the first pass: no mark dominates and none is lost; the Arabic script and the Jetour line stay legible.
+- Outcome: PASS (sizes are a judgement: they are tunable per mark in px).
+
+### Cycle 10: Copy, outline and tests
+
+- Verification: the content module holds the owner's words exactly (the range with its en dash, three sentences); on the production build all 58 strings are found in order at 1440, 1024, 768 and 390 and the only other visible text is the same functional labels; one H1, the note's heading an H2, the strip a labelled region with five named images and nothing focusable; title, description, canonical, robots, Open Graph and sitemap unchanged; contrast on the rendered pixels (see the handoff). Tests: three new (the hero, the strip, the note), five updated (the order, the copy, the drawn blocks, the paragraphs, the obsolete-copy test, which now says money is spoken of only in the note and the proposal step); 121 of 121.
+- Outcome: PASS.
+
+### Cycle 11: Final regression on the last build
+
+- Verification after the last stylesheet edit, on a fresh production build: `npm test` 121 of 121; `npx astro check` 0 errors, 0 warnings, 10 hints; `CONTENT_SOURCE=fixtures npm run build` exit 0, 29 pages, 28 sitemap URLs unchanged, "No problems found"; heights at seven widths (+337 to +561 px, the note and, below 1024, the strip); no horizontal overflow; five more requests (52 KB) before any scroll; layout shift 0.00 at 1440 and at 390 at 3x through a full scroll; no console message; reduced motion and no script checked.
+- Evidence: `docs/ux-evidence/automotive-final-desktop-1440x900.jpg` and `automotive-final-mobile-390x844.jpg` (end states: the headless browser renders at about 1.5 frames per second, so the entrances were forced to their end).
+- Outcome: PASS for everything verifiable here. BLOCKED, not passed: Lighthouse (the DevTools connector timed out), Safari, iOS and Firefox rendering, real devices, analytics, smoothness of the entrance animations, and the owner's answers to the decisions in the handoff.
+- Cycles completed in this part: 11 (the 15-cycle minimum of the overall pass was met in earlier parts; nothing here was added to fill a count).
