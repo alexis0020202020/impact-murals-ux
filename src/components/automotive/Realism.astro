@@ -1,0 +1,62 @@
+---
+import { realism } from "@/content/automotive";
+import { resolveMedia } from "@/lib/automotive-media";
+import AutoMedia from "./AutoMedia.astro";
+import Tight from "./Tight.astro";
+
+/*
+  Automotive realism and detail: one heading and one text for the section, and
+  the realistic artworks beside them. The text speaks of the section, not of any
+  one artwork, so no picture is captioned or described here (the descriptions in
+  src/content/automotive.ts are for screen readers only).
+
+  The artworks come from `realism.art`, in reading order; each is a figure that
+  is a direct child of the layout grid, so the composition is set by CSS alone
+  (src/styles/automotive.css, ".auto-real-item--lead" and "--side"). On screens
+  the two stand on one line at different heights, so they read as a pair and not
+  as two equal tiles, with the type in a column of its own at the right: the
+  heading at its head, the text at its foot. To show another realistic piece, add
+  an entry to `realism.art` and a file for its slot, then give it a place in the
+  grid (see docs/AUTOMOTIVE-MEDIA.md).
+*/
+const art = await Promise.all(
+  realism.art.map(async (piece) => ({ ...piece, media: await resolveMedia(piece.slot) }))
+);
+
+/** What width each placement really occupies at each breakpoint, for the responsive image. */
+const sizes: Record<(typeof realism.art)[number]["place"], string> = {
+  lead: "(min-width: 1024px) 26vw, (min-width: 768px) 40vw, 84vw",
+  side: "(min-width: 1024px) 24vw, (min-width: 768px) 34vw, 64vw"
+};
+---
+
+<section class="auto-section auto-real" aria-labelledby="auto-real-title">
+  <div class="auto-wrap">
+    <div class="auto-real-layout">
+      <div class="auto-real-text" data-auto-reveal>
+        <h2 id="auto-real-title" class="auto-caption auto-real-head">
+          <span class="auto-eyebrow">{realism.eyebrow}</span>{" "}
+          <span class="headline-display auto-title-md">{realism.headline}</span>
+        </h2>
+        <div class="auto-real-body">
+          <p class="auto-lead"><Tight text={realism.body[0]} /></p>
+          <p class="auto-body"><Tight text={realism.body[1]} /></p>
+        </div>
+      </div>
+
+      {art.map((piece) => (
+        <figure class={`auto-real-item auto-real-item--${piece.place}`} data-auto-reveal>
+          <div data-auto-scale>
+            <AutoMedia
+              media={piece.media}
+              mediaSlot={piece.slot}
+              alt={piece.alt}
+              class="auto-tall"
+              sizes={sizes[piece.place]}
+            />
+          </div>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>

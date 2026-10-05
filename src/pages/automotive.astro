@@ -1,0 +1,83 @@
+---
+/**
+ * /automotive: an outreach page, not a site section.
+ *
+ * Built from the "Impact Murals: Automotive" deck and translated for the web:
+ * natural scrolling, each section as tall as it needs to be, no slides. Sent
+ * by email or WhatsApp to people who have not heard of the studio, so it opens
+ * on the work (a Ferrari mural, edge to edge), then says what the studio does
+ * and goes through proof (automotive realism, a BMW painted live, a
+ * building-scale mural, two launches), to who is behind it, how a project
+ * works (budget is mentioned there, in the proposal step) and how to reach the
+ * studio. The artwork leads; type supports it. The range of styles is shown by
+ * the projects themselves, not by a section of its own. The copy is the approved
+ * final copy, kept word for word in src/content/automotive.ts, in the order of
+ * its nine blocks.
+ *
+ * Deliberately outside the route registry (src/lib/routes.ts): that registry is
+ * the single source for the sitemap, so a page that is not in it is never
+ * listed. It is also `noindex, follow` and has no site header or footer, so a
+ * visitor sent this link sees one focused page that ends in the contact block,
+ * with the site one link away.
+ *
+ * Every picture and clip is a real file; where each lives and how it was
+ * prepared is in docs/AUTOMOTIVE-MEDIA.md.
+ */
+import { getImage } from "astro:assets";
+import "@/styles/automotive.css";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Hero from "@/components/automotive/Hero.astro";
+import WhatWeDo from "@/components/automotive/WhatWeDo.astro";
+import Realism from "@/components/automotive/Realism.astro";
+import Bmw from "@/components/automotive/Bmw.astro";
+import Exterior from "@/components/automotive/Exterior.astro";
+import Launch from "@/components/automotive/Launch.astro";
+import About from "@/components/automotive/About.astro";
+import Process from "@/components/automotive/Process.astro";
+import ContactCta from "@/components/automotive/ContactCta.astro";
+import { automotiveSeo } from "@/content/automotive";
+import { resolveMedia } from "@/lib/automotive-media";
+
+/*
+  Link preview. This page travels by message, so the picture a messenger shows
+  matters more than for an indexed page: the opening picture, cropped to the
+  1200x630 JPEG that messengers and social cards read reliably.
+*/
+const hero = await resolveMedia("AUTOMOTIVE_HERO");
+const preview = await getImage({
+  src: hero.image,
+  width: 1200,
+  height: 630,
+  fit: "cover",
+  position: "center",
+  format: "jpeg",
+  quality: 82
+});
+---
+
+<BaseLayout
+  title={automotiveSeo.title}
+  description={automotiveSeo.description}
+  ogImage={preview.src}
+  noindex
+  minimal
+>
+  <div class="auto-page">
+    <Hero />
+    <WhatWeDo />
+    <Realism />
+    <Bmw />
+    <Exterior />
+    <Launch />
+    <About />
+    <Process />
+    <ContactCta />
+  </div>
+</BaseLayout>
+
+<script>
+  import { initAutomotiveMotion } from "@/lib/automotive-motion";
+  import { initAutomotiveVideo } from "@/lib/automotive-video";
+  initAutomotiveMotion(document);
+  initAutomotiveVideo(document);
+</script>

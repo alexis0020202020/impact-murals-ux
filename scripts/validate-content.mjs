@@ -142,10 +142,25 @@ while (queue.length) {
   }
 }
 
+/*
+  Outreach pages are the one deliberate exception: a page sent to someone
+  directly, with no header, no footer and no inbound link, is unlinked by
+  design, and a link from the public site would defeat the point of it. The
+  exemption is an explicit list, not a pattern, and it is conditional. The page
+  must still ask not to be indexed here, and the sitemap checks below already
+  fail the build if it is ever listed in one.
+*/
+const OUTREACH_ROUTES = new Set(["/automotive"]);
+const exemptOutreach = new Set();
+
 for (const route of pages.keys()) {
-  if (!reached.has(route)) {
-    problems.push(`${route}: orphan. No path of links reaches it from the homepage.`);
+  if (reached.has(route)) continue;
+  if (OUTREACH_ROUTES.has(route)) {
+    if (pages.get(route)?.noindex) exemptOutreach.add(route);
+    else problems.push(`${route}: outreach page is unlinked by design, so it must be noindex.`);
+    continue;
   }
+  problems.push(`${route}: orphan. No path of links reaches it from the homepage.`);
 }
 
 /* --------------------------------------------------------------- sitemaps */
@@ -281,7 +296,13 @@ if (isStressBuild) {
   );
 }
 
-console.log(`Checked ${files.length} pages, all reachable from the homepage: ${reached.size === pages.size}.\n`);
+console.log(
+  `Checked ${files.length} pages, all reachable from the homepage: ${reached.size + exemptOutreach.size === pages.size}` +
+    (exemptOutreach.size
+      ? ` (${exemptOutreach.size} noindex outreach page exempt: ${[...exemptOutreach].join(", ")})`
+      : "") +
+    ".\n"
+);
 
 if (warnings.length) {
   console.log(`${warnings.length} warning(s):`);

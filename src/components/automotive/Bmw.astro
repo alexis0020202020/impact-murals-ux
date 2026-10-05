@@ -1,0 +1,70 @@
+---
+import { bmw } from "@/content/automotive";
+import { resolveMedia } from "@/lib/automotive-media";
+import AutoMedia from "./AutoMedia.astro";
+import Tight from "./Tight.astro";
+
+/*
+  The strongest project on the page, built as one composition of two parts with
+  a role each: the BMW being painted live (a tall, silent, native 9:16 loop, the
+  process) and the finished car (a landscape photograph, the result). The photo
+  stands left under the type, the clip right and taller, level with the photo's
+  foot, so the eye reads work in progress, then work done. The summit work is a
+  single line beneath, a footnote to the main proof and not a second feature,
+  and the section ends on the link to AGMC's own article about the event (a new
+  tab, since it leaves this page for another site).
+*/
+const [main, detail] = await Promise.all([
+  resolveMedia("BMW_BINANCE_MAIN"),
+  resolveMedia("BMW_BINANCE_DETAIL")
+]);
+// The clip's own proportions, so a phone can size it from the screen's height without a wide crop.
+const ratio = Number((main.image.width / main.image.height).toFixed(4));
+---
+
+<section class="auto-section auto-bmw surface-dark" aria-labelledby="auto-bmw-title">
+  <div class="auto-wrap">
+    <div class="auto-bmw-layout">
+      <div class="auto-bmw-copy" data-auto-reveal>
+        <h2 id="auto-bmw-title" class="auto-caption">
+          <span class="auto-eyebrow">{bmw.eyebrow}</span>{" "}
+          <span class="headline-display auto-title-md">{bmw.title}</span>
+        </h2>
+        <p class="auto-lead"><Tight text={bmw.body[0]} /></p>
+        <p class="auto-body"><Tight text={bmw.body[1]} /></p>
+      </div>
+
+      <div class="auto-bmw-photo" data-auto-reveal>
+        <div data-auto-scale>
+          <AutoMedia
+            media={detail}
+            mediaSlot="BMW_BINANCE_DETAIL"
+            alt={bmw.detailAlt}
+            sizes="(min-width: 1024px) 50vw, 100vw"
+          />
+        </div>
+      </div>
+
+      <div class="auto-bmw-stage" style={`--r-bmw:${ratio}`} data-auto-scale>
+        <AutoMedia
+          media={main}
+          mediaSlot="BMW_BINANCE_MAIN"
+          alt={bmw.alt}
+          class="auto-tall"
+          sizes="(min-width: 1024px) 28vw, (min-width: 768px) 38vw, 80vw"
+        />
+      </div>
+
+      <div class="auto-bmw-also" data-auto-reveal>
+        <p class="auto-body"><Tight text={bmw.also} /></p>
+        <a
+          class="auto-link"
+          href={bmw.article.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-track="automotive_agmc_article_click"
+        >{bmw.article.label}&nbsp;<span class="auto-link-arrow" aria-hidden="true">{bmw.article.arrow}</span></a>
+      </div>
+    </div>
+  </div>
+</section>

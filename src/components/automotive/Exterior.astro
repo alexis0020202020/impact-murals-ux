@@ -1,0 +1,61 @@
+---
+import { exterior } from "@/content/automotive";
+import { resolveMedia } from "@/lib/automotive-media";
+import AutoMedia from "./AutoMedia.astro";
+import Tight from "./Tight.astro";
+
+/*
+  Scale. The finished wall is the largest frame on the page, kept as the whole
+  building face (scaffolding, windows and pavement included) so the size of the
+  work is plain; the same wall before the mural is a smaller companion that
+  overlaps its edge, one picture's worth of evidence set against the other, with
+  a one-word label. Not a slider and not a gallery. The copy names the subject
+  of the mural (the Spirit of Ecstasy) and calls the work a private commission:
+  the marque is the subject of the artwork, never the client.
+*/
+const [main, before] = await Promise.all([
+  resolveMedia("EXTERIOR_MURAL_MAIN"),
+  resolveMedia("EXTERIOR_MURAL_BEFORE")
+]);
+// The finished wall's proportions, so the grid can start the next column exactly where the picture ends.
+const ratio = Number((main.image.width / main.image.height).toFixed(4));
+---
+
+<section class="auto-section auto-exterior" aria-labelledby="auto-exterior-title">
+  <div class="auto-wrap">
+    <div class="auto-exterior-layout" style={`--r-main:${ratio}`}>
+      <div class="auto-exterior-main" data-auto-scale>
+        <AutoMedia
+          media={main}
+          mediaSlot="EXTERIOR_MURAL_MAIN"
+          alt={exterior.alt}
+          class="auto-tall"
+          sizes="(min-width: 1024px) 44vw, 100vw"
+        />
+      </div>
+
+      <h2 id="auto-exterior-title" class="auto-caption auto-exterior-title" data-auto-reveal>
+        <span class="auto-eyebrow">{exterior.eyebrow}</span>{" "}
+        <span class="headline-display auto-title-md">{exterior.title}</span>
+      </h2>
+
+      <div class="auto-exterior-text" data-auto-reveal>
+        {exterior.body.map((paragraph) => (
+          <p class="auto-body"><Tight text={paragraph} /></p>
+        ))}
+      </div>
+
+      <figure class="auto-exterior-before" data-auto-reveal>
+        <div data-auto-scale>
+          <AutoMedia
+            media={before}
+            mediaSlot="EXTERIOR_MURAL_BEFORE"
+            alt={exterior.beforeAlt}
+            sizes="(min-width: 1024px) 22vw, (min-width: 768px) 30vw, 40vw"
+          />
+        </div>
+        <figcaption class="auto-label">{exterior.beforeLabel}</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>

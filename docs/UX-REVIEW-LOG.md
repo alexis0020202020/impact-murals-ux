@@ -404,3 +404,791 @@ Short trace only, per this brief's own instruction ("garde seulement une courte 
 
 `npx astro check`: 0 errors, 0 warnings, 7 hints (91 files, same pre-existing unrelated hints as Parts 1-2). `npm test`: 89/89. `CONTENT_SOURCE=fixtures npm run build`: clean, 8 pages, all reachable from the homepage.
 
+---
+
+# Part 13: /automotive outreach page (brief received 29 September 2026)
+
+> **Superseded by Part 15.** The page reviewed here was replaced by a rebuild from the deck; its evidence images were removed. Kept as history.
+
+Source: four files supplied from outside the repo (AUTOMOTIVE_CONTEXT, AUTOMOTIVE_CONTENT, AUTOMOTIVE_ASSET_MAP, AUTOMOTIVE_BUILD_PROMPT). Scope: one new route, `/automotive`, inside this Astro site; copy locked; media to be supplied later. Cycles below are review loops actually run this session, against the running dev server and, where stated, the production build and preview, with Chrome DevTools MCP and Playwright MCP. Screenshots of the final no-media state are in `docs/ux-evidence/` (see cycle 15).
+
+Facts recorded before building:
+
+- No automotive media exists in the project (`public/` held only the four offer videos and posters, none automotive). The sibling folder named "Quotation carrefour" holds unrelated client documents and was not touched.
+- The site has no analytics or event tracking (CSP `connect-src 'self'`, no tracking code anywhere), so the three event names are left as `data-track` attributes only. Nothing was installed.
+- `scripts/validate-content.mjs` (run by `npm run build`) fails any page no link reaches from the homepage. A deliberately unlinked `noindex` page would break the production build, so a narrow, conditional exemption was added (see UX-HANDOFF, Part 13).
+
+### Cycle 01: Opening, layout shift
+
+- Pages and viewports: `/automotive`, 1280, 1440, 1920, 768, 390, 360, with and without media.
+- Observation: the composition holds (two-line headline over a dark veil, intro fully inside the first viewport at all seven widths). A `layout-shift` PerformanceObserver on the production preview measured CLS 0.031 to 0.037 on desktop widths, 0 on mobile. Source: the bottom-aligned text block moved 85px when the web font swapped in and the headline dropped from three lines (fallback face) to two.
+- Change: at `md` and up the two halves of the headline are block, no-wrap spans (`headlineLines` in the content file; the words are unchanged and a test asserts they join to the approved headline). The character cap on the heading is lifted at the same breakpoint.
+- Verification: CLS re-measured on fresh pages with a single observer at 1440, 1920, 1280, 768, 390 and 360, media present, full scroll-through: 0 at all six. Local dev server with locally served fonts, not field data.
+- Outcome: PASS.
+
+### Cycle 02: What we do
+
+- Observation: at 1440 a decorative fragment sat behind the intro paragraph (text over a tint). The offer rows read as a ledger, not cards; a thumbnail column exists only on rows that have media.
+- Change: fragment moved to the lower right on `md` and up (top of the section on mobile).
+- Verification: re-screenshot at 1440 (clean); the text and media overlap audit in cycle 10 reports none.
+- Outcome: PASS.
+
+### Cycle 03: BMW / Binance
+
+- Observation: at 768 the two-column layout squeezed the text to about 255px and wrapped the eyebrow onto two lines. On mobile the strongest proof sat below the text; once the media came first, its overhanging detail inset touched the text below.
+- Change: two columns start at `lg`; tablet and mobile stack with the media first; extra gap when an inset is present; bottom padding adjusted.
+- Verification: screenshots at 390, 768 and 1440 with real (test) media: clean, video playing in the panel on mobile.
+- Outcome: PASS.
+
+### Cycle 04: Selected work spacing
+
+- Observation: (a) at 1440 the workshop detail inset, which hangs 64px below its frame, covered the "AUTOMOTIVE WORKSHOP" caption. (b) At 390 with no media the last two ledger rows (Jetour and iCAUR) touched: 0px gap, the next row's hairline under the previous title.
+- Change: larger caption margin when an inset exists (workshop, exterior); `gap-y-12` for the no-media pair.
+- Verification: 1440 screenshot (inset ends at y=618, caption starts at 682); the pair measured at 48px on mobile.
+- Outcome: PASS.
+
+### Cycle 05: Ferrari panel
+
+- Observation: a faint diagonal hairline was visible at rest on a still-image fracture panel (two clipped copies of one photograph, anti-aliased on both edges). At 768 the portrait panel was only 312px wide.
+- Change: `automotive.css` extends the first shard's clip 1.5px past the cut (scoped to this route, the shared shard shapes in `global.css` are untouched); the panel takes seven columns at tablet.
+- Verification: 1440 screenshot at rest shows one continuous image; 768 screenshot shows the wider panel.
+- Outcome: PASS.
+
+### Cycle 06: Creative range mosaic
+
+- Observation: CSS-columns masonry left large holes under landscape tiles when only four tiles existed. Justified rows fixed that, but on phones a lone portrait tile took 60% of the row and left the rest blank, and labels without an image were numbered 03, 06, 07, 08 (a skipping sequence) beside the mosaic.
+- Change: justified rows driven by each tile's own aspect ratio (nothing is cropped); the growth cap applies from 768 up, on phones a lone tile takes the full width; numbers show only in the all-typographic state.
+- Verification: 1440 shows one full-width row of equal-height tiles; 390 shows full and half-width tiles then the type index.
+- Outcome: PASS.
+
+### Cycle 07: Contrast and small text
+
+- Observation: computed ratios: stone (`#6f695f`) on sand (`#ddd5c6`) is 3.73:1 for the 12.5px "PROJECT SCOPE" label, below AA for normal text; the darker `paper-dim` token gives 5.76:1 there. Stone on paper is 4.73:1. The smallest text was 11px mono labels.
+- Change: `.auto-eyebrow--on-sand` uses `paper-dim`; eyebrow 0.72rem to 0.78rem; index numbers 11px to 12px.
+- Verification: ratios recomputed; the automated accessibility audit in cycle 13 reports no issue.
+- Outcome: PASS for everything measurable now. Text over supplied footage in the opening depends on that footage: BLOCKED until real media exists.
+
+### Cycle 08: Keyboard
+
+- Observation: the page has three links plus the skip link, no header or footer, so no early exit routes. Real Tab key presses: skip link, WhatsApp, Email, Explore, each `:focus-visible` with the site's 2px orange outline, visible on the dark surface. The Explore link is 25px tall.
+- Change: a pseudo-element extends its hit area without moving the visible box.
+- Verification: probing `elementFromPoint` above and below the link gives a 56px hit height at 390 and 1440.
+- Outcome: PASS.
+
+### Cycle 09: Reduced motion
+
+- Method: real `prefers-reduced-motion: reduce` emulation (Playwright `emulateMedia`), not a script override.
+- Observation and verification on load, without scrolling: all 37 reveal targets at opacity 1 with no transform, the opening's CSS entrance is `none`, hero and BMW videos paused on their poster, fracture panels settled at `translate(0, 0)`.
+- Change: none needed.
+- Outcome: PASS (kept as is).
+
+### Cycle 10: Viewport matrix, with and without media
+
+- Method: a scripted audit at 360x800, 390x844, 768x1024, 1024x768, 1280x720, 1440x900 and 1920x1080 after a full scroll-through: horizontal overflow, text against media collisions (judged on the visible frame, since parallax scales the image inside a clipping frame), text over text overlaps, headline line count, intro inside the first viewport.
+- Observation: the first version of the script reported two collisions at 768 and above; both were the parallax-scaled image rectangle extending past its clipping frame, not a visual defect. The script was corrected, not the page.
+- Verification: with media and without, at all seven widths: 0 overflow, 0 collisions, 0 text overlaps, headline 4 lines on phones and 2 from 768, no console error.
+- Outcome: PASS.
+
+### Cycle 11: Media states and loading
+
+- Method: the same page in each state a supplied asset can produce.
+- Observation and verification: no media (nothing rendered, no placeholder word); video only with no still (plain video, no `poster` attribute, no fracture panel); still only in the hero (eager, `fetchpriority="high"`, decorative empty alt, real dimensions); video plus still (BMW panel with poster shards and crossfade); a below-the-fold video with a poster is `preload="none"`, made 0 requests while 3000px away and started, playing, within about 900px; the hero clip plays immediately.
+- Change: `AutoMedia` preloads metadata only for above-the-fold or poster-less video.
+- Note: the existing site videos are not faststart-encoded (Part 9); the same will apply to supplied clips. The recommended remux is in `docs/AUTOMOTIVE-MEDIA.md`.
+- Outcome: PASS.
+
+### Cycle 12: Build, indexation, protected areas
+
+- Method: `CONTENT_SOURCE=fixtures npm run build`, with test media and without, then read the built HTML.
+- Observation and verification: 29 pages (28 before), sitemap unchanged at 27 URLs, `/automotive` is `noindex, follow` with canonical `https://impactmurals.ae/automotive`, no header or footer in the built HTML, no em dash, three `data-track` events present. The validator reports the exempt outreach page explicitly and still fails a page that is exempt but not `noindex`. `routes.ts`, `sitemap.ts`, `publishing.ts`, `relations.ts`, the content-source adapter and the enquiry module were not modified.
+- Outcome: PASS.
+
+### Cycle 13: Automated audit on the production preview
+
+- Method: Lighthouse through Chrome DevTools MCP on `npm run preview`, no media, mobile and desktop.
+- Observation: Accessibility 100, Best Practices 100, SEO 66, Agentic Browsing 100. The single failed audit is "Page is blocked from indexing", the intended `noindex`.
+- Limits: automated checks only, not an accessibility certification; no performance score is claimed (local server, no media).
+- Outcome: PASS.
+
+### Cycle 14: No-JS and link preview
+
+- Observation: the built HTML contains no inline `opacity` or `transform` hiding anything; reveals and parallax are JS enhancements over fully visible content, and the opening's entrance is CSS keyframes. This page travels by message, so the preview image matters: with a still supplied, the build emits an absolute `https://impactmurals.ae/_astro/....jpeg` as `og:image` (first still among hero, BMW, Ferrari); with none, the site default applies.
+- Verification: read from the built HTML in both states.
+- Remaining issue: the site's default preview image is an SVG, which most messengers do not render, so until a still is supplied a WhatsApp or email preview will show no picture.
+- Outcome: PASS, with that limit recorded.
+
+### Cycle 15: Final regression
+
+- Method: every check re-run after the last edit, in the final no-media state (temporary stand-in media removed first).
+- `npx astro check`: 0 errors, 0 warnings, 10 hints (116 files). Eight hints were already present in the repository (an unused variable each in `enquiry.js` and the capability page, and the deprecated `register` notice, two per existing test file); the two new ones come from `tests/automotive.test.mjs`, which follows the same loader convention as the existing tests.
+- `npm test`: 95 of 95 passing (89 existing plus 6 new), 0 failures.
+- `CONTENT_SOURCE=fixtures npm run build`: exit 0, 29 pages, sitemap 27 URLs (unchanged), 2 pages `noindex` and excluded, "all reachable from the homepage: true (1 noindex outreach page exempt: /automotive)", "No problems found".
+- Working tree: only intended files changed; `src/assets/` absent and no `automotive-*` file left in `public/videos/`; the browser tools' output folder removed.
+- Evidence saved at the time: two full-page captures of that version, no media, Astro's dev overlay hidden and the logo at full opacity. They were removed in Part 14 because that composition was replaced; see Part 14 for the current evidence. There was deliberately no capture with stand-in media, since those images are not automotive work and would misrepresent the page.
+- Outcome: PASS for everything that can be verified without real media. BLOCKED, not passed: crops, contrast over real footage and pacing with the real work; iOS Safari and real-device autoplay; analytics (no system exists).
+- Cycles completed: 15 of the minimum 15, each a real inspection followed by a change or a recorded reason to keep, and a re-check. Cycles 09, 13 and 14 confirmed correct without a change; cycle 12 changed the build check and added tests, not the page.
+
+---
+
+# Part 14: /automotive final art direction pass (brief received 29 September 2026)
+
+> **Superseded by Part 15.** The composition reviewed here was replaced by a rebuild from the deck; its evidence images were removed. Kept as history.
+
+Second brief on the same route, from the owner's review of Part 13: the copy and logic were right but the execution still read as a premium sales landing page. Scope: presentation, composition and pacing only. Approved copy, facts, sections and the technical setup (noindex, no site chrome, outside the sitemap, the narrow build-check exemption) are unchanged. The Influential Walls deck was supplied as a reference for commercial discipline only.
+
+## Deck and diagnosis
+
+- **Deck (read as text; its pages could not be rendered to images here, so its visual design was not seen, which the brief did not need).** Ten pages: cover and contact, a short mission, benefits with data, three case studies (client request, then solution), a three-phase process with durations, pricing stated plainly with its factors and a base price, testimonials, contact. Borrowed as discipline only: one idea at a time, proof before process, process then price, price stated plainly, then a single contact. The page already ran in that order; what changed is how each step is staged. No layout, colour, font or structure of the deck was used.
+- **What made the previous version a landing page:** every section opened with the same big heading plus paragraph; the four offers were a ruled list of rows (a feature list); light, dark and sand bands with identical padding read as nine modules; the creative range was a justified gallery plus a list (a services grid); the scope figure sat on its own sand band (a pricing section); the outro was a dark block with buttons (a CTA section); and with no media the page collapsed to text rows, so its composition could not be judged at all.
+- **What replaced it:** one paper canvas with three recurring compositions (ANCHOR, IMMERSIVE, EDITORIAL, described at the top of `src/styles/automotive.css`); full-bleed media only where a moment is immersive (opening, BMW, exterior), cut on the logo's diagonal; a single shared frame beside the offers; overlaps and bleeds instead of rows; silent structural plates wherever media is missing.
+
+## Cycles
+
+### Cycle 01: The page as one canvas
+
+- Observation: nine banded modules, each opening with the same heading and paragraph.
+- Change: sections kept for landmarks and headings but recomposed so they run into one another: paper throughout, three immersive frames as the only dark moments, diagonal cuts at their edges, the offers frame rising into the opening, varied spacing between moments instead of one uniform gap.
+- Verification: contact sheets at 1440x900 and 390x844 (`docs/ux-evidence/automotive-art-direction-*-sequence.jpg`) and a full-page overview: dark appears only in the opening, BMW and exterior; the rest is one surface.
+- Outcome: PASS.
+
+### Cycle 02: Offers, the sticky frame
+
+- Observation: the four offers were four ruled rows. Recomposed as one large typographic sequence with a single frame beside it that shows the picture of the offer in view (pure CSS sticky, a small script only switches which offer is active).
+- Defect found: the frame did not stick. A `top` value was being reset by an `inset: auto` shorthand declared after it.
+- Change and verification: order fixed; a scroll script at 1440, 768 and 390 shows the frame pinned (top 99px on desktop, 0 in the stacked layout), the active offer moving 0, 1, 2, 3 and the frame shown always matching it, with the frame visible at every step.
+- Outcome: PASS.
+
+### Cycle 03: Opening
+
+- Observation: an orange logo fragment sat behind the headline, a 1px line of the opening showed under the diagonal, and the plate's glass-panel plane looked like a UI card on the dark title.
+- Change: fragment moved off the type, the diagonal overlaps the last pixel row, the plane removed.
+- Verification: re-captured at 1440 and 390, with and without media.
+- Outcome: PASS.
+
+### Cycle 04: Plates (media that is not there yet)
+
+- Observation: the brief asks for intentional composition before the media exists, without placeholder names or ugly cards.
+- Change: a plate is a tonal gradient with one soft sheen, drawn from the site palette in six tones, no text, no border, no radius, `aria-hidden`. A test asserts that every CSS `content` value on the page is empty and that plates are empty hidden spans. A first version also carried a faint hairline grid, borrowed from the site's existing placeholder; the design hook flagged it as a decorative grid with no purpose on a stand-in field, and it was removed (the captures were retaken afterwards).
+- Verification: screenshots of BMW, exterior, Ferrari and the range in the scaffold state; the rendered text of the page contains no placeholder word.
+- Outcome: PASS.
+
+### Cycle 05: Fracture seam on a still panel
+
+- Observation: after the rewrite the faint diagonal hairline was back on the Ferrari panel; the fix from Part 13 had been dropped with the old stylesheet.
+- Change: restored, scoped to this route (the shared shard shapes are untouched).
+- Verification: 1440 screenshot at rest, one continuous surface.
+- Outcome: PASS.
+
+### Cycle 06: BMW, supporting photograph
+
+- Observation: on a phone the supporting photograph, hanging from the foot of the frame, sat on top of the caption text.
+- Change: it now straddles the frame's cut top edge, clear of the caption at every width.
+- Verification: stand-in media, 390 and 1440 screenshots, plus the collision audit in cycle 08.
+- Outcome: PASS.
+
+### Cycle 07: Creative range
+
+- Observation: eight frames at unrelated heights left large voids in the field, and the earlier justified rows read as a gallery.
+- Change: an irregular 12-column field with per-frame span, drop and ratio balanced row by row, labels over the pictures, the heading on a grid with its body; a staggered two-column mosaic on phones. A real still keeps its own ratio within limits.
+- Verification: stand-in media at 1440 and 390: dense, irregular, every label legible, nothing cropped harder than the limits.
+- Outcome: PASS.
+
+### Cycle 08: Tablet and every width
+
+- Observation: at 768 the 12-column grids with a 2.5rem gap left columns about 19px wide; the workshop caption ran 2px past the viewport and the launch pair was 150px wide.
+- Change: a column-gap variable (tighter below 1024), tablet-specific spans for the pair and the about block, the workshop caption below its frame until 1024.
+- Verification: a scripted audit at 360x800, 390x844, 768x1024, 1024x768, 1280x720, 1440x900 and 1920x1080 (real text-line rectangles against picture frames, and text against text): 0 horizontal overflow, 0 collisions, 0 overlaps, headline 4 lines on phones and 2 from 768, intro inside the first viewport at all seven, no console error. The first version of the audit reported false collisions by comparing whole element boxes; it was corrected to compare text lines.
+- Outcome: PASS.
+
+### Cycle 09: Media states
+
+- Method: stand-in stills (and clips) at the intended ratios, then states removed one by one.
+- Verification: video-only hero (plain video, no poster, playing); video-only BMW with a detail (video main, the detail becomes the supporting photograph); Ferrari with only its detail (its frame stays a plate, the detail shows); a video with a poster below the fold is `preload="none"`; no console error in any state.
+- Outcome: PASS.
+
+### Cycle 10: Reduced motion and no JavaScript
+
+- Method: real `prefers-reduced-motion` emulation, and a browser context with JavaScript disabled.
+- Verification: reduced motion, on load and without scrolling: all 29 reveal targets visible, no growth transform, the opening's CSS entrance off, clips paused on posters, fracture shards settled, the offers frame still following the offer in view (a state change, instant). No JavaScript: the H1, all four offers and every approved line are in the HTML with no inline hiding.
+- Defect found: with JavaScript off the browser draws native player controls over the opening clip. Hidden with a rule scoped to this page.
+- Outcome: PASS.
+
+### Cycle 11: Layout shift
+
+- Measurement: a `layout-shift` observer on fresh pages, full scroll-through, media present. The first run gave 0.004 to 0.007 on desktop and tablet, from the opening's intro paragraph re-wrapping when the web font swapped in.
+- Change: three lines are reserved for the intro from 768 up.
+- Verification: re-measured at 1920, 1440, 1280, 1024, 768, 390 and 360: 0 at all seven. Local dev server and locally served fonts, not field data.
+- Outcome: PASS.
+
+### Cycle 12: Keyboard and tap targets
+
+- Verification: real Tab presses: skip link, WhatsApp, Email, Explore, each `:focus-visible` with the site's 2px orange ring. The exits are 99px, 99px and 49px tall on desktop and 65px, 65px and 48px on a phone, all above 44px.
+- Outcome: PASS.
+
+### Cycle 13: Contrast
+
+- Computed: inactive offer titles (ink at 56% on paper) 4.0:1 for large type; labels on paper 4.7:1; body 7.3:1; exits 15.8:1. Two findings: the clay hover on paper is 3.45:1, fine for the large exits but not for the small "Explore" line, which no longer changes colour on hover (underline instead); and the caption scrims left about 2:1 in the worst case of pure white footage.
+- Change: stronger scrims, a soft text shadow on text set over media, the quiet exit's hover.
+- Limit: real footage decides the rest. Contrast of the opening title, BMW and exterior captions over the supplied media is BLOCKED until it exists.
+- Outcome: PASS for everything measurable now.
+
+### Cycle 14: Build, indexation, protected areas
+
+- Verification: `CONTENT_SOURCE=fixtures npm run build`: 29 pages, sitemap unchanged at 27 URLs, `/automotive` is `noindex, follow`, absent from the sitemap, no site footer and no site navigation in the built HTML, no em dash, no placeholder word, the three `data-track` events present, "all reachable from the homepage: true (1 noindex outreach page exempt: /automotive)". `routes.ts`, `sitemap.ts`, `publishing.ts`, `relations.ts`, the content adapter and the enquiry module untouched.
+- Outcome: PASS.
+
+### Cycle 15: Final regression
+
+- `npx astro check`: 0 errors, 0 warnings, 10 hints (no new hint from this pass; eight pre-date the work and two come from the new test file's loader convention).
+- `npm test`: 97 of 97 (89 existing plus 8 for this route).
+- Lighthouse on the production preview, scaffold state, mobile and desktop: Accessibility 100, Best Practices 100, SEO 66, the one failed audit being "Page is blocked from indexing", the intended `noindex`. Automated audits only, no certification, no performance score claimed.
+- Working tree: stand-in media removed (`src/assets/` absent, no `automotive-*` file in `public/videos/`), work captures removed, the browser tools' output folder removed.
+- Evidence: `docs/ux-evidence/automotive-art-direction-desktop-1440x900-sequence.jpg` and `docs/ux-evidence/automotive-art-direction-mobile-390x844-sequence.jpg`, twelve viewport captures each, taken in the scaffold state (plates, no media) with Astro's dev overlay hidden. There is deliberately no capture with stand-in images: they are not automotive work.
+- Outcome: PASS for what can be verified without real media. BLOCKED, not passed: how the composition reads with the real photographs and footage; contrast over that footage; iOS Safari and real-device behaviour of the sticky frame and autoplay.
+- Cycles completed: 15 of the minimum 15.
+
+---
+
+# Part 15: /automotive rebuilt from the deck (brief received 30 September 2026)
+
+Third brief on the same route: rebuild the page completely from the attached deck ("Impact Murals: Automotive.pdf") as a premium, responsive web page and not a slideshow, following the deck's hierarchy, flow, typography, image dominance and pacing, with the existing site as the brand system. Scope: the whole page. The Part 13 and Part 14 versions were replaced, not adjusted.
+
+## Deck and diagnosis
+
+- **The deck.** Eleven 16:9 pages, read in Chrome's PDF viewer (there is no local PDF renderer) and as extracted text. Ink and paper alternate; the "images" are flat greige placeholder frames (there are no photographs in it); titles are large uppercase grotesque, labels are small mono type, the process is a four-row ledger, the budget is one huge figure with two sentences. Its two colours match the site's own tokens, so the site's palette, fonts (Instrument Sans, Archivo, IBM Plex Mono) and `.headline-display` were kept and no colour or font was added.
+- **Deck against brief.** They differ in wording, in the order of the proof sections and in a few layouts (listed in `docs/UX-HANDOFF.md`, Part 15). The brief's wording and order were used and the deck's layouts, because the brief states its order is intentional and gives its copy line by line. Every wording difference is flagged for confirmation.
+- **The Part 13/14 page** followed a different copy set and a different art direction (a sticky offers frame, diagonal cuts, tonal plates, an eight-frame range). Nothing of its composition fits the deck, so it was removed wholesale. Kept because it still holds: the media resolver idea, the placeholder plate (now flat), the `minimal` layout, `noindex`, the sitemap exemption, the shared contact details, the site's fracture reveal and video starter.
+- **Media in the repository.** None that is automotive: `src/assets/` did not exist and `public/videos/` holds only the four site videos and their posters. So every slot is a placeholder, and the review below tests real-media behaviour with temporary stand-ins (removed afterwards).
+
+## Cycles
+
+### Cycle 01: First render against the deck, desktop
+
+- Observation: at 1440 the structure and rhythm follow the deck (paper and ink alternation, the two-column offers with the tall picture, Ferrari as a wide frame with the label left and the title offset, the workshop text-left, the launch pair unequal). Two defects: the exterior caption inherited the Ferrari caption's 12-column grid, so its title wrapped into a one-column strip and overlapped its own label; and the BMW right column (title, line, summit picture, its line) was about 40% taller than the cinematic frame, leaving the frame floating with a gap beneath it.
+- Change: captions stack by default and only the Ferrari caption is a grid; BMW was recomposed as the frame with the copy beside it and a quiet supporting strip beneath (close-up, then the summit picture with its "Also:" line).
+- Verification: recaptured at 1440: the exterior title sits on one line under its label; the BMW frame and copy align and the strip reads as a footnote, not a second feature.
+- Outcome: PASS.
+
+### Cycle 02: First render, phone
+
+- Observation: at 390 a min-height written for the exterior's main frame also applied to its close-up, stretching it into a tall sliver that ran into the title; and the hero title broke as "VEHICLE / ART & LIVE", splitting the phrase.
+- Change: the min and max height apply to the main frame only; the headline carries a non-breaking space so "VEHICLE ART" stays together.
+- Verification: recaptured at 390: no collision (the audit in cycle 08 counts none), the title reads "MURALS, / VEHICLE ART / & LIVE / PAINTING".
+- Outcome: PASS.
+
+### Cycle 03: Tablet
+
+- Observation: at 768 the 12-column grids have about 38 px columns with the 1.25 rem gap; the offers stay a 2x2 beside the tall picture, BMW and the workshop stack (frame, then type) and switch to two columns at 1024.
+- Decision: no change. The screenshots at 768 and 1024 read correctly and neither overflows; the tablet-specific gap variable from the earlier version was the reason it holds, and it was carried over.
+- Outcome: PASS, confirmed without a change.
+
+### Cycle 04: Stand-in pictures, legibility and the fracture seam
+
+- Method: 18 generated stills (bright and dark, several ratios, corner markers to show cropping) and two existing site clips, in place of the missing media. Not automotive work; used only to test.
+- Observation: over a bright stand-in hero the logo and the `CONTACT` link had about 1.7:1 in the worst case, and the faint diagonal hairline between the two fracture shards on the Ferrari frame was back (the fix from the earlier version had gone with the old stylesheet).
+- Change: a soft top veil (58% ink fading over the first 24%) and the jump link at full paper colour when there is media; the first shard runs 1.5 px under the second, scoped to this route.
+- Verification: hero recaptured with a real clip at 1440 and 390: logo, link and title legible; a 2x crop across the seam band is one continuous surface.
+- Outcome: PASS with the stand-in. Contrast over the real footage is BLOCKED until it exists.
+
+### Cycle 05: Video behaviour
+
+- Verification: the hero clip has `muted`, `loop`, `playsinline`, no `autoplay` attribute, `preload="metadata"` (it is above the fold), a poster (the hero still) and plays; the BMW clip below the fold has `preload="none"`, a poster, is paused with `readyState` 0 until scrolled near, then plays. A hero clip with no still at all has no poster attribute, `preload="metadata"` and plays as a plain video.
+- Outcome: PASS. (On the dev server Chromium reports aborted media range requests and one `ERR_CACHE_OPERATION_NOT_SUPPORTED` for the clips: the browser cancelling and re-requesting byte ranges, not an application error, and not seen elsewhere.)
+
+### Cycle 06: Media states
+
+- Observation: the summit picture (BMW) would have stayed a placeholder at launch if only the main picture were supplied.
+- Change: the summit picture now behaves like the close-ups (shown only when it exists, or while the main picture is missing); without it the "Also:" line stands alone.
+- Verification, states removed one by one: main present and every close-up absent (close-ups vanish, layouts hold: Ferrari, exterior, workshop, BMW with its line alone); close-ups present and mains absent (Ferrari shows a plate main with its close-up; BMW a clip with its strip); video-only hero. No console error in any state.
+- Outcome: PASS.
+
+### Cycle 07: Reduced motion and no JavaScript
+
+- Method: a real `prefers-reduced-motion: reduce` context and a JavaScript-disabled context.
+- Verification: reduced motion, on load and without scrolling: all 31 reveal targets fully visible, no picture scaled, the hero entrance animation off, both clips paused on their posters, fracture shards settled. No JavaScript: all 22 checked approved strings (headings, offers, the BMW line, labels, figure, both contact details, the location) are in the HTML, and no inline style hides anything.
+- Outcome: PASS.
+
+### Cycle 08: Seven widths
+
+- Method: a scripted audit at 360, 390, 768, 1024, 1280, 1440 and 1920 (real text-line rectangles against picture frames and against other text, not whole element boxes; a layout-shift observer over a full scroll).
+- Verification: no horizontal overflow, layout shift 0, no text colliding with a close-up or with other text, the headline four lines on phones and two from 768, the hero's line inside the first viewport, every link at least 45 px tall. Run again on the production build at the end (cycle 17) with the same result.
+- Outcome: PASS.
+
+### Cycle 09: Pacing
+
+- Observation: the range section was the tallest (about 1760 px at 1440, close to two screens), a 3:2 photograph would run the Ferrari frame to about 820 px so its caption fell below the fold, and the process ledger and the contact block carried more padding than their weight.
+- Change: range rows and offsets tightened; the Ferrari frame's wide clamp raised so a 3:2 photograph is capped at about 770 px at 1440 (it was about 820); process padding to 85%; contact padding trimmed.
+- Verification: measured at 1440 on the scaffold: range 1688 px (was about 1759), process 967 (was 1015), contact 898 (was 969); the whole page 12028 px at 1440 and 10656 at 390.
+- Outcome: PASS. The page is long by design (eleven moments), but each moment is one to two screens and a phone reader reaches the budget after about ten.
+
+### Cycle 10: Accessibility tree
+
+- Verification: the tree lists twelve named regions (one per section, each named by its heading; the launch pair by its "Launch Artwork" label), one H1, H2 per moment and H3 for offers and steps, ordered lists for the process, real alt text on every real picture, decorative frames and plates absent, the numerals hidden from assistive technology.
+- Defect found: the contact links' label and value were separate spans with no space between them.
+- Change: an explicit space, so the accessible names read "WHATSAPP +971 58 195 7567" and "EMAIL alexis@impactmurals.ae".
+- Outcome: PASS.
+
+### Cycle 11: Keyboard and the only navigation
+
+- Verification: real Tab presses: skip link, `CONTACT`, WhatsApp, Email, the website link, each with the site's 2 px orange focus ring. The jump link lands on `#contact`. Defect found: the scripted check showed that at 1280x720 the contact block was taller than the screen after the jump (the section's top padding was generous).
+- Change: contact padding trimmed (top 70%, bottom 85% of the section rhythm).
+- Verification: after loading `#contact`, both contact lines and the website and location line are on screen at 1280x720, 1440x900, 1024x768, 390x844 and 360x640.
+- Outcome: PASS.
+
+### Cycle 12: Contrast
+
+- Method: computed from rendered colours (alpha composited over the real ancestor background) for 73 text elements at 1440 and at 390, scaffold state.
+- Verification: every element meets 4.5:1 (3:1 for large text). The lowest are the mono eyebrows and numerals at 4.7:1 (stone on paper), the dim scope sentence at 6.6:1 and the body copy at 7.3:1. Only the decorative contact arrow fell short (4.35:1 at 20 px on a phone).
+- Change: the arrow is 24 px minimum, which puts it in the large-graphic class (3:1).
+- Limit: the hero title, the eyebrow and the small labels over real footage are BLOCKED; a soft scrim and a text shadow are in place for it.
+- Outcome: PASS for everything measurable now.
+
+### Cycle 13: Loading behaviour, development against production
+
+- Observation: on the dev server all 17 stand-in pictures loaded immediately although every `<img>` is `loading="lazy"`; a control (twelve lazy images far below the fold) showed lazy loading works in that browser.
+- Verification on the production build: only the pictures near the fold load. Before any scroll, on a phone and on desktop, four pictures were requested (the hero poster, the BMW clip's poster, the What we do picture and the Ferrari frame) plus the hero clip; the other thirteen waited. So the eager loading is dev-only.
+- Change found while reading the requests: a browser fetches a video's poster even with `preload="none"`, so a below-the-fold clip's poster is an early request. Posters are now capped (hero 1920, BMW 1600). The media resolver also built an extra fixed-width file for every slot although only video posters and the fracture panel use one; it now builds it only for those, which stops unused files reaching `dist`.
+- Outcome: PASS.
+
+### Cycle 14: Wide screens
+
+- Observation: at 1920 the About picture bled to the edge of the 1800 px content column, not to the edge of the page (about 60 px short).
+- Change: a `--bleed` distance (the width beyond the content column plus the gutter) drives the negative margin, so the picture reaches the page edge at any width.
+- Verification: at 1920 the picture starts at the left edge of the page; the rest of the page scales without change (hero title capped, wrap capped at 1800).
+- Outcome: PASS.
+
+### Cycle 15: Cold prospect walkthrough
+
+- Method: read top to bottom as someone who has never heard of the studio, asking the brief's nine questions in order (expert scenario check, not user research).
+- Result: what it does (hero, offers) in the first screen and a half; artistic quality (Ferrari, the first and quietest proof); real automotive experience (BMW / Binance, with the summit as a footnote); scale (the exterior, edge to edge); application (a workshop); breadth (four frames, eight directions as labels); process (four lines); budget (one figure, stated plainly, with the flexibility sentence); who is behind it and how it works (About: Alexis leads, specialist artists per brief, one point of contact); how to reach it (two large lines at the close, and a jump link at the top for a reader who is already convinced).
+- Checked for invented claims: no client, result, statistic or date beyond the brief; Ferrari appears only as the subject of a private client's mural and the exterior names no marque; the directions are labelled as directions. A test pins the wording.
+- Decision: no change; the page answers each question where the brief's order puts it.
+- Outcome: PASS.
+
+### Cycle 16: Build, indexation, protected areas
+
+- Verification: `CONTENT_SOURCE=fixtures npm run build`: 29 pages, sitemap unchanged at 27 URLs, `/automotive` is `noindex, follow`, canonical `https://impactmurals.ae/automotive`, not in any sitemap, no site header or footer, no em dash, no visible placeholder name, the four `data-track` events present. `routes.ts`, `sitemap.ts`, `publishing.ts`, `relations.ts`, the content adapter and the enquiry module are untouched; the only shared-file changes are the ones from Part 13 (`BaseLayout` `minimal` prop, `Contact` icon import, the `OUTREACH_ROUTES` exemption).
+- Outcome: PASS.
+
+### Cycle 17: Final regression
+
+- `npx astro check`: 0 errors, 0 warnings, 10 hints (eight pre-date the work, two are the deprecated `register` notice of the new test file, as before).
+- `npm test`: 101 of 101 (89 existing, 12 for this route: not in the sitemap, noindex and no chrome, section order and no leftover component, the brief's wording with no em dash, contact details reused, accurate client labelling, slot identifiers documented and never rendered as text, silent flat plates, offers as a plain list, restraint (no radius, shadow, snapping, pinning, full-height sections), video behaviour, the build exemption).
+- Lighthouse on the production preview, scaffold state, mobile and desktop: Accessibility 100, Best Practices 100, Agentic Browsing 100, SEO 66; the one failed audit is `is-crawlable`, the intended `noindex`. Automated audits only, no certification, no performance score claimed.
+- Working tree: stand-in media moved out of the project (deleting the folders was blocked, so the files were moved to a temporary folder; two empty folders remain, which are the intended drop locations), the old evidence moved out, the new evidence added.
+- Evidence: `docs/ux-evidence/automotive-rebuild-desktop-1440x900-sequence.jpg` and `automotive-rebuild-mobile-390x844-sequence.jpg`, twelve section captures each, taken on the production build in the scaffold state (flat plates, no media). There is deliberately no capture with stand-in pictures: they are not automotive work.
+- Outcome: PASS for what can be verified without real media. BLOCKED, not passed: how the composition reads with the real photographs and footage; contrast over that footage; performance with real media; iOS Safari and real-device autoplay; analytics (no system exists).
+- Cycles completed: 17 of the minimum 15, each a real inspection followed by a change or a recorded reason to keep, and a re-check. Cycles 03 and 15 were confirmed correct without a change.
+
+---
+
+# Part 16: /automotive media integration, UX and performance pass (brief received 1 October 2026)
+
+Fourth brief on the route: the real photographs and clips were supplied (seven photographs, five clips, in a folder outside the project; the project's media folders were empty). Audit them, replace every placeholder, recompose each section around the media rather than swapping one for one, keep the commercial order, show portrait clips in premium editorial layouts, defer and cap video, keep the opening fast, and review as a cold prospect and for performance and accessibility. The structure and copy from Part 15 were kept; the layouts, the media code and the stylesheet were rebuilt.
+
+## Media and diagnosis
+
+- **What was supplied.** Seven JPEGs (phone photographs carrying an EXIF rotation, 780x470 to 2252x4000; two near-duplicates of the finished exterior wall, two views of the Ferrari wall, the McQueen / Porsche mural, the wall before the exterior mural, the finished BMW at an outdoor event) and five MP4 clips (BMW / Binance, a canvas painting, iCAUR, Jetour, a workshop mural), all vertical.
+- **What was wrong with the clips.** HEVC with an AAC audio track, 7.7 to 14.7 Mbps, 83 MB in total, with the index (moov) at the end of the file. HEVC does not play reliably in Chrome, Firefox or Edge, and an index at the end makes playback wait for the whole file. They could not be shipped as they are.
+- **No encoder was available.** There is no `ffmpeg` on the machine and downloading a binary is not allowed here, so the re-encode was done with WebCodecs in the Chromium that the review tooling provides (it decodes HEVC and encodes H.264), with a small MP4 reader and writer written for the purpose. The output was checked structurally (H.264 High, moov first, no audio, about 30 fps, keyframes at least every 2 s and at cuts) and frame by frame. The tooling is not part of the project; the media guide gives the equivalent `ffmpeg` command.
+- **What it means for the layouts.** Everything is portrait or near square, so the Part 15 compositions (a wide Ferrari band, an edge-to-edge exterior, a wide workshop frame, wide launch tiles) could not be filled; they were recomposed.
+- **Environment note.** The headless browser used for the review renders at about 1.5 frames per second on every page of the site (the homepage 0.5), so entrance animations cannot complete there. Stills of the page were taken with the text entrances forced to their end state and said so in the evidence note; behaviour (loading, playback, states) was verified by reading the page's state, not by eye.
+
+## Cycles
+
+### Cycle 01: Media audit
+
+- Observation: each file was probed read-only (dimensions after EXIF rotation, codec, bitrate, index position, audio) and looked at (contact sheets of the photographs, frame sheets of every clip). Strongest: the Ferrari mural, the BMW clip, the finished exterior wall, the McQueen poster, the canvas clip. Redundant: `RR MURAL AFTER` (the same wall, with a person in frame), `20260814_200545` (the Ferrari wall again, 40 per cent skylight). Brand cards, an agency end card and a white flash sit inside the clips.
+- Decision: use 13 pictures and clips; do not use the two redundant photographs; cut the cards and the flash; use the finished exterior view and the "before" as a pair. No slot is filled for its own sake: no portrait of the founder, no summit photograph, no workshop close-up were supplied, so those sections are set in type or a single line.
+- Outcome: PASS (decisions in `docs/AUTOMOTIVE-MEDIA.md` and the handoff).
+
+### Cycle 02: Clip encoding
+
+- Observation: 83 MB of HEVC, index last (see above). A first BMW re-encode kept the BMW logo card at the head and the agency end card at the tail (found by looking at every cut, not by trusting an automatic cut detector: the BMW sequence cuts about every 0.43 s on purpose).
+- Change: re-encoded to H.264 High, 30 fps, 720x1280 (iCAUR 592x1280, as supplied; Jetour brought down from 1080x1920 at 60 fps), 1.4 to 1.8 Mbps, no audio, index first, trimmed to the strongest passages.
+- Verification: structure probe and frame sheets at the cut seams; 8.5 MB in total. A new test checks every clip in the folder is H.264, has its index first, has no audio and is under 3 MB, and was run against the original HEVC clip as a negative control (it fails all four).
+- Outcome: PASS.
+
+### Cycle 03: Posters
+
+- Observation: the first frames are poor posters (the canvas clip opens on a pencil sketch, the Jetour clip on a white flash) and the strongest frames are not the first.
+- Decision: each poster is the strongest frame of its finished clip (the finished canvas, the hood close-up, the artist at the mural, the SUV with the guest, the white SUV under the banners). The clip fades in over it in 0.7 s instead of seeking to the poster's time, which would break the loop. A reduced-motion or script-less visitor sees the strongest frame for good.
+- Verification: frame sheets at 0, 0.5, 1.5, the middle and the end of every clip, viewed.
+- Outcome: PASS (the BMW poster against its first frame is flagged for approval).
+
+### Cycle 04: First composition with the real media, 1440 and 390
+
+- Observation: the structure held (split hero, tall clips beside the offers and the BMW title, the Ferrari with a side column, a before and after, a staggered pair, a three-part range). Defects: a one-pixel light line between the two consecutive dark sections (BMW, then Exterior) where a fractional section height leaves a gap; headings looked grey in the captures, which is not a defect (computed opacity 0.65 mid-animation, the same on every page of the site because of the 1.5 fps rendering).
+- Change: the Exterior section overlaps the BMW section by one pixel.
+- Verification: pixel rows across the boundary at 1440 and at 2x pixel density are uniformly the ink colour; the text colours are correct once an entrance finishes.
+- Outcome: PASS.
+
+### Cycle 05: Hero picture
+
+- Observation: two candidates, both with real resolution: a close crop of the exterior mural (a winged figure, black and chrome on a pale wall) and a crop of the Ferrari wall. Both were put in the real layout at 1440 and 390.
+- Decision: the exterior mural crop. The Ferrari crop is more obviously "automotive" and sits better on the dark page, but it cut the lit signature mid-word, carried a cream wall with a quotation fragment at its foot, and would have repeated the very next section; the exterior mural then reappears five sections later as the wide view and its before, with the opening crop and the wide view clearly different.
+- Verification: both captured at 1440 and 390 and compared; the chosen crop keeps the figure's head and wings in the panel at every width checked from 390 to 2560 (object-position 50% 38%).
+- Outcome: PASS (decision flagged for your approval; no brand name is in the copy or the alt text).
+
+### Cycle 06: When the clips load
+
+- Observation: on the first full network capture the first below-the-fold clip (What we do, 1.5 MB) was requested about 1.1 s after load with no scroll at all.
+- Change: observation of the clips starts only after `load`, an idle moment and the visitor's first sign of going below the opening screen (scroll, wheel, touch, key press, click, or a page that opens already scrolled).
+- Verification on the production build: before any scroll, 17 requests and no clip (the hero plus the two near-fold pictures the browser fetches on its own); after scrolling the whole page, exactly five clip requests, one each; no duplicate request, no failed request. (On the development server the clips were seen to arrive one at a time as each section was approached.)
+- Outcome: PASS.
+
+### Cycle 07: Playback behaviour
+
+- Verification, read from the page's state in a real context: at the top nothing is attached and no button is shown; at What we do only that clip is attached and playing; at the BMW section that clip plays and the What we do clip pauses; at the Launch pair both play (two at once is the cap on large screens); a hidden tab pauses all. Resuming after a back/forward-cache restore is implemented (a page-show handler) but was not exercised here. A clip whose file returns 404 is requested twice (one retry), never fades in, its button is removed and its poster stays.
+- Outcome: PASS.
+
+### Cycle 08: The pause and play button
+
+- Observation: the first accessible name carried the whole picture description (one ran to over 120 characters with two colons); the glyph would vanish in Windows high contrast (backgrounds are replaced).
+- Change: the name uses the first clause of the description ("Pause video: A BMW painted live during Binance Blockchain Week"); a forced-colors rule draws the glyph in system colours.
+- Verification: real Tab presses on the production build: skip link, CONTACT, the five buttons in page order, WhatsApp, email, the website link, each with a 2 px or 3 px signal-colour ring; Space pauses (name becomes "Play video: ..." and the play glyph shows), Enter resumes. The focus ring and the paused state are in `automotive-media-pause-control-1440x900.jpg`. A Lighthouse snapshot taken with the clips playing and the buttons shown: Accessibility 100.
+- Outcome: PASS.
+
+### Cycle 09: Reduced motion, no JavaScript, saved data, slow connections
+
+- Observation: only the first two had been designed for; Save-Data and a 3G connection should also cost no clip bytes.
+- Change: a Save-Data or 3G-or-slower connection (where the browser reports it) behaves like reduced motion.
+- Verification on the production build, with scrolling through the whole page: reduced motion (no clip attached, no button displayed, posters loaded, reveals at full opacity, the Ferrari panel settled), JavaScript disabled (18 of 18 approved strings present, no button displayed, 5 of 5 posters loaded), Save-Data and 3G (no clip request, no button). All with zero clip requests.
+- Outcome: PASS.
+
+### Cycle 10: Tablet
+
+- Observation: at 768 the 12-column grid gives about 38 px columns, so the Launch pair at 4 and 3 columns was about 213 px and 150 px wide: small clips side by side.
+- Change: from 768 the pair takes 6 and 5 columns; 4 and 3, staggered near the middle, from 1024.
+- Verification: on the final build at 768 the two clips measure 322x573 and 265x574; the rest of the page (stacked hero, side columns, offers list beside the clip) read correctly at 768 and 1024 without change.
+- Outcome: PASS.
+
+### Cycle 11: Laptop and wide screens
+
+- Observation: at 1280x720 the BMW clip, its type and the finished car are all on one screen, because every portrait frame is capped to a share of the viewport height. At 1440 the hero title's longest line filled only about 72 per cent of its column.
+- Change: the hero title is sized so that line fills about 85 per cent of its column.
+- Verification: the real text width against its column at 1024, 1100, 1180, 1280, 1366, 1440, 1536, 1920 and 2560 on the final build (83 to 92 per cent, never overflowing); 1920 and 2560 captured: the 1800 px content column centres, the hero spans the page.
+- Outcome: PASS.
+
+### Cycle 12: Width matrix
+
+- Verification: 19 widths from 320 to 2560 on the final production build: no horizontal overflow at any, except an artefact at exactly 320 in desktop Chromium (a 15 px classic scrollbar against the site's 320 px minimum width, which phones, with overlay scrollbars, do not have).
+- Outcome: PASS.
+
+### Cycle 13: Phone, media section by section
+
+- Observation: the Workshop clip had the same width as the BMW clip, so two tall clips in a row repeated each other; elsewhere no clip sits side by side with another on a phone, nothing swipes, and no clip is taller than 74 to 76 per cent of the screen.
+- Change: the Workshop clip is 82 per cent wide and right-aligned (BMW's is the one near full width, as the centrepiece); What we do sits beside its lead line; the Launch clips are 72 and 58 per cent, offset.
+- Verification: the full page at 390x844 (and 360, 375, 414 for overflow), the clip heights in `svh`, the order of sections.
+- Outcome: PASS.
+
+### Cycle 14: Contrast over media
+
+- Method: the only text on a photograph is the logo and the jump link at the top of the hero on a phone. With them hidden, the pixels under each box were read from a real capture and compared with the paper colour.
+- Verification: worst-case pixel contrast 3.58, 4.28 and 4.83 for the logo (a graphic, 3:1 needed) and 5.92, 6.06 and 8.11 for the 12 px link (4.5:1 needed) at 390, 360 and 768. The title, the eyebrow, the intro and every caption sit on ink or paper, never on a photograph.
+- Outcome: PASS (the soft top shade is what makes it hold).
+
+### Cycle 14b: Contrast of everything else
+
+- Verification: Lighthouse Accessibility 100 on the production build, mobile and desktop, navigation and snapshot modes; the text styles are unchanged from Part 15, whose rendered-colour audit passed.
+- Outcome: PASS.
+
+### Cycle 15: Accessibility tree and alt text
+
+- Observation: the tree is clean (one H1, regions named by their headings, a real alt text on each of the 13 pictures, the clips and the logo hidden, the buttons named). Defects found in the draft text: the hero and the finished-exterior pictures had near-duplicate descriptions, and the buttons' names were long.
+- Change: each description is distinct and says what that frame shows (the hero: a close view; the exterior: the whole wall with scaffolding); a test requires 13 distinct descriptions of at least 20 characters that do not announce themselves as images, and only the hero eager.
+- Outcome: PASS (please read the descriptions once, listed under "Decisions to confirm").
+
+### Cycle 16: Crops against their sources
+
+- Observation: looking at three crops beside their full sources found defects of my own making: the top of the word "McQUEEN" was cut off, the black horse's head in the Ferrari close-up was cut by the top edge, and the main Ferrari frame ended on a cut quotation and a logo on the wall beneath the artwork.
+- Change: the Porsche crop starts at the top of the poster and drops the neighbouring prints; the close-up starts higher; the main Ferrari frame is 1.04:1 and anchored to the top, so its foot is outside it.
+- Verification: the new crops viewed beside the old ones and against the sources; the page recaptured at 1440 and 390.
+- Outcome: PASS.
+
+### Cycle 17: The seam on the Ferrari panel, found only with the real photograph
+
+- Observation: with the real photograph, a faint light diagonal line runs across the car at 2x pixel density, exactly along the cut between the two fracture shards. Part 15 had verified this with synthetic stand-in pictures, where a seam across a flat gradient is invisible.
+- Diagnosis by experiment: with both cuts removed the line is gone; with one shard hidden, gone; with the frame background black, or the shards' layer properties removed, still there. So it is the anti-aliased edge of the upper shard's cut blending over the lower copy at a fractional pixel position, not a gap and not compositing.
+- Change: once the entrance has settled (the shared script marks the panel) the cut is dropped, leaving one whole picture; the cut is still used during the entrance.
+- Verification: 2x crops across the band in reduced motion (settles at once) and in normal motion (waited for the entrance to settle): no line.
+- Outcome: PASS.
+
+### Cycle 18: Performance
+
+- Verification on the production build: LCP is the hero picture (179 to 202 ms on desktop 1440 unthrottled; 1006 to 1164 ms on a 390 px phone at 3x with Fast 4G and a 4x CPU slowdown), CLS 0.00 in the traces and over a full scroll with the clips loading, at 1440 and 390; page HTML 36 KB; route stylesheet 17.7 KB; the hero is 59 KB at 1440 and 150 KB on a 3x phone; no console message. Lighthouse mobile and desktop: Accessibility 100, Best Practices 100, Agentic Browsing 100, SEO 69 (the single failed audit is `is-crawlable`, the intended `noindex`).
+- Observation: the critical path (two render-blocking stylesheets, three fonts, the shared GSAP) is the site's, not this route's; the route adds a 4.1 KB script.
+- Decision: no change. Long caching for `/videos/` is deploy configuration and was left; noted in the handoff.
+- Outcome: PASS.
+
+### Cycle 19: Cold prospect walkthrough
+
+- Method: read top to bottom as someone who has never heard of the studio, asking the brief's questions in order (expert scenario check, not user research).
+- Result: what it does is clear in the first screen (the three lines of the offer beside a very large mural); the strongest proof comes early (the Ferrari, then the BMW being painted live, with the event named); scale and its before and after next; application (a workshop owner sees the artist at work in a garage); launches (two clips, named, no case study); breadth (two pictures and eight directions); process, a budget stated once, and who is behind it (type only). No client, result or figure is claimed beyond the brief; Ferrari is only the subject of a private client's mural; the exterior names no marque.
+- Weak points, recorded not hidden: the Ferrari photograph is a tilted documentary shot taken from a staircase; the range has two pictures; the before photograph is a slightly different framing; a muralist's tag is visible on the Ferrari photograph; the opening picture is recognisable as an emblem. All are in "Decisions to confirm".
+- Decision: no change; each is a content decision, not a layout one.
+- Outcome: PASS.
+
+### Cycle 20: Build, tests, protected areas
+
+- Verification: `npx astro check` 0 errors, 0 warnings, 10 hints (eight pre-date the work, two are the deprecated `register` notice of the route's test file); `npm test` 105 of 105 (16 for this route); `CONTENT_SOURCE=fixtures npm run build` exit 0, 29 pages, sitemap unchanged at 27 URLs, `/automotive` is `noindex, follow`, canonical `https://impactmurals.ae/automotive`, not in any sitemap, no site header or footer, no em dash, no `autoplay`, no clip in the markup as a source. The protected files (`routes.ts`, the sitemap code, the content adapter, the enquiry module, `validate-content.mjs`, the shared fracture and autoplay code) are unchanged in this pass.
+- Outcome: PASS.
+
+### Cycle 21: Final regression
+
+- Verification after the last edit, on a fresh production build: the full check, test and build above; the fallbacks (reduced motion, no script, Save-Data, 3G), keyboard, contrast, network and layout shift re-run on that build; the evidence sequences retaken on it (the Ferrari panel left to settle on its own).
+- Evidence: `docs/ux-evidence/automotive-media-desktop-1440x900-sequence.jpg`, `automotive-media-mobile-390x844-sequence.jpg` (twelve sections each, real media) and `automotive-media-pause-control-1440x900.jpg`.
+- Outcome: PASS for everything verifiable here. BLOCKED, not passed: iOS Safari and real-device autoplay (including Low Power Mode), Firefox and Safari rendering, analytics, smoothness of the entrance animations (the headless browser cannot render smoothly).
+- Cycles completed: 21 of the minimum 15, each a real inspection followed by a change or a recorded reason to keep, and a re-check. Cycles 07, 18 and 19 confirmed correct behaviour or left content decisions to the owner and led to no layout change.
+
+---
+
+# Part 17: /automotive visual redesign (brief received 4 October 2026)
+
+Fifth brief on the route. The page worked, but the owner was not satisfied with its visual design: the artwork was often overshadowed by oversized type, some compositions had large empty spaces, vertical clips looked isolated, supporting pictures repeated the main one, sections read like slides stacked vertically, one visual formula was repeated and the page had no rhythm. The brief asks for an image-led, editorial page built on the real media: the owner's Ferrari hero (a Canva mock-up) as the opening, a new section order (Hero / Ferrari, What we do, Photorealism with the workshop clip and the Porsche portrait, BMW / Binance, a large exterior mural, Jetour and iCAUR together, then About, Process and enquiries), the standalone Creative Range removed, the existing copy kept provisionally (a copywriting phase follows), media deferred and capped as before, and a review of the rendered page at desktop and mobile widths.
+
+## References, media and diagnosis
+
+- **References received.** The Ferrari hero mock-up (a 1920 by 1080 Canva image with a browser bar laid over its top) and one composition example (the BMW photograph and clip, with a title above). The brief speaks of two additional examples; only the BMW one arrived, so the other sections were composed from the written brief and the real media.
+- **The Porsche asset.** Identified by looking at the file, not by its position in the old page: `PORTRAIT PORSCHE` (912x1280), a black-and-white portrait of a driver above a number 48 racing Porsche, with the poster title "McQueen Drives Porsche". It was `CREATIVE_RANGE_01`; it is now `PORSCHE_PORTRAIT`.
+- **The Ferrari source.** `FERRARI REALISTIC MURAL` (2252x2443). The opening picture is cut from it; the lit signature and the quotation beneath the artwork are outside the crop.
+- **Environment.** The headless browser used for the review renders at about 1.5 frames per second on every page of the site, so entrance animations cannot complete there: stills were taken with the text entrances forced to their end state. Chrome's largest-contentful-paint metric ignores a picture that fills the whole viewport, so with a full-screen hero the metric lands on a text element; the picture's own arrival time was measured separately (cycle 12).
+
+## Cycles
+
+### Cycle 01: Brief, references and media audit
+
+- Observation: the structure changes (the Ferrari moves from its own section to the opening; two sections merge; one is removed), so every media decision had to be re-made, not carried over. The two retired Ferrari crops and the wheel close-up would have repeated the opening picture; `RR MURAL AFTER` shows a neighbouring mural of another subject and a person in the window; `20260814_200545` is the same Ferrari wall under a skylight.
+- Decision: the opening picture is the Ferrari mural; the Ferrari section, its close-up, the wheel close-up and the Creative Range are retired; the Porsche portrait gets its own slot; the two redundant photographs stay unused.
+- Outcome: PASS (decisions in `docs/AUTOMOTIVE-MEDIA.md`).
+
+### Cycle 02: Diagnosis of the previous page, in the owner's window
+
+- Method: the previous version captured section by section at 1920x945, the size of the window in the owner's mock-up.
+- Observations: the page was 12,503 px tall. Titles were larger than the pictures they introduced (the section title reached 104 px, the opening title 128 px, the budget figure 154 px, the biggest text on the page after the opening). In the Ferrari, Exterior and Workshop sections a title floated in a column with hundreds of pixels of nothing between it and the picture; the BMW clip stood at the far right with a void between it and its type; the Launch clips were small and far apart; the supporting Ferrari close-up repeated the main picture; the Creative Range was a third, different layout.
+- Decision: rebuild the compositions around the artwork's own scale: art first, type sized beneath it, one grid, a different composition per section.
+- Outcome: PASS (findings drive cycles 03 to 11).
+
+### Cycle 03: The opening picture, cut from the real photograph
+
+- Observation: the mock-up's frame is a 16:9 crop of the Ferrari wall. Reconstructed by landmarks (the woman's head and feet, the two windows, the wheel hub), it is 2133x1200 from (11, 189) in the source: both stone windows, the woman, the car and its badge, no signature. A phone cannot use a 16:9 picture (a 390 px screen would show 26 per cent of its width), so a squarer crop of the same wall was made: candidates 1300x1400 from (420, 285) and 1300x1300 from (380, 250) were compared side by side.
+- Decision: 2000x1125 for screens (283 KB master), 1300x1400 for phones (the woman and both horses whole, the bonnet below, the road at the foot as a quiet zone for the type); both inside one `<picture>` so a device downloads one.
+- Verification: the crops viewed beside the source with a coordinate grid; the page rendered at 390, 768, 1024, 1366, 1600, 1920 and 2560 wide.
+- Outcome: PASS.
+
+### Cycle 04: First recomposition, 1920x945
+
+- Observation: the new compositions held (hero edge to edge; ruled offers with the canvas clip as tall as the list; Porsche and workshop clip on one line with the type in a column of its own; the finished BMW with its clip; the exterior wall at 710 px; Jetour and iCAUR in one row). Defects: the opening title ran two lines together (a class name left over from the old template, so the three lines were not forced), the shade made the whole picture grey and dull, the exterior's "before" sat at the foot of a wide column far from the wall, the BMW clip stood 250 px from the photograph, the budget was still large. The page was already 8,044 px tall.
+- Change: the three title lines restored; a lighter shade; the budget set at 2.8vw (54 px at 1920, smaller than a section title); section titles capped at 4.4rem; the BMW clip centred in its columns.
+- Verification: recaptured section by section.
+- Outcome: PASS.
+
+### Cycle 05: Contrast of the type over the Ferrari
+
+- Method: the hero rendered with its text hidden, every text line's box read from the page, and the contrast of each text colour computed against every pixel under its box (the 3rd percentile is the figure given, so one stray bright pixel cannot hide a weak area; the single worst pixel is noted when it is lower).
+- Observation: the first lighter shade left the 12 px lines short: the eyebrow 3.4 to 3.9 and the credit line 3.8 to 4.3 at several widths (4.5 needed); the title and the intro passed.
+- Change: the small lines went to near-full paper; a stronger foot shade; then, to hold at any width, a soft local shade that travels with the type and fades to nothing.
+- Verification: 1920x945, 1440x900, 1280x720, 1024x768, 1366x768, 1600x1000 and 2560x1080 on the rendered pixels: every line passes at the 3rd percentile (see cycle 19 for the final figures).
+- Outcome: PASS.
+
+### Cycle 06: Second pass at 1920x945
+
+- Observation: the exterior wall at 710 px was the largest frame but not dominant, and its title and its "before" were two satellites with 450 px of void between them; the Launch heading at the top-left left a tall empty column beneath it; the Porsche, at 72 per cent of the screen's height, read as an equal of the workshop clip, not as supporting work.
+- Change: the exterior wall grows to up to 52 per cent of the width and 118 per cent of the screen's height, and the grid starts the next column exactly where the picture ends (it is told the wall's proportions); the "before" laps the wall's edge with a one-word tag, so the evidence and the result are one picture, not two; the Launch heading sits on the foot line level with the two names, so the type reads as a caption row under the work; the Porsche is cut to 64 per cent of the screen's height against the clip's 88.
+- Verification: recaptured at 1920 and 1440; the page is 8,252 px at 1920 (it was 12,503), 7,462 at 1440, 6,443 at 1280, 5,751 at 1024, 5,815 at 768 and 8,079 at 390.
+- Outcome: PASS.
+
+### Cycle 07: Phones, section by section
+
+- Observation: at 390 the BMW clip laid over the foot of the finished-car photograph and hid the car's front and wheels, the very thing the photograph is for; the What we do lead line sat at the foot of its row with a void above it.
+- Change: the BMW reads process first, then result: the clip, then the finished car edge to edge (the source order stays photograph first, `order` puts the clip ahead on phones only); the lead line is centred beside its clip and slightly larger.
+- Verification: full page at 390x844 at 2x pixel density; the clips are 50 to 86 per cent of the screen's width and none is taller than 72 per cent of its height.
+- Outcome: PASS.
+
+### Cycle 08: Tablets
+
+- Observation: at 768 the exterior's "before" disappeared (only its label showed at the far edge): a frame with no intrinsic width collapses to nothing in a grid cell that shrinks to fit. The Porsche and the workshop clip did not end on one line because the portrait's label added height to its figure.
+- Change: the "before" stretches to its cell on tablets; the portrait's label hangs under the frame instead of adding to it.
+- Verification: 768x1024 and 820x1180: both pictures end on one line, the "before" laps the wall, the Launch pair has equal heights.
+- Outcome: PASS.
+
+### Cycle 09: Laptops, small screens and ultra-wide
+
+- Observation: at 1440x900 and 1280x720 every composition holds; at 1024 the hero crops the right of the picture and the offers, Photorealism and BMW switch to their narrow grids without collision; at 2560x1080 the hero is 62 rem tall, so a sliver of the next section shows under it (kept: a full-height hero on a 4K-class panel would be a poster).
+- Verification: 1024x768, 1280x720, 1366x768, 1440x900, 1600x1000, 1920x945, 2560x1080 captured and viewed.
+- Outcome: PASS.
+
+### Cycle 10: The hero against the owner's reference
+
+- Observation: set beside the mock-up, the implemented hero matches the composition (the same wall, the type at the lower left over the white horse and the dress, the credit at the lower right) but the mark was a third smaller than the mock-up's and the shade made the picture duller than the mock-up's.
+- Change: the animated mark is 17.5 per cent of the screen (336 px at 1920, as large as in the mock-up); the screen-wide shade is lighter; the type is held by the local shade instead.
+- Verification: the two side by side at the same scale (`docs/ux-evidence/automotive-visual-hero-vs-reference-1920x945.jpg`); contrast re-measured.
+- Outcome: PASS (the framing differs by design: the whole window frame is kept, the mock-up's bar had hidden its top).
+
+### Cycle 11: The mark over the picture on phones and tablets
+
+- Observation: on a phone or a tablet the mark sits over the top of the picture, where the photograph is palest (the skylight): contrast 2.25 to 2.5 at 768 and 820 (3:1 needed for a graphic).
+- Change: a soft shade in the top corner under the mark, in addition to the one along the top edge.
+- Verification: 390, 360, 768 and 820 wide on the rendered pixels: 7.6, 6.6, 4.8 and 5.8 at the 3rd percentile.
+- Outcome: PASS.
+
+### Cycle 12: Loading and performance (production build)
+
+- Verification, cold loads with the cache off. Before any scroll: 14 or 15 requests and 280 to 400 KB, no clip; the opening picture is 95 KB at 1440, 148 KB at 1920, 116 KB on a 390 px phone at 3x and 126 KB on a 768 px tablet at 2x (the right crop and size each time); after scrolling the whole page: 26 requests including exactly five clips, no duplicate, no failed request, no console message, layout shift 0.00 at 1440, 1920, 390 and 768. Cold timings: desktop 1440, first paint 0.20 to 0.23 s with the picture in place by 0.04 s; phone 390 at 3x on Fast 4G with a 4x CPU slowdown, first paint 1.1 to 1.5 s, largest paint (the picture) 1.2 to 1.6 s, the 116 KB picture arriving at 0.54 to 0.57 s, before the first paint; on Slow 4G (1.6 Mbps) the picture arrives at 1.6 to 2.0 s and the largest paint is 2.0 to 2.2 s. The page is 33.9 KB of HTML (9.4 KB gzipped), 19.4 KB of route stylesheet (4.3 KB gzipped) and 4.1 KB of route script (1.8 KB gzipped); no new dependency.
+- Observation worth recording: on screens Chrome reports the largest contentful paint as the CONTACT link (0.2 s), because a picture that fills the viewport is not counted; the measured arrival of the picture is the figure that matters.
+- Outcome: PASS.
+
+### Cycle 13: Playback in the new layouts
+
+- Verification, read from the page's state on the production build with real wheel input: at 1440 and 1920 no more than two clips play at once (only in the moments two are each at least 35 per cent visible, and when the Launch pair is on screen), at 390 never more than one; no clip ever plays while off screen; all five pause buttons are shown once the clips have attached; the controller itself is unchanged.
+- Outcome: PASS.
+
+### Cycle 14: Reduced motion, no script, Save-Data, 3G
+
+- Verification on the production build, scrolling the whole page: reduced motion, JavaScript disabled, Save-Data and a 3G connection each request no clip, show no pause button, load all five posters and carry all 15 sampled strings; entrance reveals sit at full opacity.
+- Outcome: PASS.
+
+### Cycle 15: Keyboard, structure, alt text, Lighthouse
+
+- Verification: Tab order skip link, CONTACT, the five pause buttons in page order, WhatsApp, email, the website link, each with a 2 px or 2.7 px ring; Space and Enter pause and resume; one H1, nine H2, eight H3, every section named by its heading, no picture without alt text (ten distinct descriptions for eleven slots: the phone crop shares the opening picture's). Lighthouse on the production build, mobile and desktop: Accessibility 100, Best Practices 100, Agentic Browsing 100, SEO 69 (the single failed audit is `is-crawlable`, the intended `noindex`).
+- Outcome: PASS.
+
+### Cycle 16: Width matrix and section seams
+
+- Verification: 23 widths from 320 to 2560 on the production build: no horizontal overflow and no hero title line past the viewport at any. Every boundary between sections at 1x, 1.5x and 2x pixel density shows only the two surface colours and at most one anti-aliased blend row where a boundary falls between device pixels (no stray light line: there is no dark-on-dark junction any more).
+- Outcome: PASS.
+
+### Cycle 17: Cold prospect walkthrough
+
+- Method: read top to bottom as someone who has never heard of the studio (expert check, not user research).
+- Result: the first screen is the work (an ultra-realistic mural, the name and the offer in three lines, a credit line saying it is a private client's Ferrari mural); the four offers can be read in a glance beside a clip of a car being drawn and painted; Photorealism shows a process and a result, each captioned on its own; the BMW painted live with its finished car is the strongest proof and names its event; the exterior wall shows scale with its before; two launches are named; process, a budget stated once as information, who is behind it and how to reach it follow. No client, result or figure is claimed beyond the brief.
+- Weak points, recorded not hidden: the finished BMW photograph is 780 px wide, so at 940 px it is slightly soft; the Photorealism heading is new wording taken from the brief; the exterior "before" is a different framing of the wall (the number 77 sits at the same height in both); the Porsche portrait is a phone photograph of a poster-like artwork with a visible door outline. All are in the handoff's "Decisions to confirm".
+- Outcome: PASS (no layout change; content decisions left to the owner).
+
+### Cycle 18: Build, tests, protected areas
+
+- Verification: `npx astro check` 0 errors, 0 warnings, 10 hints (eight pre-date the work, two are the deprecated `register` notice of the route's test file); `npm test` 110 of 110 (89 existing plus 21 for this route, six of them new or rewritten for this brief: the opening picture and its phone crop, the two separate photoreal pieces, modest section titles and a smaller price, the exterior's dominant wall, the launch pair at one height, no Creative Range); `CONTENT_SOURCE=fixtures npm run build` exit 0, 29 pages, sitemap unchanged at 27 URLs, the route noindex and exempted only by name. The protected files and the shared fracture and autoplay code are unchanged; `automotive-motion.ts` (route-only) no longer imports the fracture helper because no panel uses it.
+- Outcome: PASS.
+
+### Cycle 19: Final regression on the last build
+
+- Verification after the last edit, on a fresh production build: the tests, the check and the build above; loading, cold timings, playback, the four fallbacks, keyboard, the width matrix and Lighthouse re-run on that build. Contrast of the type over the picture at the 3rd percentile, final figures (title needs 3:1, the rest 4.5:1 except the mark, 3:1; the title figure counts the whole line box, so it is conservative): 1920x945 title 3.9, eyebrow 7.0, intro 8.7, credit 5.3, mark 3.3, link 5.1; 1440x900 4.8, 7.4, 8.7, 6.3, 3.9, 8.5; 1280x720 4.6, 7.3, 6.9, 5.6, 3.6, 4.7; 1024x768 6.2, 8.2, 7.2, 11.6, 4.0, 9.2; 2560x1080 4.5, 5.1, 8.1, 4.9, 5.0, 7.1; 390 wide 14.1, 11.3, 12.3, 14.0, 7.6, 15.5; 360 wide 13.6, 10.6, 12.3, 14.0, 6.6, 14.8; 768 wide 11.8, 10.1, 12.3, 14.0, 4.8, 11.3. The lowest single pixel under the 12 px credit line is 3.4 to 4.1 at some widths (one highlight on the bonnet), below the 4.5 target for that one pixel.
+- Evidence: `docs/ux-evidence/automotive-visual-desktop-1920x945-sequence.jpg` (fourteen captures, every section), `automotive-visual-mobile-390x844-sequence.jpg` (ten captures) and `automotive-visual-hero-vs-reference-1920x945.jpg` (the owner's mock-up beside the implemented hero). The Part 16 images show the previous composition and are kept for history only.
+- Outcome: PASS for everything verifiable here. BLOCKED, not passed: iOS Safari and real-device autoplay (including Low Power Mode), Firefox and Safari rendering, analytics, smoothness of the entrance animations (the headless browser cannot render smoothly), the browser's back/forward-cache restore.
+- Cycles completed: 19 of the minimum 15, each a real inspection followed by a change or a recorded reason to keep, and a re-check. Cycles 01, 09, 13, 14, 15, 16 and 17 confirmed correct behaviour or left content decisions to the owner and led to no layout change.
+
+---
+
+# Part 18: /automotive final copy integration (brief received 4 October 2026)
+
+Sixth brief on the route, and a controlled copy update: the visual design is a separate task and stays as it is. The owner supplied the approved final website copy (nine blocks: hero, what we do, realism and detail, BMW / Binance, large-scale exterior mural, Jetour and iCAUR, about, how we work, closing) and asked for it to be integrated accurately: word for word, no new marketing copy, headings or taglines, no redesign. Section 03 changes meaning: it is no longer about the workshop mural and the Porsche portrait but about automotive realism in general ("THE DETAILS CAR PEOPLE NOTICE."), with a media composition that can take more realistic artworks later and no description of any single artwork. The old Workshop / Automotive Portraits text, a Ferrari case study, the Creative Range, the standalone Project Budgets section and old pricing statements must not be visible; budget stays mentioned in "How we work". The BMW section carries the link "FEATURED BY AGMC: READ THE ARTICLE →" to AGMC's article about Binance Blockchain Week 2025.
+
+## Baseline and decisions
+
+- **Baseline.** The Part 17 page with its provisional copy: hero with a credit line, "FROM WALLS TO VEHICLES", a "PHOTOREALISM" section with two captioned pieces, BMW with one line of copy, a title-only exterior, "LAUNCH ARTWORK", process, a budget section ("AED 8,000–25,000+"), about, contact. The route's tests pinned that wording.
+- **Hero credit line removed.** "PRIVATE CLIENT / ULTRA-REALISTIC FERRARI MURAL" is not in the approved hero (eyebrow, headline, intro), so it is not on the page; the mural itself, the composition and the CONTACT link are unchanged.
+- **Section 03 is generic.** The two captions ("AUTOMOTIVE WORKSHOP / PHOTOREAL MURAL", "PORSCHE PORTRAIT") are gone, the component is `Realism.astro`, the pictures are a list in the content file (`realism.art`: slot, place, description for screen readers) placed by role (`lead`, `side`) instead of by what they show. The two pictures, their files and their positions are unchanged.
+- **No budget section.** `Scope.astro`, its content and its styles are removed; the word "budget" now appears once on the page, in the proposal step of "How we work".
+- **Order.** The approved copy runs About (07) before How we work (08) before the closing (09); the page had How we work first. The page follows the approved order (two lines in `automotive.astro`).
+- **The AGMC link is new.** The previous copy named neither AGMC nor an article, so there was no existing link to preserve; it uses the page's link conventions (a new tab with `rel="noopener noreferrer"`, a `data-track` hook, mono capitals as in the jump link, underlined, with the signal-colour arrow of the contact rows).
+- **Closing.** The secondary link "EXPLORE IMPACT MURALS →" replaces the old website text and still goes to the site root; the WhatsApp and email rows and the location line stay as essential contact details.
+- **Kept although not in the copy:** the one-word tag BEFORE on the second exterior picture (a label of the picture, not copy), the step numerals 01 to 04, the CONTACT jump link, the pause buttons, the alt texts (screen readers only; the pictures did not change).
+- **Metadata.** The meta and Open Graph description is now the approved hero intro.
+
+## Cycles
+
+### Cycle 01: Approved copy against the page, the components and the tests
+
+- Observation: every block changes (new eyebrows, longer bodies, two or three paragraphs where there was one line, a full stop at the end of each headline); the hero credit, the section 03 captions and the budget section have no counterpart in the approved copy; the old test for "no Rolls-Royce named" and "no AGMC named" contradict the approved exterior and BMW copy.
+- Decision: the content module holds the approved text exactly; anything visible that is not approved copy must be a documented functional label; the two old negative tests become "never the client" tests.
+- Outcome: PASS (decisions above).
+
+### Cycle 02: Integration and a guard that fails on any old wording
+
+- Change: `src/content/automotive.ts` rewritten with the approved text (a full stop kept on each headline, apostrophes as supplied, non-breaking spaces only inside the hero's lines); the sections draw it; the tests carry the approved copy as a fixture and assert that the module equals it, that every approved block is present, that every visible string is approved or one of six functional labels, that no old phrase remains in a template or the stylesheet, and that no template contains a sentence.
+- Verification on the production build: the page's text compared with the approved copy block by block: 54 of 54 found, in order; everything else visible is the skip link, CONTACT, BEFORE, 01 to 04, the WhatsApp and email rows and "Dubai, UAE". The built head carries no old description.
+- Outcome: PASS.
+
+### Cycle 03: Desktop render, 1920 and 1440
+
+- Observation: the compositions hold with the longer text (hero, offers beside the clip, the two realistic pieces with the text column, BMW with its link, the exterior wall with the text and the "before", Jetour and iCAUR with a sentence each). Two defects: brand names and compounds split across lines at almost every width ("Coca-" / "Cola Arena", "Rolls-" / "Royce", "hands-" / "on", "black-and-" / "white"), and the eyebrow and headline spans of a heading touch with no space between them in the HTML.
+- Change: a small helper (`src/lib/automotive-text.ts`, `Tight.astro`) sets every hyphenated word in a paragraph in a run that never breaks (markup only; the characters are the supplied ones); a space between the eyebrow and the headline of each heading.
+- Verification: a scan of every hyphen in every paragraph at 13 widths: 0 broken compounds (it found one to three at every width before). The only remaining hyphen break is a headline ("PROJECT-DRIVEN." at tablet widths), handled in cycle 05.
+- Outcome: PASS.
+
+### Cycle 04: Kept as it is, on purpose
+
+- Observation: beside the offers, the open space under the clip is now larger (about 470 px at 1920 and at 1440, from the second offer down), because the list is longer than the clip is tall; the clip stays level with the headline, where it was.
+- Decision: keep. The brief asks for the container to adapt to longer text and not for equal heights; moving the clip or growing it would change a media placement (and the clip is meant not to dominate). The text column was widened to a 62-character line so a two-paragraph offer stays compact.
+- Outcome: PASS (recorded in the handoff).
+
+### Cycle 05: Tablets, 768 and 820
+
+- Observation: on the exterior section the "before" was left alone under a long text column with a block of 360 by 420 px of empty paper beside it; the About headline broke after the hyphen ("PROJECT-" / "DRIVEN.").
+- Change: from 768 the exterior's text runs under the wall and its title in two columns, the right column keeps the title and the "before" (which stays at the wall's foot, lapping its edge); the About headline gets six columns.
+- Verification: 768 and 820 rendered: the "before" ends on the wall's foot, the section is about 170 px shorter, the headline is on two lines.
+- Outcome: PASS.
+
+### Cycle 06: Laptops, 1024 to 1366
+
+- Observation: beside the wall the text column was taller than the wall on short screens (1280 by 720: the "before" hung 100 px below the wall; 1024 by 768: 200 px).
+- Change: the text goes under the pair (two columns) below 1280 px, and at 1280 or more only when the screen is at least 760 px tall. A first version of this change dropped one grid line from the wall's rule and the screenshot showed the text column crushed to 150 px (found, fixed and re-captured the same cycle).
+- Verification: 93 combinations of width (768 to 1500 in steps of 24) and height (768, 900, 1024): the title, the "before", the text and the wall never overlap; the "before" hangs at most 92 px below the wall and ends on its foot at most sizes (1024, 1180, 1440 and 1920 included).
+- Outcome: PASS.
+
+### Cycle 07: Phones, 390, 360 and 320
+
+- Observation: composition by composition as before (the BMW clip then the finished car, the staggered pair, the exterior wall between its title and its text, the ruled steps); at 320 and 360 the BMW link wrapped with the arrow alone on the second line.
+- Change: the arrow is joined to the last word by a non-breaking space (BMW link and the closing link).
+- Verification: at 320 the label wraps as "FEATURED BY AGMC: READ THE" / "ARTICLE →". The pages are 9,592 px tall at 390 (it was 8,079).
+- Outcome: PASS. (Tooling note: a full-page capture at 3x density is limited to 16,384 device pixels and repeats the top of the page below that; the phone checks used 1x full pages and per-screen captures.)
+
+### Cycle 08: Is any text clipped, hidden or overlapped?
+
+- Method: at 13 widths from 320 to 2560 every text node's line boxes were read from the page and compared with the viewport, every `overflow` ancestor, every other text block and every picture frame; then effective opacity of all 92 text nodes in three real contexts.
+- Verification: no text outside the viewport, clipped, over other text, over a picture or wider than its box at any width (the hero headline's own tight line boxes overlap by font metrics only and are skipped); no horizontal overflow at any width. All 92 text nodes are fully visible with reduced motion, with JavaScript off, and in normal motion after scrolling the whole page.
+- Outcome: PASS.
+
+### Cycle 09: The AGMC link
+
+- Verification: the built link has the exact address, opens a new tab with `rel="noopener noreferrer"` (a click in a real browser opened it, with `window.opener` null, and the original page stayed on /automotive); the address answered HTTP 200 with no redirect from this machine; the article's text names the live spray-painting of the BMW M5 Touring by Alexis from Impact Murals, so "featured by AGMC" is accurate. The tab order is skip link, CONTACT, three pause buttons, the AGMC link (after the BMW clip), two more pause buttons, WhatsApp, email and the closing link, each with a 2 px focus ring.
+- Observation worth recording: AGMC's own page carries another article's title in its `<title>` and Open Graph tags ("AGMC Becomes an Official Partner with BMW Classic Collection"), so the browser tab and any link preview show that title; the page content is the right article. That is on their side.
+- Outcome: PASS.
+
+### Cycle 10: The hero's type with the new, longer text
+
+- Method as in Part 17: the text hidden, the contrast of each text colour computed against every pixel under its own line boxes (the 3rd percentile is the figure; a single worst pixel is noted). A first run measured the eyebrow's whole flex box instead of its text and flagged it LOW (3.1 to 3.6); with the text's own rectangles it is fine.
+- Result at 1920, 1440, 1280, 1024, 2560, 768, 390 and 360: headline at least 4.0 against 3:1 needed (conservative: whole line boxes), eyebrow at least 5.8 against 4.5, intro at least 6.4 against 4.5, CONTACT at least 4.69 against 4.5 (one pixel at 4.01 at 1280), the mark at least 3.34 against 3:1 (one pixel at 2.76 at 1920). Re-measured on the last build: the same boxes at every width and the same pixels (six of the eight widths pixel-identical, two with about 18 pixels different), so the figures stand.
+- Outcome: PASS.
+
+### Cycle 11: The media and how they load
+
+- Verification on the production build (cold, real wheel input): the same 11 slots and files (no media file was touched; the newest is from the previous pass); before any scroll 13 requests and no clip; after scrolling the whole page 26 requests with exactly five clips; no duplicate, no failed request, no console message; layout shift 0.00 at 1440 and at 390 at 3x; at most two clips playing together on a large screen and one on a phone; five pause buttons; the page is 36.8 KB of HTML (10.6 KB gzipped, +2.9 KB) and the route stylesheet 19.3 KB (4.2 KB gzipped).
+- Outcome: PASS.
+
+### Cycle 12: Structure, accessibility and search tooling
+
+- Verification: one h1, eight h2 (the budget section is gone), ten h3 (four offers, the two launch names, four steps); ten pictures all with alt text, five clips; Lighthouse on the production build, mobile and desktop: Accessibility 100, Best Practices 100, Agentic Browsing 100, SEO 69 (the one failed audit is `is-crawlable`, the intended `noindex`).
+- Outcome: PASS.
+
+### Cycle 13: Large default text size
+
+- Method: the browser's default text size raised to 150 per cent and 200 per cent at 1280, 1024, 768, 390 and 320 wide (a stricter test than zoom, because the gutters and gaps grow with it).
+- Observation: at 150 per cent the hero headline lines, the CONTACT link, the long exterior headline and (at tablet width) the exterior title over the "before" overflowed or overlapped; one cause was structural (the title and the "before" shared one grid row and cleared each other by 12 px at 768).
+- Change: display titles and the names of offers and steps may break a long word as a last resort (`overflow-wrap: anywhere`, which also stops a long word widening a grid column); the hero's top row wraps; from 768 the exterior's title, "before" and text are three stacked rows (the 93-combination check was re-run).
+- Verification: clean at 150 per cent at all five widths and at 200 per cent at 1280, 768 and 390; two extreme corners remain at 200 per cent (1024 wide: the exterior eyebrow runs past the edge of a very narrow column; 320 wide: three step paragraphs run past the right edge and the offers lead overlaps its clip). Both are far outside normal use and are recorded in the handoff.
+- Outcome: PASS for normal use and for 150 per cent; the two 200 per cent corners are documented, not fixed.
+
+### Cycle 14: A cold read of the copy against the media
+
+- Method: the page read top to bottom as someone who has never heard of the studio (expert check, not user research).
+- Result: the first screen says what the page is for ("ART FOR CAR LOVERS.", the three disciplines, who it is for); the four offers read in one glance beside a clip of a car being drawn and painted; the realism text is about attention to detail and sits beside a workshop mural in progress and a racing portrait without describing either; the BMW section names the event, the car and the venue, shows the process and the result and ends on the proof of the partner's own article; the exterior copy matches what the picture shows (a black-and-white, chrome-like figure at building scale) and says "private commission" before it names the marque; the two launches each say what was painted and where; About says who leads and who is brought in; How we work states budget once, in the proposal; the closing asks for a short call and offers the site as a second step.
+- Weak points, recorded not hidden: the summit booth sentence has no picture (none was supplied); the finished BMW photograph is still a 780 px original shown up to about 940 px; the hero no longer says anything about the Ferrari mural being a private client's; About has no portrait. All are in the handoff.
+- Outcome: PASS (no change; content decisions left to the owner).
+
+### Cycle 15: Final regression on the last build
+
+- Verification after the last stylesheet edit, on a fresh production build: `npm test` 115 of 115 (89 existing plus 26 for this route); `npx astro check` 0 errors, 0 warnings, 10 hints (unchanged: eight pre-date the work, two are the deprecated `register` notice of the route's test file); `CONTENT_SOURCE=fixtures npm run build` exit 0, 29 pages, sitemap unchanged at 27 URLs, "No problems found". On that same build: the text comparison (54 of 54 in order), the old-wording scan (nothing left), the 13-width sweep (no overflow, clipping or overlap; 0 broken compounds), the exterior check over 93 sizes, the large-text test, text visibility with reduced motion, without JavaScript (after the hero's 0.8 s entrance) and in normal motion (92 of 92), loading and playback (13 requests then 26 with five clips, no failure, layout shift 0.00, two clips at most at once on a large screen and one on a phone), the AGMC click in a real browser, the tab order, the hero contrast (above) and Lighthouse (mobile and desktop: 100, 100, 100 and SEO 69). The protected and shared files are unchanged (`BaseLayout`, `Contact`, `validate-content`, routes, the sitemap code, the video and motion scripts, `AutoMedia`, `HeroLogo`, `global`, the media, `_headers`).
+- Evidence: `docs/ux-evidence/automotive-copy-desktop-1920x945-sequence.jpg` (ten captures, every section) and `automotive-copy-mobile-390x844-sequence.jpg` (twelve captures); the Part 17 images show the previous copy and are kept for history.
+- Outcome: PASS for everything verifiable here. BLOCKED, not passed: iOS Safari and real-device behaviour of the clips, Firefox and Safari rendering (only Chromium was available), analytics, smoothness of the entrance animations (the headless browser cannot render smoothly), the owner's approval of the points listed in the handoff.
+- Cycles completed in this part: 15 (the 15-cycle minimum of the overall pass was met in earlier parts; nothing here was added to fill a count: cycles 04, 09, 11, 12 and 14 confirmed correct behaviour or left decisions to the owner and led to no layout change).

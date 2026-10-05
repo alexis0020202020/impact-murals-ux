@@ -32,6 +32,7 @@ Travaille uniquement dans ce dossier. Pars des sources V2-80 corrigées présent
 | `docs/UX-TECHNICAL-GUARDRAILS.md` | Architecture et fonctionnement à préserver |
 | `docs/UX-REVIEW-LOG.md` | Journal des 15 cycles minimum, à remplir réellement |
 | `docs/UX-HANDOFF.md` | État de départ et point de reprise à tenir à jour |
+| `docs/AUTOMOTIVE-MEDIA.md` | Médias de la page `/automotive` : fichiers attendus par emplacement, préparation des photos et des clips, chargement et lecture différés des vidéos |
 
 Les anciennes versions de README, CLAUDE, START-HERE et BUILD_PROMPT sont conservées dans `docs/archive/pre-ux-pass/`. Les anciens PRODUCT, DESIGN, prompts V1 et comptes rendus restent consultables, mais ne définissent pas la mission actuelle.
 

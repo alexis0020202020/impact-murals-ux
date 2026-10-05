@@ -1,0 +1,63 @@
+---
+import { contact } from "@/content/automotive";
+import { global } from "@/content/global";
+import Tight from "./Tight.astro";
+
+/*
+  The close, and the first and only place the page asks for anything. The ask on
+  the left (a heading, a question, and a short paragraph), two direct routes set
+  as large ruled lines of type on the right (the whole line is the tap target),
+  reusing the studio's existing WhatsApp link and address from
+  src/content/global.ts, then the secondary link to the studio's site and the
+  location.
+
+  The site has no analytics system to reuse and none is added for this page. The
+  `data-track` names are the integration point for whichever system is adopted.
+*/
+---
+
+<section id="contact" class="auto-section auto-contact surface-dark" aria-labelledby="auto-contact-title">
+  <div class="auto-wrap">
+    <div class="auto-contact-layout">
+      <div class="auto-contact-ask">
+        <h2 id="auto-contact-title" class="headline-display auto-title-lg" data-auto-reveal>{contact.headline}</h2>
+        <div class="auto-contact-copy" data-auto-reveal>
+          <p class="auto-lead"><Tight text={contact.body[0]} /></p>
+          <p class="auto-body"><Tight text={contact.body[1]} /></p>
+        </div>
+      </div>
+
+      <div class="auto-contact-routes">
+        <ul class="auto-contact-list" role="list" data-auto-reveal>
+          <li>
+            <a
+              href={global.contact.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="auto-contact-row"
+              data-track="automotive_whatsapp_click"
+            >
+              <span class="auto-contact-label">{contact.whatsapp}</span>{" "}
+              <span class="auto-contact-value">{global.contact.phoneDisplay}</span>
+              <span class="auto-contact-arrow" aria-hidden="true">↗</span>
+            </a>
+          </li>
+          <li>
+            <a href={`mailto:${global.contact.email}`} class="auto-contact-row" data-track="automotive_email_click">
+              <span class="auto-contact-label">{contact.email}</span>{" "}
+              <span class="auto-contact-value">{global.contact.email}</span>
+              <span class="auto-contact-arrow" aria-hidden="true">↗</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="auto-contact-foot">
+          <a href="/" class="auto-link" data-track="automotive_website_click"
+            >{contact.site.label}&nbsp;<span class="auto-link-arrow" aria-hidden="true">{contact.site.arrow}</span></a
+          >
+          <p>{contact.location}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

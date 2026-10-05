@@ -1,0 +1,67 @@
+---
+import { launch } from "@/content/automotive";
+import { resolveMedia } from "@/lib/automotive-media";
+import AutoMedia from "./AutoMedia.astro";
+import Tight from "./Tight.astro";
+
+/*
+  Two launches, one section: the heading says what both are, the name and the
+  line under each clip say which is which. Both are portrait clips at their own
+  native proportions, and on a screen they stand in one row on one baseline at
+  the same height (each takes a share of the row equal to its own proportion,
+  which is what makes the heights match at every width), so neither is the
+  lesser. No oversized frame around them, no swipe carousel. Each caption is the
+  marque's name and one sentence about the artwork; the two sentences may differ
+  in length, so the captions end where their text ends.
+*/
+const [jetour, icaur] = await Promise.all([
+  resolveMedia("JETOUR_LAUNCH"),
+  resolveMedia("ICAUR_LAUNCH")
+]);
+const ratio = (media: typeof jetour) => Number((media.image.width / media.image.height).toFixed(4));
+---
+
+<section class="auto-section auto-launch surface-dark" aria-labelledby="auto-launch-title">
+  <div class="auto-wrap">
+    <div class="auto-launch-layout">
+      <h2 id="auto-launch-title" class="auto-caption auto-launch-head" data-auto-reveal>
+        <span class="auto-eyebrow">{launch.eyebrow}</span>{" "}
+        <span class="headline-display auto-title-md">{launch.headline}</span>
+      </h2>
+
+      <div class="auto-launch-pair" style={`--ra:${ratio(jetour)};--rb:${ratio(icaur)}`}>
+        <figure class="auto-launch-a" data-auto-reveal>
+          <div data-auto-scale>
+            <AutoMedia
+              media={jetour}
+              mediaSlot="JETOUR_LAUNCH"
+              alt={launch.jetour.alt}
+              class="auto-tall"
+              sizes="(min-width: 1024px) 26vw, (min-width: 768px) 40vw, 72vw"
+            />
+          </div>
+          <figcaption>
+            <h3 class="headline-display auto-title-sm">{launch.jetour.name}</h3>
+            <p class="auto-body"><Tight text={launch.jetour.body} /></p>
+          </figcaption>
+        </figure>
+
+        <figure class="auto-launch-b" data-auto-reveal>
+          <div data-auto-scale>
+            <AutoMedia
+              media={icaur}
+              mediaSlot="ICAUR_LAUNCH"
+              alt={launch.icaur.alt}
+              class="auto-tall"
+              sizes="(min-width: 1024px) 22vw, (min-width: 768px) 34vw, 62vw"
+            />
+          </div>
+          <figcaption>
+            <h3 class="headline-display auto-title-sm auto-title--mixed">{launch.icaur.name}</h3>
+            <p class="auto-body"><Tight text={launch.icaur.body} /></p>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,15 @@
+---
+import { tightRuns } from "@/lib/automotive-text";
+
+/*
+  A paragraph's text with every hyphenated word kept whole across line breaks
+  (see src/lib/automotive-text.ts). It draws the text only, no wrapper element:
+  put it inside the paragraph that carries the class.
+*/
+interface Props {
+  text: string;
+}
+
+const runs = tightRuns(Astro.props.text);
+---
+{runs.map((run) => (run.tight ? <span class="auto-tight">{run.text}</span> : run.text))}

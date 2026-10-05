@@ -1,0 +1,73 @@
+---
+import { hero } from "@/content/automotive";
+import { resolveMedia, responsiveSet } from "@/lib/automotive-media";
+import HeroLogo from "../HeroLogo.astro";
+import Tight from "./Tight.astro";
+
+/*
+  The Ferrari mural is the opening picture and fills the screen; the type sits
+  over it, left, with a soft shade under the type and under the logo so it
+  reads on any part of the photograph. One still, never a clip, so nothing but
+  the title and this picture is on the critical path.
+
+  Two crops of the same wall (art direction, one request each): a wide one for
+  tablets and screens (the whole scene, steered by object-position), a squarer
+  one for phones (the woman and both horses, which is the scene), where the
+  picture sits above the type and melts into it. The type comes first in the
+  source, so assistive technology meets the title before the picture.
+*/
+const [wide, narrow] = await Promise.all([resolveMedia("AUTOMOTIVE_HERO"), resolveMedia("AUTOMOTIVE_HERO_MOBILE")]);
+const [wideSet, narrowSet] = await Promise.all([
+  responsiveSet(wide.image, [720, 1080, 1440, 1800, wide.image.width]),
+  responsiveSet(narrow.image, [540, 780, 1080, narrow.image.width])
+]);
+---
+
+<section class="auto-hero surface-dark" aria-labelledby="auto-hero-title">
+  <div class="auto-hero-layout">
+    <div class="auto-hero-top">
+      <HeroLogo class="auto-hero-logo" />
+      <a class="auto-jump" href="#contact" data-track="automotive_jump_contact">{hero.jump}</a>
+    </div>
+
+    <div class="auto-hero-foot">
+      <div class="auto-hero-copy">
+        <p class="auto-eyebrow auto-open" style="--i:1">{hero.eyebrow}</p>
+        <h1 id="auto-hero-title" class="headline-display auto-title-hero auto-hero-title auto-open" style="--i:2">
+          {hero.headlineLines.map((line, index) => (
+            <>
+              <span class="auto-line">{line}</span>
+              {index < hero.headlineLines.length - 1 && " "}
+            </>
+          ))}
+        </h1>
+        <p class="auto-hero-intro auto-open" style="--i:3"><Tight text={hero.intro} /></p>
+      </div>
+    </div>
+
+    <div class="auto-hero-art">
+      <picture data-media-slot="AUTOMOTIVE_HERO" data-media-state="image">
+        <source
+          media="(max-width: 767px)"
+          srcset={narrowSet.srcset}
+          sizes="100vw"
+          type="image/webp"
+          width={narrow.image.width}
+          height={narrow.image.height}
+        />
+        <img
+          src={wideSet.src}
+          srcset={wideSet.srcset}
+          sizes="100vw"
+          width={wide.image.width}
+          height={wide.image.height}
+          alt={hero.alt}
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </picture>
+      <div class="auto-hero-veil" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>

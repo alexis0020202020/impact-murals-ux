@@ -1,0 +1,55 @@
+---
+import { whatWeDo } from "@/content/automotive";
+import { resolveMedia } from "@/lib/automotive-media";
+import AutoMedia from "./AutoMedia.astro";
+import Tight from "./Tight.astro";
+
+/*
+  Four formats, scannable in one glance: a ruled list, each line a name in
+  display type beside its text. No icons, no cards, no boxes. The short clip is
+  the one moving thing this high on the page and it is a supporting piece, not
+  the lead: a car drawn and painted by hand on a canvas, from the first pencil
+  lines to the finished artwork, which is what "custom artwork" means. On large
+  screens it stands at the right edge of the list; on a phone it sits beside the
+  lead line. The introduction is two paragraphs (the lead, then the sentence that
+  explains it) and an offer is one or two: each takes the height it needs.
+*/
+const media = await resolveMedia("WHAT_WE_DO_MAIN");
+const [lead, support] = whatWeDo.intro;
+---
+
+<section class="auto-section auto-wwd" aria-labelledby="auto-wwd-title">
+  <div class="auto-wrap">
+    <div class="auto-wwd-layout">
+      <h2 id="auto-wwd-title" class="headline-display auto-title-lg auto-wwd-head" data-auto-reveal>
+        {whatWeDo.headline}
+      </h2>
+
+      <p class="auto-lead auto-wwd-lead" data-auto-reveal><Tight text={lead} /></p>
+      <p class="auto-body auto-wwd-support" data-auto-reveal><Tight text={support} /></p>
+
+      <div class="auto-wwd-media" data-auto-scale>
+        <AutoMedia
+          media={media}
+          mediaSlot="WHAT_WE_DO_MAIN"
+          alt={whatWeDo.alt}
+          class="auto-tall"
+          sizes="(min-width: 1024px) 24vw, (min-width: 768px) 34vw, 50vw"
+        />
+      </div>
+
+      <ul class="auto-wwd-list" role="list">
+        {whatWeDo.offers.map((offer) => (
+          <li class="auto-wwd-item" data-auto-reveal>
+            <h3 class="auto-wwd-name">{offer.title}</h3>
+            <div class="auto-wwd-copy">
+              {offer.body.map((paragraph) => (
+                <p class="auto-body"><Tight text={paragraph} /></p>
+              ))}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>

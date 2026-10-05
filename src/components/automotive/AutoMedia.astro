@@ -1,0 +1,104 @@
+---
+/**
+ * One /automotive media frame: a still, or a muted looping clip laid over its
+ * poster.
+ *
+ * Every frame takes the aspect ratio of its own picture (or of the clip's
+ * poster), written as `--r`, so the space is reserved before anything loads and
+ * a portrait clip keeps its native framing instead of being cropped to a wide
+ * box. The opening picture is the one exception: it fills its panel and is cut
+ * by its own markup (Hero.astro).
+ *
+ * A clip is never in the markup as a source: `data-src` carries its URL and
+ * src/lib/automotive-video.ts attaches it when the frame nears the viewport,
+ * plays it only while it is on screen and never starts it for a visitor who
+ * prefers reduced motion, so the poster (a real, lazy, responsive image with
+ * the alt text) is all that ever downloads in that case. The clip itself is
+ * hidden from assistive technology; the button laid over the frame is the
+ * pause / play control (WCAG 2.2.2), revealed by the script once it takes over.
+ */
+import { Image } from "astro:assets";
+import { imageWidths, type ResolvedMedia } from "@/lib/automotive-media";
+import type { AutomotiveSlot } from "@/content/automotive";
+
+interface Props {
+  media: ResolvedMedia;
+  /** The slot this frame shows (not `slot`: that name is reserved by Astro). */
+  mediaSlot: AutomotiveSlot;
+  /** What the picture shows. Empty only for a purely decorative picture. */
+  alt?: string;
+  /** Extra classes for the frame (positioning, sizing). */
+  class?: string;
+  /** `sizes` for the responsive image: what width it really occupies at each breakpoint. */
+  sizes: string;
+}
+
+const { media, mediaSlot, alt = "", class: className = "", sizes } = Astro.props;
+
+const { image, video } = media;
+const ratio = Number((image.width / image.height).toFixed(4));
+const frameStyle = `--r:${ratio}`;
+const widths = imageWidths(image);
+
+// The button names its clip by the first clause of the description ("A BMW painted live during Binance Blockchain Week"), not the whole of it.
+const subject = alt.split(/[:,]/)[0].trim();
+const pause = subject ? `Pause video: ${subject}` : "Pause video";
+const play = subject ? `Play video: ${subject}` : "Play video";
+---
+
+{video ? (
+  <div
+    class={`auto-frame auto-frame--video ${className}`}
+    style={frameStyle}
+    data-media-slot={mediaSlot}
+    data-media-state="video"
+    data-video-state="idle"
+  >
+    <Image
+      class="auto-poster"
+      src={image}
+      alt={alt}
+      widths={widths}
+      sizes={sizes}
+      format="webp"
+      loading="lazy"
+      decoding="async"
+    />
+    <video
+      class="auto-video"
+      muted
+      loop
+      playsinline
+      preload="none"
+      disablepictureinpicture
+      disableRemotePlayback
+      tabindex="-1"
+      aria-hidden="true"
+      data-auto-video
+      data-src={video.src}
+    ></video>
+    <button
+      type="button"
+      class="auto-video-toggle"
+      hidden
+      aria-label={pause}
+      data-video-toggle
+      data-label-pause={pause}
+      data-label-play={play}
+    >
+      <span class="auto-video-icon" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </div>
+) : (
+  <div class={`auto-frame ${className}`} style={frameStyle} data-media-slot={mediaSlot} data-media-state="image">
+    <Image
+      src={image}
+      alt={alt}
+      widths={widths}
+      sizes={sizes}
+      format="webp"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+)}

@@ -1,0 +1,30 @@
+---
+import { process } from "@/content/automotive";
+import Tight from "./Tight.astro";
+
+/*
+  Four steps as a calm ledger: a numeral, a name and its text, ruled. Four
+  columns on a large screen, two on a tablet, one on a phone, so the longer step
+  texts keep a comfortable line length. Type and whitespace only, no cards,
+  icons or timeline graphics, and nothing that reads as project-management
+  software. This is the one place the page mentions budget, in the proposal step.
+*/
+---
+
+<section class="auto-section auto-process" aria-labelledby="auto-process-title">
+  <div class="auto-wrap">
+    <div class="auto-process-layout">
+      <h2 id="auto-process-title" class="headline-display auto-title-lg" data-auto-reveal>{process.headline}</h2>
+
+      <ol class="auto-steps" role="list">
+        {process.steps.map((step, index) => (
+          <li class="auto-step" data-auto-reveal>
+            <span class="auto-step-n" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+            <h3 class="auto-step-name">{step.title}</h3>
+            <p class="auto-body"><Tight text={step.body} /></p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
