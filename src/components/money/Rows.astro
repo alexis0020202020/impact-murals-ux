@@ -1,0 +1,38 @@
+---
+import type { Row } from "@/content/money/types";
+import { resolveLink } from "@/lib/money-links";
+import Link from "./Link.astro";
+import Tight from "./Tight.astro";
+
+/*
+  A ruled list: a name in display type at the left, its words at the right, an
+  optional note line and an optional link to the page that owns the detail. No
+  cards, icons or boxes.
+*/
+interface Props {
+  rows: Row[];
+  /** The element level of each name. */
+  level?: "h3" | "h4";
+}
+
+const { rows, level = "h3" } = Astro.props;
+const Heading = level;
+// A destination the build cannot link to safely draws nothing, not a label with no link behind it.
+const linked = await Promise.all(rows.map(async (row) => ({ row, live: row.href ? Boolean((await resolveLink(row.href)).href) : false })));
+---
+<ul class="mp-rows" role="list">
+  {linked.map(({ row, live }) => (
+    <li class="mp-row" data-auto-reveal>
+      <Heading class="mp-name">{row.name}</Heading>
+      <div class="mp-row-copy">
+        <p class="mp-body"><Tight text={row.text} /></p>
+        {row.note && <p class="mp-row-note">{row.note}</p>}
+        {row.href && live && (
+          <p>
+            <Link href={row.href} class="mp-link" arrow>{row.linkLabel}</Link>
+          </p>
+        )}
+      </div>
+    </li>
+  ))}
+</ul>

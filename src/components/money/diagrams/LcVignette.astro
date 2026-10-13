@@ -1,0 +1,105 @@
+---
+/*
+  Small thin-line scenes for Live Customisation: one object before, during and
+  after the artist's hand; three techniques; the five stops of a guest's flow.
+  Every one is illustrative (a generic bottle, a generic card, a generic
+  rack), never a drawing of a real product or a real piece of work, and is
+  labelled as an illustration wherever it appears. Decorative, so hidden from
+  assistive technology: the caption beside each carries the meaning.
+*/
+interface Props {
+  kind: "plain" | "painting" | "finished" | "paint" | "line" | "lettering" | "choose" | "set" | "pack" | "collect";
+}
+
+const { kind } = Astro.props;
+const showBottle = kind === "plain" || kind === "painting" || kind === "finished";
+---
+<svg class="mp-svg lc-vignette" viewBox="0 0 160 120" aria-hidden="true" focusable="false">
+  {showBottle && (
+    <>
+      <path class="l-soft" d="M24 104H136" />
+      <path class="l" d="M62 50Q62 44 68 44H92Q98 44 98 50V96Q98 102 92 102H68Q62 102 62 96Z" />
+      <path class="l" d="M74 44V32H86V44" />
+      <rect class="l" x="71" y="20" width="18" height="12" />
+      <path class="l-faint" d="M68 54V92" />
+    </>
+  )}
+  {kind === "painting" && (
+    <>
+      <path class="l" d="M130 20L99 62" />
+      <path class="l" d="M99 62L95 68" />
+      <path class="l-signal" d="M95 68L90 75" style="stroke-width: 3" />
+      <path class="l-signal" d="M72 86C76 78 84 82 88 74" />
+    </>
+  )}
+  {kind === "finished" && (
+    <>
+      <path class="l-signal" d="M68 96C70 84 80 86 84 74S78 58 72 54" />
+      <path class="l-signal" d="M92 96C90 86 84 84 88 72S94 60 90 54" />
+      <path class="l-signal" d="M70 78c4-6 8 6 12 0s8 6 10 0" />
+    </>
+  )}
+  {kind === "paint" && (
+    <>
+      <path class="signal" d="M26 86C38 60 62 86 84 60S120 62 134 84C118 74 102 90 86 72S44 106 26 86Z" />
+      <path class="l" d="M126 24L100 56" />
+      <path class="l-soft" d="M20 104H140" />
+    </>
+  )}
+  {kind === "line" && (
+    <>
+      <path class="l" d="M80 104C52 88 52 40 80 20C108 40 108 88 80 104Z" />
+      <path class="l-soft" d="M80 104V28M80 52L64 44M80 66L62 58M80 80L66 72M80 52L96 44M80 66L98 58M80 80L94 72" />
+      <path class="l" d="M128 26L106 50" />
+    </>
+  )}
+  {kind === "lettering" && (
+    <>
+      <path class="l-signal" d="M22 76C34 36 48 40 50 68S62 100 74 66S90 38 96 66 112 98 128 54 142 58 142 70" style="stroke-width: 3" />
+      <path class="l-soft" d="M20 92H140" />
+      <path class="l" d="M126 22L110 44" />
+    </>
+  )}
+  {kind === "choose" && (
+    <>
+      <rect class="l" x="48" y="18" width="64" height="84" />
+      <rect class="l-soft" x="58" y="34" width="9" height="9" />
+      <rect class="signal" x="58" y="56" width="9" height="9" />
+      <rect class="l-soft" x="58" y="78" width="9" height="9" />
+      <path class="l-soft" d="M76 39H100M76 61H100M76 83H100" />
+      <path class="l" d="M132 84L114 66" />
+      <circle class="fill-ink" cx="134" cy="86" r="3" />
+    </>
+  )}
+  {kind === "set" && (
+    <>
+      <path class="l" d="M30 62H130M30 98H130" />
+      <path class="l-soft" d="M34 36V108M126 36V108" />
+      {[52, 76, 100].map((x) => (
+        <>
+          <rect class="l-soft" x={x} y="40" width="10" height="22" />
+          <rect class="l-soft" x={x} y="76" width="10" height="22" />
+        </>
+      ))}
+      <circle class="l" cx="80" cy="16" r="9" />
+      <path class="l-soft" d="M80 16V10M80 16L85 18" />
+    </>
+  )}
+  {kind === "pack" && (
+    <>
+      <rect class="l" x="40" y="64" width="80" height="40" />
+      <rect class="l" x="36" y="52" width="88" height="12" />
+      <path class="l-signal" d="M80 52V104" />
+      <path class="l-signal" d="M80 52C70 38 56 46 70 52M80 52C90 38 104 46 90 52" />
+    </>
+  )}
+  {kind === "collect" && (
+    <>
+      <path class="l" d="M52 56H108L114 104H46Z" />
+      <path class="l" d="M66 56C66 32 94 32 94 56" />
+      <path class="l-soft" d="M20 106H140" />
+      <path class="l-signal" d="M118 40H138" />
+      <path class="signal" d="M142 40l-9-4.5v9z" />
+    </>
+  )}
+</svg>

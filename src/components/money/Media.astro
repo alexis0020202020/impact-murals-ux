@@ -1,0 +1,111 @@
+---
+/**
+ * One money-page media frame: a still, a muted looping clip laid over its
+ * poster, or (while an asset is still to come) a designed placeholder.
+ *
+ * Every real frame takes the aspect ratio of its own picture, written as `--r`,
+ * so the space is reserved before anything loads and a portrait clip keeps its
+ * native framing. A clip is never in the markup as a source: `data-src` carries
+ * its URL and the shared playback script (src/lib/automotive-video.ts, the one
+ * that plays the Automotive clips) attaches it when the frame nears the
+ * viewport, plays it only while it is on screen and never for a visitor who
+ * prefers reduced motion or saved data. The clip itself is hidden from assistive
+ * technology; the button over the frame is the pause / play control, revealed
+ * by the script once it takes over.
+ *
+ * `fill` makes the frame cover its container (an opening panel). `priority`
+ * marks an opening clip that may start without waiting for the visitor's first
+ * scroll; the playback cap still applies.
+ */
+import { Image } from "astro:assets";
+import { imageWidths, resolveSlot } from "@/lib/money-media";
+import type { MoneySlotId } from "@/content/money/media";
+
+interface Props {
+  slot: MoneySlotId;
+  /** `sizes` for the responsive image: the width it really occupies at each breakpoint. */
+  sizes?: string;
+  class?: string;
+  /** Overrides the manifest's description of the picture. */
+  alt?: string;
+  fill?: boolean;
+  priority?: boolean;
+  /** Extra inline style (custom properties for the layout). */
+  style?: string;
+}
+
+const { slot, sizes = "100vw", class: className = "", alt, fill = false, priority = false, style = "" } = Astro.props;
+
+const resolved = resolveSlot(slot);
+const { def, image, video, state } = resolved;
+const eager = Boolean(def.eager);
+const description = alt ?? def.alt;
+const frameStyle = `--r:${resolved.ratio};${style}`;
+const frameClass = `mp-frame${fill ? " mp-frame--fill" : ""} ${className}`.trim();
+
+// The button names its clip by the first clause of the description, not the whole of it.
+const subject = description.split(/[:,]/)[0].trim();
+const pause = subject ? `Pause video: ${subject}` : "Pause video";
+const play = subject ? `Play video: ${subject}` : "Play video";
+const widths = image ? imageWidths(image) : [];
+---
+
+{state === "placeholder" ? (
+  <div class={`${frameClass} mp-slot`} style={frameStyle} data-media-slot={slot} data-media-state="placeholder" role="group" aria-label={`Image to come: ${def.brief}`}>
+    <p class="mp-slot-tag">Asset to come / {def.priority}</p>
+    <p class="mp-slot-brief">{def.brief}</p>
+    <p class="mp-slot-ratio">{def.ratio.includes(":") ? def.ratio.replace(":", " : ") : `${resolved.ratio}`}</p>
+  </div>
+) : video ? (
+  <div class={`${frameClass} mp-frame--video`} style={frameStyle} data-media-slot={slot} data-media-state="video" data-video-state="idle">
+    <Image
+      class="mp-poster"
+      src={image!}
+      alt={description}
+      widths={widths}
+      sizes={sizes}
+      format="webp"
+      loading={eager ? "eager" : "lazy"}
+      fetchpriority={eager ? "high" : undefined}
+      decoding="async"
+    />
+    <video
+      class="mp-video"
+      muted
+      loop
+      playsinline
+      preload="none"
+      disablepictureinpicture
+      disableRemotePlayback
+      tabindex="-1"
+      aria-hidden="true"
+      data-auto-video
+      data-eager={priority ? "" : undefined}
+      data-src={video.src}
+    ></video>
+    <button
+      type="button"
+      class="mp-video-toggle"
+      hidden
+      aria-label={pause}
+      data-video-toggle
+      data-label-pause={pause}
+      data-label-play={play}
+    >
+      <span class="mp-video-icon" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </div>
+) : (
+  <div class={frameClass} style={frameStyle} data-media-slot={slot} data-media-state="image">
+    <Image
+      src={image!}
+      alt={description}
+      widths={widths}
+      sizes={sizes}
+      format="webp"
+      loading={eager ? "eager" : "lazy"}
+      fetchpriority={eager ? "high" : undefined}
+      decoding="async"
+    />
+  </div>
+)}

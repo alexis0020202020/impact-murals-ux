@@ -1,0 +1,20 @@
+---
+import Tight from "./Tight.astro";
+
+/* Two ways in, side by side, separated by a hairline. */
+interface Props {
+  paths: Array<{ name: string; body: string }>;
+  /** One above the other instead of side by side, for a narrow column. */
+  stack?: boolean;
+}
+
+const { paths, stack = false } = Astro.props;
+---
+<div class:list={["mp-paths", stack && "mp-paths--stack"]}>
+  {paths.map((path) => (
+    <div class="mp-path" data-auto-reveal>
+      <h3 class="mp-name">{path.name}</h3>
+      <p class="mp-body"><Tight text={path.body} /></p>
+    </div>
+  ))}
+</div>

@@ -1,0 +1,264 @@
+---
+/**
+ * Live Painting Dubai.
+ *
+ * Organising idea: the page runs like the event does. A cinematic opening of
+ * three real live-painting loops, the performance in three frames (first marks,
+ * the build, the reveal), the formats, the practical part settled before doors,
+ * a run of show from first cue to handover, and the live work behind it.
+ *
+ * The vehicles are the only live work the studio has documented, so they are
+ * captioned as what they are and the page claims nothing wider. Copy is in
+ * src/content/money/live-painting.ts.
+ */
+import "@/styles/money/live-painting.css";
+import { lp } from "@/content/money/live-painting";
+import { moneyPage } from "@/content/money/pages";
+import { resolveSlot } from "@/lib/money-media";
+import { mediaSlots } from "@/content/money/media";
+import Section from "../Section.astro";
+import Media from "../Media.astro";
+import Cta from "../Cta.astro";
+import Rows from "../Rows.astro";
+import Ledger from "../Ledger.astro";
+import Paths from "../Paths.astro";
+import Factors from "../Factors.astro";
+import Faq from "../Faq.astro";
+import Guides from "../Guides.astro";
+import Closing from "../Closing.astro";
+import InvestmentNote from "../InvestmentNote.astro";
+import Tight from "../Tight.astro";
+import Link from "../Link.astro";
+import LiveSetupPlan from "../diagrams/LiveSetupPlan.astro";
+
+const page = moneyPage("live-painting");
+const reel = ["LP_REEL_JETOUR", "LP_REEL_BMW", "LP_REEL_ICAUR"] as const;
+---
+
+<!-- 01. The opening: three live loops, the title over them. -->
+<section class="mp-hero lp-hero surface-dark" aria-labelledby="lp-title">
+  <div class="lp-reel">
+    {reel.map((slot) => (
+      <figure class="lp-reel-item">
+        <Media slot={slot} fill priority sizes="34vw" />
+        <figcaption class="lp-reel-caption">{mediaSlots[slot].caption}</figcaption>
+      </figure>
+    ))}
+  </div>
+  <div class="lp-hero-veil" aria-hidden="true"></div>
+  <div class="mp-wrap lp-hero-copy">
+    <div class="lp-hero-text">
+      <p class="mp-eyebrow lp-notation mp-open" style="--i:0">{lp.hero.notation}</p>
+      <h1 id="lp-title" class="headline-display mp-title-hero mp-open" style="--i:1">{page.h1}.</h1>
+      <p class="mp-hero-sub mp-open" style="--i:2">{lp.hero.statement}</p>
+      <p class="mp-hero-support mp-open" style="--i:3">{lp.hero.support}</p>
+      <div class="mp-open" style="--i:4">
+        <Cta pageKey="live-painting" cta={lp.cta} where="hero" micro={lp.hero.micro} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02. What your guests see: the performance in three frames. -->
+<Section labelledby="lp-seq-title">
+  <div class="lp-seq-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{lp.audience.eyebrow}</p>
+      <h2 id="lp-seq-title" class="headline-display mp-title-lg lp-seq-title" data-auto-reveal>{lp.audience.headline}</h2>
+    </div>
+    <p class="mp-lead" data-auto-reveal>{lp.audience.lead}</p>
+    <p class="mp-body" data-auto-reveal>{lp.audience.body}</p>
+  </div>
+  <div class="lp-seq-wall">
+    {lp.audience.frames.map((frame) => {
+      const ratio = resolveSlot(frame.slot).ratio;
+      return (
+        <figure class="mp-figure lp-seq-item" style={`--r:${ratio}`}>
+          <div data-auto-scale>
+            <Media slot={frame.slot} sizes="(min-width: 1024px) 40vw, 90vw" />
+          </div>
+          <figcaption class="lp-seq-caption">
+            <span class="mp-label">{frame.label}</span>
+            <span class="mp-small">{frame.text}</span>
+          </figcaption>
+        </figure>
+      );
+    })}
+  </div>
+</Section>
+
+<!-- 03. Four ways to run it. -->
+<Section tone="soft" labelledby="lp-formats-title">
+  <div class="lp-formats">
+    <div class="lp-formats-head">
+      <p class="mp-eyebrow" data-auto-reveal>{lp.formats.eyebrow}</p>
+      <h2 id="lp-formats-title" class="headline-display mp-title-lg" data-auto-reveal>{lp.formats.headline}</h2>
+      <p class="mp-small" data-auto-reveal>{lp.formats.note}</p>
+    </div>
+    <Rows rows={lp.formats.rows} />
+  </div>
+</Section>
+
+<!-- 04. Where it works: five occasions across the page. -->
+<Section labelledby="lp-where-title">
+  <p class="mp-eyebrow" data-auto-reveal>{lp.where.eyebrow}</p>
+  <h2 id="lp-where-title" class="headline-display mp-title-lg lp-where-title" data-auto-reveal>{lp.where.headline}</h2>
+  <ul class="lp-occasions" role="list">
+    {lp.where.items.map((item) => (
+      <li class="lp-occasion" data-auto-reveal>
+        <h3 class="mp-name">{item.name}</h3>
+        <p class="mp-small">{item.text}</p>
+      </li>
+    ))}
+  </ul>
+</Section>
+
+<!-- 05. Two starting points. -->
+<Section tone="soft" labelledby="lp-paths-title">
+  <div class="lp-paths">
+    <div class="lp-paths-head">
+      <p class="mp-eyebrow" data-auto-reveal>{lp.paths.eyebrow}</p>
+      <h2 id="lp-paths-title" class="headline-display mp-title-lg" data-auto-reveal>{lp.paths.headline}</h2>
+    </div>
+    <div class="lp-paths-body">
+      <Paths paths={lp.paths.items} stack />
+      <p class="mp-micro lp-paths-note">{lp.paths.note}</p>
+    </div>
+    <figure class="mp-figure lp-paths-media">
+      <div data-auto-scale><Media slot="LP_PREP" sizes="(min-width: 1024px) 28vw, 80vw" /></div>
+    </figure>
+  </div>
+</Section>
+
+<!-- 06. The practical part, settled before the day. -->
+<Section tone="dark" labelledby="lp-prod-title">
+  <div class="lp-prod-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{lp.production.eyebrow}</p>
+      <h2 id="lp-prod-title" class="headline-display mp-title-lg lp-prod-title" data-auto-reveal>{lp.production.headline}</h2>
+    </div>
+    <p class="mp-lead" data-auto-reveal>{lp.production.lead}</p>
+  </div>
+  <div class="lp-prod-body">
+    <figure class="mp-fig lp-prod-plan" data-auto-reveal>
+      <LiveSetupPlan />
+      <figcaption class="mp-label">{lp.production.caption}</figcaption>
+    </figure>
+    <ul class="mp-rows lp-prod-list" role="list">
+      {lp.production.items.map((item) => (
+        <li class="mp-row" data-auto-reveal>
+          <h3 class="mp-name">{item.name}</h3>
+          <p class="mp-body"><Tight text={item.text} /></p>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <figure class="mp-figure lp-prod-wide" data-auto-reveal>
+    <div data-auto-scale><Media slot="LP_SETUP_WIDE" sizes="(min-width: 1800px) 1700px, 100vw" /></div>
+  </figure>
+</Section>
+
+<!-- 07. From first cue to handover. -->
+<Section labelledby="lp-run-title">
+  <div class="lp-run-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{lp.runOfShow.eyebrow}</p>
+      <h2 id="lp-run-title" class="headline-display mp-title-lg lp-run-title" data-auto-reveal>{lp.runOfShow.headline}</h2>
+    </div>
+    <p class="mp-lead" data-auto-reveal>{lp.runOfShow.lead}</p>
+  </div>
+  <ol class="lp-timeline" role="list" aria-label="Run of show">
+    {lp.runOfShow.stages.map((stage, index) => (
+      <li class:list={["lp-stage", stage.cue && "lp-stage--cue"]} data-auto-reveal>
+        <span class="lp-stage-n" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+        <h3 class="mp-name">{stage.label}</h3>
+        <p class="mp-small">{stage.text}</p>
+      </li>
+    ))}
+  </ol>
+  <div class="lp-who">
+    <div>
+      <h3 class="mp-eyebrow" data-auto-reveal>{lp.runOfShow.whoHeadline}</h3>
+      <ul class="mp-rows lp-who-list" role="list">
+        {lp.runOfShow.who.map((entry) => (
+          <li class="mp-row" data-auto-reveal>
+            <h4 class="mp-name">{entry.name}</h4>
+            <p class="mp-body">{entry.text}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="mp-small lp-av" data-auto-reveal>{lp.runOfShow.av}</p>
+    </div>
+    <div class="lp-finished" data-auto-reveal>
+      <h3 class="mp-name">{lp.runOfShow.finished.name}</h3>
+      <p class="mp-body">{lp.runOfShow.finished.text}</p>
+    </div>
+  </div>
+</Section>
+
+<!-- 08. Live work, on vehicles. -->
+<Section tone="dark" labelledby="lp-proof-title">
+  <p class="mp-eyebrow" data-auto-reveal>{lp.proof.eyebrow}</p>
+  <h2 id="lp-proof-title" class="headline-display mp-title-lg" data-auto-reveal>{lp.proof.headline}</h2>
+  <div class="lp-proof">
+    {lp.proof.cards.map((card) => {
+      const ratio = resolveSlot(card.slot).ratio;
+      return (
+        <article class="lp-proof-card" style={`--r:${ratio}`}>
+          <div data-auto-scale><Media slot={card.slot} sizes="(min-width: 1024px) 28vw, 80vw" /></div>
+          <p class="mp-eyebrow mp-asis">{card.eyebrow}</p>
+          <p class="mp-body"><Tight text={card.body} /></p>
+          {"link" in card && card.link && (
+            <p><a class="mp-link" href={card.link.href} target="_blank" rel="noopener noreferrer">{card.link.label}{" "}<span class="mp-link-arrow" aria-hidden="true">→</span></a></p>
+          )}
+        </article>
+      );
+    })}
+  </div>
+  <p class="lp-proof-more"><Link href={lp.proof.more.href} class="mp-link" arrow>{lp.proof.more.label}</Link></p>
+</Section>
+
+<!-- 09. Process. -->
+<Section labelledby="lp-process-title">
+  <p class="mp-eyebrow" data-auto-reveal>{lp.process.eyebrow}</p>
+  <h2 id="lp-process-title" class="headline-display mp-title-lg" data-auto-reveal>{lp.process.headline}</h2>
+  <Ledger steps={lp.process.steps} cols={3} />
+</Section>
+
+<!-- 10. What shapes the fee. -->
+<Section tone="soft" labelledby="lp-fee-title">
+  <div class="lp-fee">
+    <div class="lp-fee-head">
+      <p class="mp-eyebrow" data-auto-reveal>{lp.fee.eyebrow}</p>
+      <h2 id="lp-fee-title" class="headline-display mp-title-lg" data-auto-reveal>{lp.fee.headline}</h2>
+      <p class="mp-body" data-auto-reveal>{lp.fee.closing}</p>
+    </div>
+    <div class="lp-fee-body">
+      <Factors groups={lp.fee.groups} />
+    </div>
+  </div>
+  <div class="lp-fee-invest"><InvestmentNote /></div>
+</Section>
+
+<!-- 11. Questions and guides. -->
+<Section labelledby="lp-faq-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{lp.faq.eyebrow}</p>
+      <h2 id="lp-faq-title" class="headline-display mp-title-lg" data-auto-reveal>{lp.faq.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Faq items={lp.faq.items} /></div>
+  </div>
+</Section>
+
+<Section labelledby="lp-guides-title" ruled>
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{lp.guides.eyebrow}</p>
+      <h2 id="lp-guides-title" class="headline-display mp-title-md" data-auto-reveal>{lp.guides.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Guides guides={lp.guides.items} /></div>
+  </div>
+</Section>
+
+<Closing pageKey="live-painting" closing={lp.closing} cta={lp.cta} />

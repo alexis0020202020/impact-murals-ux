@@ -1,0 +1,237 @@
+---
+/**
+ * Custom Canvas Art Dubai.
+ *
+ * Organising idea: wall labels. The page is hung like a gallery wall: a tall
+ * work on a pale wall with its label beside it, a detail you can see the paint
+ * in, commission types drawn as elevations with a figure for scale, and one
+ * real canvas followed from the first pencil line to the finished painting.
+ * Almost no running text.
+ *
+ * The only works shown are the studio's own, labelled with what is confirmed
+ * and nothing more: no artist credit, size, place or client is claimed. Copy is
+ * in src/content/money/custom-canvas.ts.
+ */
+import "@/styles/money/custom-canvas.css";
+import { cc } from "@/content/money/custom-canvas";
+import { moneyPage } from "@/content/money/pages";
+import { mediaSlots } from "@/content/money/media";
+import { resolveSlot } from "@/lib/money-media";
+import Section from "../Section.astro";
+import Media from "../Media.astro";
+import Cta from "../Cta.astro";
+import Paths from "../Paths.astro";
+import Faq from "../Faq.astro";
+import Guides from "../Guides.astro";
+import Closing from "../Closing.astro";
+import InvestmentNote from "../InvestmentNote.astro";
+import Ledger from "../Ledger.astro";
+import Tight from "../Tight.astro";
+import WallLabel from "../WallLabel.astro";
+import SizeGlyph from "../diagrams/SizeGlyph.astro";
+import WallElevation from "../diagrams/WallElevation.astro";
+
+const page = moneyPage("custom-canvas");
+const heroRatio = resolveSlot("CC_HERO").ratio;
+const clipRatio = resolveSlot("CC_MAKING").ratio;
+const steps = ["CC_STEP_SKETCH", "CC_STEP_UNDERPAINT", "CC_STEP_DEVELOP", "CC_STEP_DETAIL", "CC_STEP_FINISHED"] as const;
+const plateRatios = ["3 / 4", "1 / 1", "4 / 3"];
+---
+
+<!-- 01. The work on its wall, its label beside it. -->
+<section class="mp-hero cc-hero" aria-labelledby="cc-title">
+  <div class="mp-wrap cc-hero-inner">
+    <div class="cc-hero-text">
+      <h1 id="cc-title" class="headline-display mp-title-hero mp-open" style="--i:1">{page.h1}.</h1>
+      <p class="mp-hero-sub mp-open" style="--i:2">{cc.hero.statement}</p>
+      <p class="mp-hero-support mp-open" style="--i:3">{cc.hero.support}</p>
+      <p class="mp-label cc-qualifier mp-open" style="--i:4">{cc.hero.qualifier}</p>
+      <div class="mp-open" style="--i:5">
+        <Cta pageKey="custom-canvas" cta={cc.cta} where="hero" />
+      </div>
+    </div>
+  </div>
+  <div class="cc-hero-wall mp-open" style="--i:2">
+    <figure class="cc-canvas" style={`--r:${heroRatio}`}>
+      <Media slot="CC_HERO" priority sizes="(min-width: 1024px) 32vw, 60vw" />
+    </figure>
+    <WallLabel no="01" lines={cc.hero.label} />
+  </div>
+</section>
+
+<!-- 02. Material and making: the paint, and the hand that put it there. -->
+<Section labelledby="cc-hand-title">
+  <div class="cc-hand">
+    <div class="cc-hand-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{cc.hand.eyebrow}</p>
+      <h2 id="cc-hand-title" class="headline-display mp-title-lg" data-auto-reveal>{cc.hand.headline}</h2>
+      <p class="mp-lead" data-auto-reveal>{cc.hand.lead}</p>
+      <p class="mp-body" data-auto-reveal>{cc.hand.body}</p>
+    </div>
+    <figure class="mp-figure cc-hand-detail">
+      <div data-auto-scale><Media slot="CC_DETAIL" sizes="(min-width: 1024px) 42vw, 92vw" /></div>
+      <figcaption class="mp-label">{mediaSlots.CC_DETAIL.caption}</figcaption>
+    </figure>
+    <figure class="mp-figure cc-hand-clip">
+      <div class="mp-tall" style={`--r:${clipRatio};--cap:64svh`} data-auto-scale>
+        <Media slot="CC_MAKING" sizes="(min-width: 1024px) 24vw, 70vw" />
+      </div>
+      <figcaption class="mp-label">{mediaSlots.CC_MAKING.caption}</figcaption>
+    </figure>
+  </div>
+</Section>
+
+<!-- 03. One work or a family of works. -->
+<Section tone="soft" labelledby="cc-types-title">
+  <p class="mp-eyebrow" data-auto-reveal>{cc.types.eyebrow}</p>
+  <h2 id="cc-types-title" class="headline-display mp-title-lg" data-auto-reveal>{cc.types.headline}</h2>
+  <ul class="cc-types" role="list">
+    {cc.types.rows.map((row) => (
+      <li class="cc-type" data-auto-reveal>
+        <SizeGlyph kind={row.glyph} />
+        <h3 class="mp-name">{row.name}</h3>
+        <p class="mp-body"><Tight text={row.text} /></p>
+      </li>
+    ))}
+  </ul>
+  <p class="mp-micro cc-types-note">{cc.types.note}</p>
+</Section>
+
+<!-- 04. The artist follows the room. -->
+<Section labelledby="cc-artist-title">
+  <div class="cc-artist">
+    <div class="cc-artist-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{cc.artist.eyebrow}</p>
+      <h2 id="cc-artist-title" class="headline-display mp-title-lg" data-auto-reveal>{cc.artist.headline}</h2>
+      <p class="mp-lead" data-auto-reveal>{cc.artist.lead}</p>
+      <p class="mp-body" data-auto-reveal>{cc.artist.body}</p>
+      <p class="mp-small cc-aside" data-auto-reveal>{cc.artist.aside}</p>
+    </div>
+    <ul class="cc-plates" role="list" aria-label="Approaches an artist might take">
+      {cc.artist.approaches.map((word, index) => (
+        <li class="cc-plate" style={`--ar:${plateRatios[index]}`} data-auto-reveal>
+          <span class="mp-label" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+          <span class="cc-plate-word">{word}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="cc-criteria" data-auto-reveal>
+    <p class="mp-eyebrow">{cc.artist.criteriaLabel}</p>
+    <ul class="cc-criteria-list" role="list">
+      {cc.artist.criteria.map((item) => <li class="mp-label">{item}</li>)}
+    </ul>
+  </div>
+</Section>
+
+<!-- 05. Measure the room first. -->
+<Section tone="soft" labelledby="cc-room-title">
+  <div class="cc-room">
+    <figure class="mp-fig cc-room-fig" data-auto-reveal>
+      <WallElevation />
+      <figcaption class="mp-label">{cc.room.caption}</figcaption>
+    </figure>
+    <div class="cc-room-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{cc.room.eyebrow}</p>
+      <h2 id="cc-room-title" class="headline-display mp-title-lg" data-auto-reveal>{cc.room.headline}</h2>
+      <p class="mp-lead" data-auto-reveal>{cc.room.lead}</p>
+      <p class="mp-body" data-auto-reveal>{cc.room.body}</p>
+    </div>
+  </div>
+</Section>
+
+<!-- 06. A design you have, or one we develop. -->
+<Section labelledby="cc-design-title">
+  <div class="cc-design">
+    <div class="cc-design-head">
+      <p class="mp-eyebrow" data-auto-reveal>{cc.design.eyebrow}</p>
+      <h2 id="cc-design-title" class="headline-display mp-title-lg" data-auto-reveal>{cc.design.headline}</h2>
+    </div>
+    <div class="cc-design-body">
+      <Paths paths={cc.design.paths} />
+      <div class="cc-helps" data-auto-reveal>
+        <p class="mp-eyebrow">{cc.design.helpsLabel}</p>
+        <ul class="mp-tags" role="list">
+          {cc.design.helps.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<!-- 07. How a commission is painted: one real canvas, pencil to finish. -->
+<Section tone="dark" labelledby="cc-production-title">
+  <p class="mp-eyebrow" data-auto-reveal>{cc.production.eyebrow}</p>
+  <h2 id="cc-production-title" class="headline-display mp-title-lg" data-auto-reveal>{cc.production.headline}</h2>
+  <ol class="cc-frames" role="list" aria-label="One canvas, from sketch to finish">
+    {steps.map((slot, index) => (
+      <li class="cc-frame">
+        <figure class="mp-figure">
+          <div data-auto-scale><Media slot={slot} sizes="(min-width: 1024px) 18vw, (min-width: 600px) 19vw, 30vw" /></div>
+          <figcaption class="mp-label"><span aria-hidden="true">{String(index + 1).padStart(2, "0")} </span>{mediaSlots[slot].caption}</figcaption>
+        </figure>
+      </li>
+    ))}
+    <li class="cc-frames-note"><p class="mp-micro">{cc.production.framesCaption}</p></li>
+  </ol>
+  <Ledger steps={cc.production.steps} cols={5} label="Commission steps" />
+  <p class="mp-small cc-production-note" data-auto-reveal>{cc.production.note}</p>
+</Section>
+
+<!-- 08. Finish, frame, deliver. -->
+<Section labelledby="cc-delivery-title">
+  <div class="cc-delivery">
+    <div class="cc-delivery-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{cc.delivery.eyebrow}</p>
+      <h2 id="cc-delivery-title" class="headline-display mp-title-lg" data-auto-reveal>{cc.delivery.headline}</h2>
+      <p class="mp-lead" data-auto-reveal>{cc.delivery.lead}</p>
+      <p class="mp-body" data-auto-reveal>{cc.delivery.body}</p>
+      <ul class="cc-lines mp-tags" role="list" data-auto-reveal>
+        {cc.delivery.lines.map((line) => <li>{line}</li>)}
+      </ul>
+    </div>
+    <figure class="mp-figure cc-delivery-media">
+      <div data-auto-scale><Media slot="CC_EDGE" sizes="(min-width: 1024px) 40vw, 92vw" /></div>
+    </figure>
+  </div>
+</Section>
+
+<!-- 09. What determines cost and time. -->
+<Section tone="soft" labelledby="cc-costs-title">
+  <p class="mp-eyebrow" data-auto-reveal>{cc.costs.eyebrow}</p>
+  <h2 id="cc-costs-title" class="headline-display mp-title-lg" data-auto-reveal>{cc.costs.headline}</h2>
+  <div class="cc-costs">
+    <div class="cc-cost" data-auto-reveal>
+      <h3 class="mp-name">{cc.costs.cost.title}</h3>
+      <p class="mp-body">{cc.costs.cost.body}</p>
+    </div>
+    <div class="cc-cost" data-auto-reveal>
+      <h3 class="mp-name">{cc.costs.time.title}</h3>
+      <p class="mp-body">{cc.costs.time.body}</p>
+    </div>
+  </div>
+  <div class="cc-costs-invest"><InvestmentNote /></div>
+</Section>
+
+<!-- 10. Questions and guides. -->
+<Section labelledby="cc-faq-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{cc.faq.eyebrow}</p>
+      <h2 id="cc-faq-title" class="headline-display mp-title-lg" data-auto-reveal>{cc.faq.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Faq items={cc.faq.items} /></div>
+  </div>
+</Section>
+
+<Section tone="soft" labelledby="cc-guides-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{cc.guides.eyebrow}</p>
+      <h2 id="cc-guides-title" class="headline-display mp-title-md" data-auto-reveal>{cc.guides.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Guides guides={cc.guides.items} /></div>
+  </div>
+</Section>
+
+<Closing pageKey="custom-canvas" closing={cc.closing} cta={cc.cta} />

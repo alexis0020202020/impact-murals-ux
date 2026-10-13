@@ -1,0 +1,28 @@
+---
+import { resolveLink } from "@/lib/money-links";
+
+/*
+  One link of a money page. The destination is resolved for the current build
+  (src/lib/money-links.ts): a real route is a link, a guide the build does not
+  have points at its address on the live site while the pages are in preview,
+  and a route that is not deployed yet (or a guide missing from a launch build)
+  is drawn as plain text, never as a link that goes nowhere.
+*/
+interface Props {
+  href: string;
+  class?: string;
+  /** Draw the signal arrow after the label, only when it is a link. */
+  arrow?: boolean;
+  track?: string;
+}
+
+const { href, class: className = "", arrow = false, track } = Astro.props;
+const resolved = await resolveLink(href);
+---
+{resolved.href ? (
+  <a href={resolved.href} class={className} data-track={track}>
+    <slot />{arrow && <>{" "}<span class="mp-link-arrow" aria-hidden="true">→</span></>}
+  </a>
+) : (
+  <span data-gated={resolved.gated ? "true" : undefined}><slot /></span>
+)}

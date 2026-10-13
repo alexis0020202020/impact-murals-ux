@@ -1,0 +1,33 @@
+---
+/*
+  One section of a money page: its surface, its padding and the page's content
+  width. `bare` leaves the width to the content (an opening panel, a picture
+  that bleeds). The heading inside names the section for assistive technology
+  through `labelledby`.
+*/
+interface Props {
+  tone?: "paper" | "soft" | "dark";
+  id?: string;
+  labelledby?: string;
+  class?: string;
+  tight?: boolean;
+  ruled?: boolean;
+  bare?: boolean;
+}
+
+const { tone = "paper", id, labelledby, class: className = "", tight = false, ruled = false, bare = false } = Astro.props;
+---
+<section
+  id={id}
+  aria-labelledby={labelledby}
+  class:list={[
+    "mp-section",
+    tone === "soft" && "mp-section--soft",
+    tone === "dark" && "surface-dark",
+    tight && "mp-section--tight",
+    ruled && "mp-section--ruled",
+    className
+  ]}
+>
+  {bare ? <slot /> : <div class="mp-wrap"><slot /></div>}
+</section>

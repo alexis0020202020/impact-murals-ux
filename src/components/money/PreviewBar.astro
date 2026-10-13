@@ -1,0 +1,24 @@
+---
+import { moneyMode } from "@/content/money/launch";
+
+/*
+  Shown while the money pages are not live: these are unpublished drafts for
+  review (noindex, outside the sitemap), and this strip says so on every one of
+  them. It disappears by itself once the launch switch is flipped
+  (src/content/money/launch.ts). A page whose launch is on hold says that too.
+*/
+interface Props {
+  provisional?: boolean;
+}
+
+const { provisional = false } = Astro.props;
+const mode = moneyMode();
+---
+{mode !== "live" && (
+  <div class:list={["mp-preview", provisional && "mp-preview--provisional"]} role="note">
+    <b>Preview</b>
+    <span>Unpublished draft.</span>
+    <span class="mp-preview-detail">Not indexed. Not in the sitemap.</span>
+    {provisional && <span>Provisional: launch on hold until the workshop gate is cleared.</span>}
+  </div>
+)}

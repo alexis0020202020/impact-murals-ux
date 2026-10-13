@@ -1,0 +1,45 @@
+---
+/**
+ * Everything a money page shares inside the site layout: the preview strip
+ * (while the pages are not live), the breadcrumb trail, the page wrapper that
+ * scopes the styles, the structured data and the two small scripts (the
+ * secondary scroll reveals and the muted-clip playback, both the Automotive
+ * page's own modules). The page's content goes in the slot.
+ *
+ * The scripts are progressive enhancement: the page is complete without them,
+ * and under reduced motion they exit before animating or loading anything.
+ */
+import "@/styles/money/base.css";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { global } from "@/content/global";
+import { moneyCanonical, moneyPage, type MoneyKey } from "@/content/money/pages";
+import { breadcrumbsFor } from "@/lib/routes";
+import JsonLd from "./JsonLd.astro";
+import PreviewBar from "./PreviewBar.astro";
+
+interface Props {
+  pageKey: MoneyKey;
+}
+
+const { pageKey } = Astro.props;
+const page = moneyPage(pageKey);
+const canonical = page.existing ? `${global.domain}${page.path}` : moneyCanonical(page, global.domain);
+
+// The last crumb carries the same trailing-slash address the page's canonical does.
+const trail = (await breadcrumbsFor(page.path)).map((crumb, index, all) =>
+  index === all.length - 1 && !page.existing ? { ...crumb, path: `${page.path}/` } : crumb
+);
+---
+<PreviewBar provisional={page.status === "provisional"} />
+<Breadcrumbs trail={trail} currentLabel={page.label} />
+<JsonLd pageKey={pageKey} canonical={canonical} />
+<div class="mp-page" data-money-page={pageKey}>
+  <slot />
+</div>
+
+<script>
+  import { initAutomotiveMotion } from "@/lib/automotive-motion";
+  import { initAutomotiveVideo } from "@/lib/automotive-video";
+  initAutomotiveMotion(document);
+  initAutomotiveVideo(document);
+</script>

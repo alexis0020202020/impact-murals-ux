@@ -1,0 +1,101 @@
+---
+/*
+  An illustrative section through a hotel, drawn in thin line, with the route
+  a guest takes through it: arrival, restaurant, corridor, suite, spa and the
+  roof terrace, a numbered stop at each and a small mark where a work of art
+  would hang. Two drawings of the same idea: a long section across a large
+  screen, and a narrow vertical one for a phone. An example, labelled as one
+  wherever it appears; it is not a drawing of any real hotel.
+*/
+const stops = [
+  { n: 1, x: 130, y: 255 },
+  { n: 2, x: 400, y: 255 },
+  { n: 3, x: 620, y: 185 },
+  { n: 4, x: 850, y: 185 },
+  { n: 5, x: 1040, y: 255 },
+  { n: 6, x: 1040, y: 45 }
+];
+const rungs = [
+  { n: 1, y: 485 },
+  { n: 2, y: 485 },
+  { n: 3, y: 415 },
+  { n: 4, y: 345 },
+  { n: 5, y: 275 },
+  { n: 6, y: 205 }
+];
+const label =
+  "Illustrative section through a hotel with the guest's route marked in six numbered stops: arrival and lobby, restaurant, corridor, suite, spa and the roof terrace, with a place for art at each.";
+---
+<div class="ht-route" role="img" aria-label={label}>
+  <!-- A long section: a large screen -->
+  <svg class="mp-svg ht-route-h" viewBox="0 0 1200 290" style="--tm:22px" aria-hidden="true" focusable="false">
+    <!-- Ground, envelope, floor slabs -->
+    <path class="l" d="M0 270H1200" />
+    <path class="l" d="M60 60V205M60 60H1140V270" />
+    <path class="l-soft" d="M300 200H1140M300 130H1140M60 130H300" />
+    <path class="l-soft" d="M30 200H100" />
+
+    <!-- Lift core -->
+    <path class="l-soft" d="M470 60V270M500 60V270M470 200H500M470 130H500" />
+
+    <!-- Restaurant: tables -->
+    <circle class="l-soft" cx="345" cy="254" r="7" />
+    <circle class="l-soft" cx="378" cy="254" r="7" />
+    <path class="l-soft" d="M320 200V214M360 200V214M400 200V214" />
+
+    <!-- First storey: rooms along a corridor, then a suite -->
+    <path class="l-soft" d="M500 170H760M540 130V170M580 130V170M620 130V170M660 130V170M700 130V170M740 130V170" />
+    <path class="l-faint" d="M540 60V130M580 60V130M620 60V130M660 60V130M700 60V130M740 60V130" />
+    <path class="l" d="M760 130V200M940 130V200" />
+    <rect class="l-soft" x="790" y="150" width="70" height="30" />
+    <path class="l-soft" d="M796 156h20" />
+
+    <!-- Spa: water -->
+    <path class="l-soft" d="M960 266C975 260 990 272 1005 266S1035 260 1050 266S1080 272 1095 266" />
+
+    <!-- Roof terrace -->
+    <path class="l-soft" d="M960 60V50H1140V60" />
+    <path class="l-soft" d="M1066 56H1088M1094 56H1116" />
+
+    <!-- Places for art: a tall piece in the lobby, a piece in the restaurant, a series in the corridor, one at the suite head, one in the spa, a sculpture on the terrace -->
+    <rect class="fill-ink" x="292" y="150" width="7" height="80" />
+    <rect class="fill-ink" x="410" y="214" width="44" height="6" />
+    {[545, 585, 625, 665, 705].map((x) => <rect class="fill-ink" x={x} y="166" width="20" height="5" />)}
+    <rect class="fill-ink" x="932" y="146" width="6" height="40" />
+    <rect class="fill-ink" x="1000" y="206" width="70" height="5" />
+    <path class="l" d="M1000 18L1013 31L1000 44L987 31Z" />
+
+    <!-- The route -->
+    <path class="l-signal" d="M20 255H485V185H975V255H1110V45H1040" />
+    {stops.map((s) => (
+      <g>
+        <circle class="l" cx={s.x} cy={s.y} r="14" style="fill: var(--svg-bg)" />
+        <text class="t-mid t-num" x={s.x} y={s.y + 5}>{s.n}</text>
+      </g>
+    ))}
+  </svg>
+
+  <!-- The same idea, standing: a phone -->
+  <svg class="mp-svg ht-route-v" viewBox="0 0 150 520" style="--tm:17px" aria-hidden="true" focusable="false">
+    <path class="l" d="M0 500H150" />
+    <path class="l" d="M30 500V220H130V500" />
+    <path class="l-soft" d="M30 430H130M30 360H130M30 290H130" />
+    <path class="l-soft" d="M96 220V500M124 220V500" />
+    <path class="l-soft" d="M40 220V204H120V220" />
+    <rect class="fill-ink" x="30" y="462" width="5" height="24" />
+    <rect class="fill-ink" x="30" y="392" width="5" height="24" />
+    <rect class="fill-ink" x="30" y="322" width="5" height="24" />
+    <rect class="fill-ink" x="30" y="252" width="5" height="24" />
+    <path class="l" d="M80 168L92 180L80 192L68 180Z" />
+    <path class="l-signal" d="M0 485H110V415H55H110V345H55H110V275H55H110V205H55" />
+    {rungs.map((s, i) => {
+      const x = i === 0 ? 48 : i === 1 ? 82 : 55;
+      return (
+        <g>
+          <circle class="l" cx={x} cy={s.y} r="12" style="fill: var(--svg-bg)" />
+          <text class="t-mid t-num" x={x} y={s.y + 6}>{s.n}</text>
+        </g>
+      );
+    })}
+  </svg>
+</div>

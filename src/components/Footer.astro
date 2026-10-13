@@ -2,6 +2,7 @@
 import { footerNavigation } from "@/content/navigation";
 import { global } from "@/content/global";
 import { sectionIndexPath, sectionLabel } from "@/lib/routes";
+import { moneyPreviewLinks } from "@/content/money/launch";
 
 const year = new Date().getFullYear();
 const editorialSections = (
@@ -15,6 +16,8 @@ const editorialSections = (
 
 const mainLinks = [...footerNavigation[0].items, ...editorialSections];
 const offerLinks = footerNavigation[1].items;
+// Only in a preview build: the unpublished money pages, so they are reachable for review. Empty in a production build.
+const previewLinks = moneyPreviewLinks();
 ---
 
 <footer class="surface-dark border-t border-paper/10 pb-8 pt-14 md:pt-18">
@@ -42,6 +45,17 @@ const offerLinks = footerNavigation[1].items;
             ))}
           </ul>
         </nav>
+
+        {previewLinks.length > 0 && (
+          <nav aria-label="Preview pages" class="mt-5 border-t border-paper/12 pt-3">
+            <p class="image-note !text-paper/40">Preview / unpublished pages</p>
+            <ul class="mt-1 flex flex-wrap gap-x-6 gap-y-1">
+              {previewLinks.map((item) => (
+                <li><a href={item.href} class="inline-block py-2 font-body text-[12px] text-paper/48 transition-colors hover:text-paper">{item.label}</a></li>
+              ))}
+            </ul>
+          </nav>
+        )}
 
         <div class="mt-6 flex flex-wrap gap-x-6 gap-y-1">
           <a href={`mailto:${global.contact.email}`} class="inline-block py-2 font-body text-[12px] text-paper/65 transition-colors hover:text-paper">{global.contact.email}</a>

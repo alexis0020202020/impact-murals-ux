@@ -1,0 +1,25 @@
+---
+import { moneyMode } from "@/content/money/launch";
+import { provisionalInvestment as note } from "@/content/money/shared";
+
+/*
+  PROVISIONAL editorial note: the studio's own typical range, reused from the
+  Automotive page on the three pages where a single original work or a single
+  performance is the purchase. While the pages are in preview it carries a
+  visible "provisional" tag so a reviewer cannot mistake it for a settled
+  decision; the tag disappears at launch. Never a card, a tier or a price list.
+*/
+const mode = moneyMode();
+---
+<div class="mp-invest" data-auto-reveal>
+  <p class="headline-display mp-invest-figure">
+    <span class="mp-invest-unit">{note.currency}</span>
+    <span class="mp-invest-amount">{note.amount}</span>
+  </p>
+  <div class="mp-invest-copy">
+    {mode !== "live" && <p class="mp-micro">Provisional wording, reused from the Automotive page. Decide before launch.</p>}
+    <p class="mp-lead">{note.lead}</p>
+    <p class="mp-body">{note.flexible}</p>
+    <p class="mp-invest-deposit">{note.deposit}</p>
+  </div>
+</div>

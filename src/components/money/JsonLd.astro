@@ -1,0 +1,46 @@
+---
+import { seo } from "@/content/seo";
+import { moneyPage, type MoneyKey } from "@/content/money/pages";
+import { toJsonLd } from "@/lib/json-ld";
+
+/*
+  The page's own structured data: a WebPage that belongs to the site and a
+  truthful Service that names the one Organization the layout already declares
+  (same name and URL, so the entities agree). BreadcrumbList comes from the
+  Breadcrumbs component. No Event, Product, Offer, Review, FAQ or video markup:
+  none of them describes a quote-based service page.
+*/
+interface Props {
+  pageKey: MoneyKey;
+  canonical: string;
+}
+
+const { pageKey, canonical } = Astro.props;
+const page = moneyPage(pageKey);
+
+const webPage = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: page.title,
+  description: page.description,
+  url: canonical,
+  inLanguage: "en",
+  isPartOf: { "@type": "WebSite", name: seo.siteName, url: seo.canonicalBase }
+};
+
+const service = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: page.h1,
+  serviceType: page.serviceType,
+  description: page.description,
+  url: canonical,
+  provider: { "@type": "Organization", name: seo.organization.name, url: seo.canonicalBase },
+  areaServed: [
+    { "@type": "City", name: "Dubai" },
+    { "@type": "Country", name: "United Arab Emirates" }
+  ]
+};
+---
+<script type="application/ld+json" set:html={toJsonLd(webPage)} is:inline />
+<script type="application/ld+json" set:html={toJsonLd(service)} is:inline />

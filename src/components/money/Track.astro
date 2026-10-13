@@ -1,0 +1,29 @@
+---
+import type { Step } from "@/content/money/types";
+import Tight from "./Tight.astro";
+
+/*
+  A programme as one line with its steps on it. A step that ends in a decision
+  carries a gate: a signal diamond on the line, named. Horizontal from a large
+  screen, a vertical rule on a phone or tablet. Type and a single line, no icons.
+*/
+interface Props {
+  steps: Step[];
+  label?: string;
+  /** What a gate is called: a decision, a dependency. */
+  gateLabel?: string;
+}
+
+const { steps, label, gateLabel = "Decision" } = Astro.props;
+---
+<ol class="mp-track" style={`--n:${steps.length}`} role="list" aria-label={label}>
+  {steps.map((step, index) => (
+    <li class:list={["mp-track-step", step.gate && "mp-track-step--gate"]} data-auto-reveal>
+      <span class="mp-track-node" aria-hidden="true"></span>
+      <span class="mp-track-n" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+      <h3 class="mp-name">{step.title}</h3>
+      <p class="mp-small"><Tight text={step.body} /></p>
+      {step.gate && <p class="mp-track-gate"><span>{gateLabel}</span>{step.gate}</p>}
+    </li>
+  ))}
+</ol>

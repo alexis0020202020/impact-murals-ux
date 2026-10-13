@@ -88,7 +88,8 @@ export function initAutomotiveVideo(root: ParentNode = document) {
   let queued = false;
 
   for (const video of videos) {
-    const frame = video.closest<HTMLElement>(".auto-frame");
+    // `.mp-frame` is the same frame on the money pages (src/components/money/Media.astro).
+    const frame = video.closest<HTMLElement>(".auto-frame, .mp-frame");
     if (!frame || !video.dataset.src) continue;
     entries.set(video, {
       video,
@@ -254,8 +255,10 @@ export function initAutomotiveVideo(root: ParentNode = document) {
     opened already scrolled (a reload, an anchor). A visitor who stays on the
     opening screen downloads no clip at all. The page has fully loaded by then.
   */
+  // An opening clip (`data-eager`, money pages only) may start once the page has loaded and is idle, without waiting for a scroll. The cap and every check above still apply, and only clips near the viewport are attached.
+  const hasPriority = videos.some((video) => video.hasAttribute("data-eager"));
   const arm = () => {
-    if (window.scrollY > 0) {
+    if (window.scrollY > 0 || hasPriority) {
       whenIdle(begin);
       return;
     }

@@ -1,0 +1,27 @@
+---
+import type { Step } from "@/content/money/types";
+import Tight from "./Tight.astro";
+
+/*
+  A numbered ledger of steps: numeral, name, text, and an optional gate (a
+  decision point drawn as a small signal diamond). Columns on a large screen
+  follow `cols`; two on a tablet; one on a phone.
+*/
+interface Props {
+  steps: Step[];
+  cols?: 3 | 4 | 5 | 6;
+  label?: string;
+}
+
+const { steps, cols = 4, label } = Astro.props;
+---
+<ol class="mp-steps" style={`--cols:${cols}`} role="list" aria-label={label}>
+  {steps.map((step, index) => (
+    <li class="mp-step" data-auto-reveal>
+      <span class="mp-step-n" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+      <h3 class="mp-name">{step.title}</h3>
+      <p class="mp-body"><Tight text={step.body} /></p>
+      {step.gate && <p class="mp-gate">{step.gate}</p>}
+    </li>
+  ))}
+</ol>

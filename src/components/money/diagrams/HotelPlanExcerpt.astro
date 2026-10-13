@@ -1,0 +1,55 @@
+---
+/*
+  An illustrative plan excerpt: one corner of a hotel lobby in thin line, with
+  one wall marked for art. It shows the starting point (a designer's plan with
+  one location picked out), not a real property. Labelled illustrative
+  wherever it appears.
+*/
+---
+<svg
+  class="mp-svg ht-plan"
+  viewBox="0 0 560 340"
+  style="--tm:22px"
+  role="img"
+  aria-labelledby="ht-plan-title ht-plan-desc"
+  focusable="false"
+>
+  <title id="ht-plan-title">Illustrative plan excerpt of a hotel lobby</title>
+  <desc id="ht-plan-desc">
+    One corner of a lobby drawn in thin line: a reception desk, two seating groups, three columns and an entrance, with
+    one wall at the top marked for a work of art.
+  </desc>
+
+  <!-- Walls, with the entrance and its door swing -->
+  <path class="l" d="M110 320H540V20H20V320H60" />
+  <path class="l-soft" d="M110 320V270A50 50 0 0 0 60 320" />
+
+  <!-- The wall marked for art, with its width ticked -->
+  <rect class="fill-ink" x="150" y="17" width="260" height="8" />
+  <path class="l-soft" d="M150 6V12M410 6V12M150 9H410" />
+  <path class="l-soft" d="M280 25V47" />
+  <circle class="l" cx="280" cy="62" r="15" style="fill: var(--svg-bg)" />
+  <text class="t-mid t-num" x="280" y="68">1</text>
+
+  <!-- Columns -->
+  <rect class="fill-ink" x="170" y="140" width="10" height="10" />
+  <rect class="fill-ink" x="340" y="140" width="10" height="10" />
+  <rect class="fill-ink" x="500" y="140" width="10" height="10" />
+
+  <!-- Two seating groups -->
+  <circle class="l" cx="180" cy="236" r="20" />
+  <rect class="l-soft" x="167" y="200" width="26" height="14" />
+  <rect class="l-soft" x="167" y="258" width="26" height="14" />
+  <rect class="l-soft" x="132" y="223" width="14" height="26" />
+  <rect class="l-soft" x="214" y="223" width="14" height="26" />
+  <circle class="l" cx="300" cy="236" r="20" />
+  <rect class="l-soft" x="287" y="200" width="26" height="14" />
+  <rect class="l-soft" x="287" y="258" width="26" height="14" />
+  <rect class="l-soft" x="252" y="223" width="14" height="26" />
+  <rect class="l-soft" x="334" y="223" width="14" height="26" />
+
+  <!-- Reception desk, two guests for scale -->
+  <rect class="l" x="380" y="262" width="140" height="28" rx="3" />
+  <circle class="fill-ink" cx="420" cy="224" r="3.4" />
+  <circle class="fill-ink" cx="440" cy="232" r="3.4" />
+</svg>

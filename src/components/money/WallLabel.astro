@@ -1,0 +1,19 @@
+---
+/*
+  A gallery wall label: a small white card in small mono capitals, set beside
+  a work. It carries only what is confirmed (title, artist, medium, size,
+  place), one line per fact; a fact that is not confirmed is simply absent.
+  The first line is the work's number or its plainest description.
+*/
+interface Props {
+  no?: string;
+  lines: string[];
+  class?: string;
+}
+
+const { no, lines, class: className = "" } = Astro.props;
+---
+<div class:list={["mp-wall-label", className]}>
+  {no && <p class="mp-wall-no" aria-hidden="true">{no}</p>}
+  {lines.map((line, index) => <p class:list={["mp-wall-line", index === 0 && "mp-wall-line--lead"]}>{line}</p>)}
+</div>

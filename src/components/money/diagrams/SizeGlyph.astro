@@ -1,0 +1,36 @@
+---
+/*
+  A small thin-line elevation of one kind of commission on a wall, with a
+  standing figure for scale: a single canvas, a very large one, three panels,
+  a coordinated series. Decorative (the row's name carries the meaning), so
+  hidden from assistive technology. Illustrative, never a drawing of a real work.
+*/
+interface Props {
+  kind: "statement" | "oversized" | "triptych" | "coordinated";
+}
+
+const { kind } = Astro.props;
+---
+<svg class="mp-svg mp-glyph" viewBox="0 0 96 64" aria-hidden="true" focusable="false">
+  <path class="l-soft" d="M2 58H94" />
+  <circle class="l" cx="11" cy="33" r="3.2" />
+  <path class="l" d="M11 36.5V48M11 48L8 58M11 48L14 58M11 40L7.5 46M11 40L14.5 46" />
+  {kind === "statement" && <rect class="l" x="42" y="12" width="22" height="30" />}
+  {kind === "oversized" && <rect class="l" x="26" y="8" width="64" height="40" />}
+  {kind === "triptych" && (
+    <>
+      <rect class="l" x="30" y="12" width="17" height="36" />
+      <rect class="l" x="50" y="12" width="17" height="36" />
+      <rect class="l" x="70" y="12" width="17" height="36" />
+    </>
+  )}
+  {kind === "coordinated" && (
+    <>
+      <rect class="l" x="26" y="26" width="9" height="12" />
+      <rect class="l" x="39" y="19" width="11" height="18" />
+      <rect class="l" x="54" y="24" width="9" height="14" />
+      <rect class="l" x="67" y="16" width="12" height="22" />
+      <rect class="l" x="83" y="26" width="9" height="12" />
+    </>
+  )}
+</svg>

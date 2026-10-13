@@ -1,0 +1,267 @@
+---
+/**
+ * Live Customisation Dubai.
+ *
+ * Organising idea: the station. Three hands in one frame (the artist, the
+ * object, the guest), a five-step guest flow with its waiting drawn as a band,
+ * throughput treated as the central honest question, and a short, tested menu
+ * as the signature device. The most operational of the brand-event pages.
+ *
+ * The studio has no footage of an object being customised live, so none is
+ * claimed: every picture here is a drawing labelled illustrative, and the
+ * places for real photographs are marked as such. Copy is in
+ * src/content/money/live-customisation.ts.
+ */
+import "@/styles/money/live-customisation.css";
+import { lc } from "@/content/money/live-customisation";
+import { moneyPage } from "@/content/money/pages";
+import Section from "../Section.astro";
+import Media from "../Media.astro";
+import Cta from "../Cta.astro";
+import Rows from "../Rows.astro";
+import Ledger from "../Ledger.astro";
+import Faq from "../Faq.astro";
+import Guides from "../Guides.astro";
+import Closing from "../Closing.astro";
+import Tight from "../Tight.astro";
+import Link from "../Link.astro";
+import StationScene from "../diagrams/StationScene.astro";
+import StationPlan from "../diagrams/StationPlan.astro";
+import LcVignette from "../diagrams/LcVignette.astro";
+
+const page = moneyPage("live-customisation");
+const links = lc.techniques.starting.links;
+---
+
+<!-- 01. The station in one frame: the artist, the object, the guest. -->
+<section class="mp-hero lc-hero surface-dark" aria-labelledby="lc-title">
+  <div class="mp-wrap lc-hero-inner">
+    <div class="lc-hero-text">
+      <h1 id="lc-title" class="headline-display mp-title-hero mp-open" style="--i:1">{page.h1}.</h1>
+      <p class="mp-hero-sub mp-open" style="--i:2">{lc.hero.statement}</p>
+      <p class="mp-hero-support mp-open" style="--i:3">{lc.hero.support}</p>
+      <p class="mp-label lc-qualifier mp-open" style="--i:4">{lc.hero.qualifier}</p>
+      <div class="mp-open" style="--i:5">
+        <Cta pageKey="live-customisation" cta={lc.cta} where="hero" micro={lc.hero.micro} />
+      </div>
+    </div>
+    <figure class="mp-fig lc-hero-fig mp-open" style="--i:2">
+      <StationScene />
+      <ul class="lc-hands" role="list" aria-hidden="true">
+        {lc.hero.hands.map((hand) => <li class="mp-label">{hand}</li>)}
+      </ul>
+      <figcaption class="mp-label">{lc.hero.sceneCaption}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 02. One object becomes theirs: before, during, after. -->
+<Section labelledby="lc-receive-title">
+  <div class="lc-receive">
+    <div class="lc-receive-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{lc.receive.eyebrow}</p>
+      <h2 id="lc-receive-title" class="headline-display mp-title-lg" data-auto-reveal>{lc.receive.headline}</h2>
+      <p class="mp-body" data-auto-reveal>{lc.receive.body}</p>
+    </div>
+    <ol class="lc-sequence" role="list" aria-label="One object: supplied, in the artist's hand, finished">
+      {lc.receive.frames.map((frame, index) => (
+        <li class="lc-seq-item" data-auto-reveal>
+          <figure class="lc-panel-fig">
+            <div class="lc-panel"><LcVignette kind={frame.kind} /></div>
+            <figcaption class="mp-label"><span aria-hidden="true">{String(index + 1).padStart(2, "0")} </span>{frame.label}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ol>
+    <p class="mp-micro lc-receive-caption">{lc.receive.caption}</p>
+  </div>
+</Section>
+
+<!-- 03. Techniques and surfaces. -->
+<Section tone="soft" labelledby="lc-tech-title">
+  <p class="mp-eyebrow" data-auto-reveal>{lc.techniques.eyebrow}</p>
+  <h2 id="lc-tech-title" class="headline-display mp-title-lg" data-auto-reveal>{lc.techniques.headline}</h2>
+  <ul class="lc-techs" role="list">
+    {lc.techniques.rows.map((row) => (
+      <li class="lc-tech" data-auto-reveal>
+        <div class="lc-tech-glyph"><LcVignette kind={row.glyph} /></div>
+        <h3 class="mp-name">{row.name}</h3>
+        <p class="mp-body">{row.text}</p>
+      </li>
+    ))}
+  </ul>
+  <div class="lc-starting" data-auto-reveal>
+    <p class="mp-body">
+      <Link href={links[0].href} class="mp-inline-link">{links[0].word}</Link>,{" "}
+      <Link href={links[1].href} class="mp-inline-link">{links[1].word}</Link>,{" "}
+      <Link href={links[2].href} class="mp-inline-link">{links[2].word}</Link>, accessories,{" "}
+      <Link href={links[3].href} class="mp-inline-link">{links[3].word}</Link>,{" "}
+      <Link href={links[4].href} class="mp-inline-link">{links[4].word}</Link> and gifts are common starting points.
+      {" "}{lc.techniques.starting.tail}
+    </p>
+    <p class="mp-small">{lc.techniques.notOffered}</p>
+  </div>
+</Section>
+
+<!-- 04. Where it sits in a programme. -->
+<Section labelledby="lc-programme-title">
+  <div class="lc-programme">
+    <div class="lc-programme-head">
+      <p class="mp-eyebrow" data-auto-reveal>{lc.programme.eyebrow}</p>
+      <h2 id="lc-programme-title" class="headline-display mp-title-lg" data-auto-reveal>{lc.programme.headline}</h2>
+      <p class="mp-small lc-programme-foot" data-auto-reveal>
+        {lc.programme.footer.lead} <Link href={lc.programme.footer.href} class="mp-inline-link">{lc.programme.footer.label}</Link>.
+      </p>
+    </div>
+    <div class="lc-programme-rows"><Rows rows={lc.programme.rows} /></div>
+  </div>
+</Section>
+
+<!-- 05. From choice to collection: the waiting drawn as a band. -->
+<Section tone="soft" labelledby="lc-flow-title">
+  <p class="mp-eyebrow" data-auto-reveal>{lc.flow.eyebrow}</p>
+  <h2 id="lc-flow-title" class="headline-display mp-title-lg" data-auto-reveal>{lc.flow.headline}</h2>
+  <ol class="lc-flow" role="list">
+    {lc.flow.steps.map((step) => (
+      <li class:list={["lc-step", step.waiting && "lc-step--wait"]} data-auto-reveal>
+        <div class="lc-panel lc-step-panel">
+          <LcVignette kind={step.glyph} />
+          {step.waiting && <span class="lc-wait-tag mp-label" aria-hidden="true">Waiting</span>}
+        </div>
+        <span class="lc-step-n" aria-hidden="true">{step.n}</span>
+        <h3 class="mp-name">{step.label}</h3>
+        <p class="mp-small">{step.text}</p>
+      </li>
+    ))}
+  </ol>
+  <div class="lc-flow-foot">
+    <p class="mp-lead" data-auto-reveal>{lc.flow.note}</p>
+    <p class="mp-micro">{lc.flow.caption}</p>
+  </div>
+</Section>
+
+<!-- 06. How many can we finish? The station, drawn in plan. -->
+<Section tone="dark" labelledby="lc-capacity-title">
+  <div class="lc-capacity-head">
+    <p class="mp-eyebrow" data-auto-reveal>{lc.capacity.eyebrow}</p>
+    <h2 id="lc-capacity-title" class="headline-display mp-title-lg" data-auto-reveal>{lc.capacity.headline}</h2>
+  </div>
+  <figure class="mp-fig lc-plan-fig" data-auto-reveal>
+    <StationPlan />
+    <ol class="lc-legend" role="list" aria-hidden="true">
+      {lc.capacity.stops.map((stop, index) => (
+        <li class="mp-label"><span>{index + 1}</span>{stop}</li>
+      ))}
+    </ol>
+    <figcaption class="mp-label">{lc.capacity.planCaption}</figcaption>
+  </figure>
+  <div class="lc-capacity-body">
+    <div class="lc-capacity-copy">
+      <p class="mp-lead" data-auto-reveal>{lc.capacity.lead}</p>
+      <p class="mp-body" data-auto-reveal>{lc.capacity.body}</p>
+      <p class="mp-body lc-capacity-closing" data-auto-reveal>{lc.capacity.closing}</p>
+    </div>
+    <div class="lc-menu" data-auto-reveal>
+      <p class="mp-eyebrow">{lc.capacity.menu.label}</p>
+      <div class="lc-menu-card">
+        <p class="lc-menu-title">{lc.capacity.menu.title}</p>
+        <ol class="lc-menu-list" role="list">
+          {lc.capacity.menu.options.map((option, index) => (
+            <li><span class="mp-label" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>{option}</li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<!-- 07. Who supplies what, and how we test. -->
+<Section labelledby="lc-resp-title">
+  <p class="mp-eyebrow" data-auto-reveal>{lc.responsibility.eyebrow}</p>
+  <h2 id="lc-resp-title" class="headline-display mp-title-lg" data-auto-reveal>{lc.responsibility.headline}</h2>
+  <div class="lc-columns">
+    {lc.responsibility.columns.map((column) => (
+      <div class="lc-column" data-auto-reveal>
+        <h3 class="mp-name">{column.name}</h3>
+        <p class="mp-body"><Tight text={column.text} /></p>
+      </div>
+    ))}
+  </div>
+  <p class="mp-body lc-resp-body" data-auto-reveal>{lc.responsibility.body}</p>
+  <figure class="mp-figure lc-materials">
+    <div data-auto-scale><Media slot="LC_MATERIALS" sizes="(min-width: 1800px) 1700px, 100vw" /></div>
+  </figure>
+</Section>
+
+<!-- 08. What the station needs. -->
+<Section tone="soft" labelledby="lc-needs-title">
+  <div class="lc-needs">
+    <div class="lc-needs-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{lc.needs.eyebrow}</p>
+      <h2 id="lc-needs-title" class="headline-display mp-title-lg" data-auto-reveal>{lc.needs.headline}</h2>
+      <ul class="lc-needs-list" role="list">
+        {lc.needs.items.map((item) => <li class="mp-label" data-auto-reveal>{item}</li>)}
+      </ul>
+    </div>
+    <figure class="mp-figure lc-needs-media">
+      <div data-auto-scale><Media slot="LC_STATION" sizes="(min-width: 1024px) 40vw, 92vw" /></div>
+    </figure>
+  </div>
+</Section>
+
+<!-- 09. Tested before it is promised. -->
+<Section labelledby="lc-process-title">
+  <p class="mp-eyebrow" data-auto-reveal>{lc.process.eyebrow}</p>
+  <h2 id="lc-process-title" class="headline-display mp-title-lg" data-auto-reveal>{lc.process.headline}</h2>
+  <Ledger steps={lc.process.steps} cols={3} />
+</Section>
+
+<!-- 10. The fee, and when not to go live. -->
+<Section tone="soft" labelledby="lc-fee-title">
+  <div class="lc-fee">
+    <div class="lc-fee-head">
+      <p class="mp-eyebrow" data-auto-reveal>{lc.fee.eyebrow}</p>
+      <h2 id="lc-fee-title" class="headline-display mp-title-lg" data-auto-reveal>{lc.fee.headline}</h2>
+      <p class="mp-body" data-auto-reveal>{lc.fee.lead}</p>
+    </div>
+    <div class="lc-fee-body">
+      <div class="lc-fee-columns">
+        {lc.fee.columns.map((column) => (
+          <div class="lc-fee-column" data-auto-reveal>
+            <h3 class="mp-name">{column.name}</h3>
+            <p class="mp-body">{column.text}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mp-small lc-fee-closing" data-auto-reveal>
+        {lc.fee.closing.lead}{" "}
+        <Link href={lc.fee.closing.first.href} class="mp-inline-link">{lc.fee.closing.first.label}</Link>{" "}
+        {lc.fee.closing.joiner}{" "}
+        <Link href={lc.fee.closing.second.href} class="mp-inline-link">{lc.fee.closing.second.label}</Link>.
+      </p>
+    </div>
+  </div>
+</Section>
+
+<!-- 11. Questions and guides. -->
+<Section labelledby="lc-faq-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{lc.faq.eyebrow}</p>
+      <h2 id="lc-faq-title" class="headline-display mp-title-lg" data-auto-reveal>{lc.faq.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Faq items={lc.faq.items} /></div>
+  </div>
+</Section>
+
+<Section tone="soft" labelledby="lc-guides-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{lc.guides.eyebrow}</p>
+      <h2 id="lc-guides-title" class="headline-display mp-title-md" data-auto-reveal>{lc.guides.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Guides guides={lc.guides.items} /></div>
+  </div>
+</Section>
+
+<Closing pageKey="live-customisation" closing={lc.closing} cta={lc.cta} />

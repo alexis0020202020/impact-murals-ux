@@ -4,6 +4,7 @@ import type { ContentRecord, ContentType } from "./content-source";
 import { loadContentRecords } from "./content-source";
 import { filterPublic } from "./publishing";
 import { versionOf } from "./content-source/manifest";
+import { moneyRouteEntries } from "@/content/money/routes";
 
 /**
  * One derived map of every public route.
@@ -207,7 +208,14 @@ export async function buildRoutes(): Promise<RouteEntry[]> {
     return [...indexRoutes, ...contentRoutes];
   });
 
-  cachedRoutes = [...core, ...offerRoutes, ...capabilityRoutes, ...sections.flat()];
+  /*
+    The money pages (src/content/money). Nothing is added in a production build
+    until launch, so the registry, the sitemap and every existing page are
+    unchanged; in preview they are noindex and outside the sitemap.
+  */
+  const moneyRoutes: RouteEntry[] = moneyRouteEntries();
+
+  cachedRoutes = [...core, ...offerRoutes, ...capabilityRoutes, ...moneyRoutes, ...sections.flat()];
   return cachedRoutes;
 }
 

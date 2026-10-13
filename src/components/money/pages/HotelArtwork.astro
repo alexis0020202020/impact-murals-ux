@@ -1,0 +1,241 @@
+---
+/**
+ * Hotel Artwork Dubai.
+ *
+ * Organising idea: the guest route. The page follows a guest through a
+ * building, from arrival to the terrace, on one section drawing with art at
+ * each stop; then it splits into the two programme tracks (a new opening and an
+ * operating hotel) and a plain ledger of who is responsible for what. Warm
+ * stone paper at the opening, then dark and light in turn.
+ *
+ * The repository holds no hotel, so none is claimed: the drawings are labelled
+ * illustrative, the one real image is a detail of a hand-painted mural, and the
+ * credited "selected applications" module is absent until a credit is agreed.
+ * Copy is in src/content/money/hotel-artwork.ts.
+ */
+import "@/styles/money/hotel-artwork.css";
+import { ht } from "@/content/money/hotel-artwork";
+import { moneyPage } from "@/content/money/pages";
+import { mediaSlots } from "@/content/money/media";
+import { resolveLink } from "@/lib/money-links";
+import Section from "../Section.astro";
+import Media from "../Media.astro";
+import Cta from "../Cta.astro";
+import Faq from "../Faq.astro";
+import Guides from "../Guides.astro";
+import Closing from "../Closing.astro";
+import Tight from "../Tight.astro";
+import Link from "../Link.astro";
+import Track from "../Track.astro";
+import Milestones from "../Milestones.astro";
+import HotelRoute from "../diagrams/HotelRoute.astro";
+import HotelPlanExcerpt from "../diagrams/HotelPlanExcerpt.astro";
+import FormatGlyph from "../diagrams/FormatGlyph.astro";
+
+const page = moneyPage("hotel-artwork");
+const rungs = await Promise.all(ht.formats.rungs.map(async (rung) => ({ rung, link: await resolveLink(rung.href) })));
+---
+
+<!-- 01. The opening: the guest's route drawn through a building. -->
+<section class="mp-hero ht-hero" aria-labelledby="ht-title">
+  <div class="mp-wrap ht-hero-inner">
+    <h1 id="ht-title" class="headline-display mp-title-hero ht-title mp-open" style="--i:1">{page.h1}.</h1>
+    <div class="ht-hero-text">
+      <p class="mp-hero-sub mp-open" style="--i:2">{ht.hero.statement}</p>
+      <p class="mp-hero-support mp-open" style="--i:3">{ht.hero.support}</p>
+      <div class="mp-open" style="--i:4">
+        <Cta pageKey="hotel-artwork" cta={ht.cta} where="hero" />
+        <p class="mp-micro ht-hero-event">
+          {ht.hero.event.lead}{" "}
+          <Link href={ht.hero.event.first.href} class="mp-inline-link">{ht.hero.event.first.label}</Link>{" "}
+          {ht.hero.event.joiner}{" "}
+          <Link href={ht.hero.event.second.href} class="mp-inline-link">{ht.hero.event.second.label}</Link>.
+        </p>
+      </div>
+    </div>
+    <figure class="ht-plate mp-open" style="--i:3">
+      <Media slot="HT_PLATE" priority sizes="(min-width: 1024px) 40vw, 92vw" />
+      <figcaption class="mp-label">{mediaSlots.HT_PLATE.caption}</figcaption>
+    </figure>
+    <figure class="mp-fig ht-route-fig mp-open" style="--i:2">
+      <HotelRoute />
+      <figcaption class="mp-label">{ht.hero.routeLabel}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 02. Along the route: six stops, numbered as on the drawing. -->
+<Section labelledby="ht-route-title">
+  <div class="ht-route-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{ht.route.eyebrow}</p>
+      <h2 id="ht-route-title" class="headline-display mp-title-lg" data-auto-reveal>{ht.route.headline}</h2>
+    </div>
+    <p class="mp-lead" data-auto-reveal>{ht.route.closing}</p>
+  </div>
+  <ol class="ht-stops" role="list">
+    {ht.route.stops.map((stop) => (
+      <li class="ht-stop" data-auto-reveal>
+        <span class="ht-stop-n" aria-hidden="true">{stop.n}</span>
+        <h3 class="mp-name">{stop.name}</h3>
+        <p class="mp-small"><Tight text={stop.text} /></p>
+      </li>
+    ))}
+  </ol>
+</Section>
+
+<!-- 03. Formats, from one wall to a whole floor. -->
+<Section tone="soft" labelledby="ht-formats-title">
+  <p class="mp-eyebrow" data-auto-reveal>{ht.formats.eyebrow}</p>
+  <h2 id="ht-formats-title" class="headline-display mp-title-lg ht-formats-title" data-auto-reveal>{ht.formats.headline}</h2>
+  <ol class="ht-ladder" role="list">
+    {rungs.map(({ rung, link }, index) => (
+      <li class="ht-rung" style={`--step:${index}`} data-auto-reveal>
+        <div class="ht-rung-glyph"><FormatGlyph kind={rung.glyph} /></div>
+        <h3 class="mp-name">{rung.name}</h3>
+        <p class="mp-small">{rung.text}</p>
+        {link.href && <p class="ht-rung-link"><Link href={rung.href} class="mp-link" arrow>{rung.linkLabel}</Link></p>}
+      </li>
+    ))}
+  </ol>
+  <p class="mp-micro ht-formats-note" data-auto-reveal>{ht.formats.note}</p>
+</Section>
+
+<!-- 04. Developed with the interior. -->
+<Section labelledby="ht-interior-title">
+  <div class="ht-interior">
+    <figure class="mp-fig ht-interior-fig" data-auto-reveal>
+      <HotelPlanExcerpt />
+      <figcaption class="mp-label">{ht.interior.caption}</figcaption>
+    </figure>
+    <div class="ht-interior-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{ht.interior.eyebrow}</p>
+      <h2 id="ht-interior-title" class="headline-display mp-title-lg" data-auto-reveal>{ht.interior.headline}</h2>
+      <p class="mp-lead" data-auto-reveal>{ht.interior.lead}</p>
+      <p class="mp-body" data-auto-reveal>{ht.interior.body}</p>
+    </div>
+  </div>
+</Section>
+
+<!-- 05. What we take on, and where we stop. -->
+<Section tone="dark" labelledby="ht-scope-title">
+  <div class="ht-scope">
+    <div class="ht-scope-roles">
+      <p class="mp-eyebrow" data-auto-reveal>{ht.scope.eyebrow}</p>
+      <h2 id="ht-scope-title" class="headline-display mp-title-lg" data-auto-reveal>{ht.scope.headline}</h2>
+      <ul class="mp-rows ht-roles" role="list">
+        {ht.scope.roles.map((role) => (
+          <li class="mp-row" data-auto-reveal>
+            <h3 class="mp-name">{role.name}</h3>
+            <p class="mp-body"><Tight text={role.text} /></p>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="ht-scope-side">
+      <p class="mp-lead" data-auto-reveal>{ht.scope.statement}</p>
+      <div class="ht-includes" data-auto-reveal>
+        <p class="mp-eyebrow">{ht.scope.includesLabel}</p>
+        <ul class="ht-includes-list" role="list">
+          {ht.scope.includes.map((item) => <li class="mp-label">{item}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<!-- 06. A new opening, or a hotel that is already open. -->
+<Section labelledby="ht-tracks-title">
+  <p class="mp-eyebrow" data-auto-reveal>{ht.tracks.eyebrow}</p>
+  <h2 id="ht-tracks-title" class="headline-display mp-title-lg" data-auto-reveal>{ht.tracks.headline}</h2>
+  <div class="ht-tracks">
+    {ht.tracks.items.map((track) => (
+      <div class="ht-track" data-auto-reveal>
+        <h3 class="mp-eyebrow">{track.name}</h3>
+        <Milestones name={track.name} milestones={track.milestones} />
+        <p class="mp-body">{track.text}</p>
+      </div>
+    ))}
+  </div>
+  <p class="mp-micro ht-tracks-caption">{ht.tracks.caption}</p>
+</Section>
+
+<!-- 07. Built for a building that is used. -->
+<Section tone="soft" labelledby="ht-finish-title">
+  <div class="ht-finish-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{ht.finish.eyebrow}</p>
+      <h2 id="ht-finish-title" class="headline-display mp-title-lg" data-auto-reveal>{ht.finish.headline}</h2>
+    </div>
+    <div class="ht-finish-copy">
+      <p class="mp-lead" data-auto-reveal>{ht.finish.lead}</p>
+      <p class="mp-body" data-auto-reveal>{ht.finish.body}</p>
+    </div>
+  </div>
+  <ul class="ht-facts" role="list">
+    {ht.finish.facts.map((fact) => <li class="ht-fact headline-display" data-auto-reveal>{fact}</li>)}
+  </ul>
+  <figure class="mp-figure ht-samples">
+    <div data-auto-scale><Media slot="HT_SAMPLES" sizes="(min-width: 1800px) 1700px, 100vw" /></div>
+  </figure>
+</Section>
+
+<!-- 08. From brief to the guest's first look. -->
+<Section labelledby="ht-process-title">
+  <p class="mp-eyebrow" data-auto-reveal>{ht.process.eyebrow}</p>
+  <h2 id="ht-process-title" class="headline-display mp-title-lg" data-auto-reveal>{ht.process.headline}</h2>
+  <Track steps={ht.process.steps} gateLabel="Dependency" label="Hospitality commission steps and dependencies" />
+</Section>
+
+<!-- 09. A statement piece or a coordinated commission. -->
+<Section tone="soft" labelledby="ht-budget-title">
+  <div class="ht-budget">
+    <div class="ht-budget-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ht.budget.eyebrow}</p>
+      <h2 id="ht-budget-title" class="headline-display mp-title-lg" data-auto-reveal>{ht.budget.headline}</h2>
+      <p class="mp-body" data-auto-reveal>{ht.budget.lead}</p>
+      <p class="mp-body" data-auto-reveal>{ht.budget.body}</p>
+    </div>
+    <div class="ht-budget-compare" data-auto-reveal>
+      <table class="mp-table mp-table--stack" role="table" aria-label="A statement piece compared with a coordinated commission">
+        <thead>
+          <tr role="row">
+            <th scope="col" role="columnheader"><span class="sr-only">Factor</span></th>
+            {ht.budget.columns.map((column) => <th scope="col" role="columnheader">{column}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {ht.budget.rows.map((row) => (
+            <tr role="row">
+              <th scope="row" role="rowheader">{row.label}</th>
+              {row.cells.map((cell, index) => <td role="cell" data-label={ht.budget.columns[index]}>{cell}</td>)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</Section>
+
+<!-- 10. Questions and guides. -->
+<Section labelledby="ht-faq-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ht.faq.eyebrow}</p>
+      <h2 id="ht-faq-title" class="headline-display mp-title-lg" data-auto-reveal>{ht.faq.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Faq items={ht.faq.items} /></div>
+  </div>
+</Section>
+
+<Section tone="soft" labelledby="ht-guides-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ht.guides.eyebrow}</p>
+      <h2 id="ht-guides-title" class="headline-display mp-title-md" data-auto-reveal>{ht.guides.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Guides guides={ht.guides.items} /></div>
+  </div>
+</Section>
+
+<Closing pageKey="hotel-artwork" closing={ht.closing} cta={ht.cta} />

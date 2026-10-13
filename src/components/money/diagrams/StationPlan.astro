@@ -1,0 +1,79 @@
+---
+/*
+  An illustrative station layout in plan, drawn in thin line: the queue, a
+  menu board, one or more artist stations, a drying rack, packing and
+  collection, with the guest's route running through them. The numerals match
+  a legend in HTML (shown under the drawing on a phone, where the labels are
+  too small to draw). An example, labelled as one; every real station is
+  designed for its own venue.
+*/
+const stops = [
+  { n: 1, x: 105, label: "QUEUE" },
+  { n: 2, x: 246, label: "MENU" },
+  { n: 3, x: 438, label: "STATION" },
+  { n: 4, x: 655, label: "DRYING" },
+  { n: 5, x: 788, label: "PACKING" },
+  { n: 6, x: 902, label: "COLLECTION" }
+];
+const queue = [44, 64, 84, 104, 124, 144, 164];
+const label =
+  "Illustrative station layout in plan: a queue, a menu board, two artist stations with an artist and a guest at each, a drying rack, a packing table and a collection counter, with the guest's route running through all six.";
+---
+<svg
+  class="mp-svg lc-plan"
+  viewBox="0 0 960 290"
+  style="--tm:30px"
+  role="img"
+  aria-label={label}
+  focusable="false"
+>
+  <!-- 1. Queue -->
+  <path class="l-soft" d="M30 120H180M30 170H180" />
+  {queue.map((x) => <circle class="fill-ink" cx={x} cy="145" r="4.4" />)}
+
+  <!-- 2. Menu board -->
+  <rect class="l" x="215" y="96" width="62" height="84" />
+  <path class="l-soft" d="M227 118h38M227 138h38M227 158h38M232 180V196M260 180V196" />
+
+  <!-- 3. Stations: one, and room for a second -->
+  <rect class="l" x="330" y="122" width="96" height="34" />
+  <circle class="fill-ink" cx="378" cy="106" r="7" />
+  <circle class="fill-ink" cx="378" cy="174" r="5" />
+  <rect class="l-soft" x="371" y="130" width="10" height="18" />
+  <rect class="l-dash" x="450" y="122" width="96" height="34" />
+  <circle class="l-soft" cx="498" cy="106" r="7" />
+  <circle class="l-soft" cx="498" cy="174" r="5" />
+
+  <!-- 4. Drying rack -->
+  <rect class="l" x="600" y="100" width="110" height="84" />
+  <path class="l-soft" d="M600 128H710M600 156H710" />
+  {[614, 636, 658, 680].map((x) => (
+    <>
+      <rect class="l-soft" x={x} y="114" width="8" height="14" />
+      <rect class="l-soft" x={x} y="142" width="8" height="14" />
+      <rect class="l-soft" x={x} y="170" width="8" height="14" />
+    </>
+  ))}
+
+  <!-- 5. Packing -->
+  <rect class="l" x="748" y="128" width="80" height="34" />
+  <rect class="l-soft" x="758" y="136" width="18" height="14" />
+  <rect class="l-soft" x="786" y="136" width="18" height="14" />
+  <circle class="fill-ink" cx="788" cy="112" r="6" />
+
+  <!-- 6. Collection -->
+  <rect class="l" x="864" y="130" width="76" height="22" />
+  <path class="l-soft" d="M892 112h20l3 16h-26z" />
+  <circle class="fill-ink" cx="902" cy="172" r="5" />
+
+  <!-- The guest's route -->
+  <path class="l-signal" d="M30 236H926" />
+  <path class="signal" d="M938 236l-12-6v12z" />
+  {stops.map((s) => (
+    <g>
+      <circle class="l" cx={s.x} cy="236" r="15" style="fill: var(--svg-bg)" />
+      <text class="t-mid t-num" x={s.x} y="242">{s.n}</text>
+      <text class="t-soft t-small t-mid t-minor" x={s.x} y="276">{s.label}</text>
+    </g>
+  ))}
+</svg>

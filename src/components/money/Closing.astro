@@ -1,0 +1,61 @@
+---
+import { global } from "@/content/global";
+import { moneyPage, type MoneyKey } from "@/content/money/pages";
+import { directRoutes, moneyConversion, resolveCta, studioLine } from "@/content/money/shared";
+import type { Closing, PageCta } from "@/content/money/types";
+import Cta from "./Cta.astro";
+
+/*
+  The close, in the Automotive pattern: the ask at the left, the two direct
+  routes at the right as large ruled lines of type (the whole line is the tap
+  target), each carrying this page's own message. While the guided form is not
+  connected the two routes ARE the call to action; once it is, the page's primary
+  button appears above them. The studio line is the one sentence deliberately
+  repeated on every page.
+*/
+interface Props {
+  pageKey: MoneyKey;
+  closing: Closing;
+  cta: PageCta;
+}
+
+const { pageKey, closing, cta } = Astro.props;
+const resolved = resolveCta(moneyPage(pageKey), cta);
+---
+<section id="contact" class="mp-section mp-closing surface-dark" aria-labelledby="mp-closing-title">
+  <div class="mp-wrap">
+    <div class="mp-closing-layout">
+      <div class="mp-closing-ask">
+        <h2 id="mp-closing-title" class="headline-display mp-title-lg" data-auto-reveal>{closing.headline}</h2>
+        <div class="mp-closing-copy" data-auto-reveal>
+          <p class="mp-lead">{closing.lead}</p>
+          <p class="mp-body">{closing.body}</p>
+        </div>
+        {moneyConversion.formConnected && <Cta pageKey={pageKey} cta={cta} where="closing" secondary={false} />}
+      </div>
+
+      <div class="mp-closing-routes">
+        <ul class="mp-route-list" role="list" data-auto-reveal>
+          <li>
+            <a href={resolved.whatsapp} target="_blank" rel="noopener noreferrer" class="mp-route" data-track={`${cta.track}_closing_whatsapp`}>
+              <span class="mp-route-label">{directRoutes.whatsappLabel}</span>{" "}
+              <span class="mp-route-value">{global.contact.phoneDisplay}</span>
+              <span class="mp-route-arrow" aria-hidden="true">↗</span>
+            </a>
+          </li>
+          <li>
+            <a href={resolved.email} class="mp-route" data-track={`${cta.track}_closing_email`}>
+              <span class="mp-route-label">{directRoutes.emailLabel}</span>{" "}
+              <span class="mp-route-value">{global.contact.email}</span>
+              <span class="mp-route-arrow" aria-hidden="true">↗</span>
+            </a>
+          </li>
+        </ul>
+        <div class="mp-closing-foot">
+          <p>{studioLine}</p>
+          <p>{directRoutes.location}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

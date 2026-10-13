@@ -1,0 +1,643 @@
+/*
+  /live-customisation-dubai/: the page's own composition.
+
+  Organising idea: the station. Three hands in one frame, a five-step guest
+  flow with its waiting drawn as a band, a station layout in plan, and a short
+  tested menu. Dark and close at the opening, then the most operational of the
+  brand-event pages. The shared vocabulary is in base.css.
+*/
+
+/* ------------------------------------------------------------------- hero */
+
+.lc-hero {
+  position: relative;
+  overflow: clip;
+  background: var(--color-ink);
+  color: var(--color-paper-bright);
+}
+
+.lc-hero .headline-display {
+  color: var(--color-paper-bright);
+}
+
+.lc-hero-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-block: 1.25rem 2.5rem;
+}
+
+.lc-hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.lc-qualifier {
+  max-width: 32rem;
+  margin-top: 1.1rem;
+  color: color-mix(in srgb, var(--color-paper) 84%, transparent);
+}
+
+.lc-hero-fig {
+  order: -1;
+  margin: 0;
+}
+
+.lc-scene {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lc-hands {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 0.4rem;
+  text-align: center;
+}
+
+.lc-hero-fig figcaption {
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .lc-hero-inner {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: center;
+    min-height: clamp(34rem, calc(100svh - 11rem), 50rem);
+    padding-block: clamp(2.25rem, 6svh, 4.5rem);
+  }
+
+  .lc-hero-text {
+    grid-column: 1 / span 6;
+  }
+
+  .lc-hero-fig {
+    order: 0;
+    grid-column: 7 / span 6;
+  }
+}
+
+/* ---------------------------------------------------------------- receive */
+
+.lc-receive {
+  display: grid;
+  gap: 2rem;
+}
+
+.lc-receive-copy {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.lc-sequence {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.lc-panel {
+  display: grid;
+  place-items: center;
+  padding: 0.9rem 0.5rem;
+  background: var(--frame-light);
+  border: 1px solid var(--hair);
+}
+
+.lc-panel svg {
+  display: block;
+  width: 100%;
+  max-width: 11rem;
+  height: auto;
+}
+
+.lc-panel-fig {
+  margin: 0;
+}
+
+.lc-panel-fig figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+}
+
+.lc-receive-caption {
+  margin: 0;
+}
+
+@media (min-width: 600px) {
+  .lc-sequence {
+    gap: var(--gap);
+  }
+
+  .lc-panel {
+    padding: 1.5rem 1rem;
+  }
+
+  .lc-panel-fig figcaption {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lc-receive {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .lc-receive-copy {
+    grid-column: 1 / span 4;
+    grid-row: 1 / span 2;
+  }
+
+  .lc-sequence {
+    grid-column: 5 / span 8;
+  }
+
+  .lc-receive-caption {
+    grid-column: 5 / span 8;
+  }
+}
+
+/* ------------------------------------------------------------- techniques */
+
+.lc-techs {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+  border-bottom: 1px solid var(--hair);
+}
+
+.lc-tech {
+  position: relative;
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem 1.25rem;
+  padding-block: 1.25rem 1.4rem;
+  border-top: 1px solid var(--hair);
+}
+
+.lc-tech::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 2.25rem;
+  height: 2px;
+  background: var(--color-signal);
+}
+
+.lc-tech .mp-body {
+  grid-column: 1 / -1;
+}
+
+.lc-tech-glyph svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lc-starting {
+  display: grid;
+  gap: 0.9rem;
+  max-width: 62ch;
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 768px) {
+  .lc-tech {
+    grid-template-columns: 9rem minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--gap);
+    padding-block: clamp(1.1rem, 1.6vw, 1.6rem);
+  }
+
+  .lc-tech .mp-body {
+    grid-column: auto;
+  }
+}
+
+/* -------------------------------------------------------------- programme */
+
+.lc-programme {
+  display: grid;
+  gap: 2rem;
+}
+
+.lc-programme-head {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.lc-programme-foot {
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  .lc-programme {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .lc-programme-head {
+    grid-column: 1 / span 5;
+  }
+
+  .lc-programme-rows {
+    grid-column: 7 / span 6;
+  }
+}
+
+/* ------------------------------------------------------------------- flow */
+
+.lc-flow {
+  display: grid;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+  border-bottom: 1px solid var(--hair);
+}
+
+.lc-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  column-gap: 1.1rem;
+  align-items: center;
+  padding-block: 1rem;
+  border-top: 1px solid var(--hair);
+}
+
+.lc-step-panel {
+  position: relative;
+  grid-row: 1 / span 3;
+  padding: 0.5rem;
+}
+
+.lc-step-n {
+  grid-column: 2;
+  font-family: var(--font-notation);
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  color: var(--color-stone);
+}
+
+.lc-step .mp-name,
+.lc-step .mp-small {
+  grid-column: 2;
+}
+
+.lc-step .mp-small {
+  margin-top: 0.3rem;
+}
+
+/* The waiting stages sit on a hatched band, joined into one where they meet. */
+.lc-step--wait .lc-step-panel {
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0,
+      transparent 7px,
+      color-mix(in srgb, var(--color-ink) 9%, transparent) 7px,
+      color-mix(in srgb, var(--color-ink) 9%, transparent) 8px
+    ),
+    var(--frame-light);
+}
+
+.lc-wait-tag {
+  position: absolute;
+  top: 0.35rem;
+  left: 0.4rem;
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  color: var(--color-ink);
+}
+
+.lc-step--wait + .lc-step--wait .lc-wait-tag {
+  display: none;
+}
+
+.lc-flow-foot {
+  display: grid;
+  gap: 1rem;
+  max-width: 44rem;
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 1024px) {
+  .lc-flow {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: var(--gap);
+    border-bottom: 0;
+  }
+
+  .lc-step {
+    display: block;
+    padding-block: 0;
+    border-top: 0;
+  }
+
+  .lc-step-panel {
+    aspect-ratio: 4 / 3.3;
+    margin-bottom: 1.1rem;
+    padding: 1rem;
+  }
+
+  .lc-step-panel svg {
+    height: 100%;
+    max-width: none;
+  }
+
+  .lc-step--wait + .lc-step--wait .lc-step-panel {
+    margin-left: calc(-1 * var(--gap));
+    width: calc(100% + var(--gap));
+  }
+
+  .lc-wait-tag {
+    font-size: 0.6875rem;
+  }
+
+  .lc-step-n {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .lc-step .mp-small {
+    max-width: 24ch;
+  }
+}
+
+/* ---------------------------------------------------------------- capacity */
+
+.lc-capacity-head {
+  display: grid;
+  gap: 1rem;
+}
+
+.lc-plan-fig {
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+.lc-plan {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.lc-legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 1rem;
+  margin-top: 1rem;
+}
+
+.lc-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--color-paper-bright);
+}
+
+.lc-legend span {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid currentcolor;
+  border-radius: 50%;
+  font-size: 0.6875rem;
+  line-height: 1;
+}
+
+.lc-capacity-body {
+  display: grid;
+  gap: 2.25rem;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+.lc-capacity-copy {
+  display: grid;
+  gap: 1.1rem;
+  align-content: start;
+}
+
+.lc-capacity-copy .mp-lead {
+  max-width: 52ch;
+}
+
+.lc-capacity-closing {
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--hair);
+  color: var(--color-paper-bright);
+}
+
+.lc-menu {
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+}
+
+.lc-menu-card {
+  padding: 1.2rem 1.25rem 1.3rem;
+  background: var(--color-paper-bright);
+  color: var(--color-ink);
+  border: 1px solid var(--hair);
+}
+
+.lc-menu-title {
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--color-ink);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 610;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.lc-menu-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  padding-block: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 560;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.lc-menu-list li:last-child {
+  border-bottom: 0;
+}
+
+.lc-menu-list .mp-label {
+  color: var(--color-stone);
+}
+
+@media (min-width: 768px) {
+  .lc-legend {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lc-capacity-body {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .lc-capacity-copy {
+    grid-column: 1 / span 7;
+  }
+
+  .lc-menu {
+    grid-column: 9 / span 4;
+  }
+}
+
+/* ----------------------------------------------------------- responsibility */
+
+.lc-columns {
+  display: grid;
+  gap: 0;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+  border-bottom: 1px solid var(--hair);
+}
+
+.lc-column {
+  padding-block: 1.25rem 1.4rem;
+  border-top: 1px solid var(--hair);
+}
+
+.lc-column .mp-name {
+  margin-bottom: 0.7rem;
+}
+
+.lc-resp-body {
+  max-width: 64ch;
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.lc-materials {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+@media (min-width: 768px) {
+  .lc-columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--gap);
+    border-bottom: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ needs */
+
+.lc-needs {
+  display: grid;
+  gap: 2rem;
+}
+
+.lc-needs-copy {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.lc-needs-list {
+  margin-top: 0.75rem;
+  border-bottom: 1px solid var(--hair);
+}
+
+.lc-needs-list li {
+  padding-block: 0.85rem;
+  border-top: 1px solid var(--hair);
+  color: var(--color-ink);
+}
+
+@media (min-width: 1024px) {
+  .lc-needs {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: center;
+  }
+
+  .lc-needs-copy {
+    grid-column: 1 / span 6;
+  }
+
+  .lc-needs-media {
+    grid-column: 8 / span 5;
+  }
+}
+
+/* -------------------------------------------------------------------- fee */
+
+.lc-fee {
+  display: grid;
+  gap: 2rem;
+}
+
+.lc-fee-head {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.lc-fee-head .mp-body {
+  max-width: 46ch;
+}
+
+.lc-fee-columns {
+  display: grid;
+  gap: 0;
+  border-bottom: 1px solid var(--hair);
+}
+
+.lc-fee-column {
+  padding-block: 1.25rem 1.4rem;
+  border-top: 1px solid var(--hair);
+}
+
+.lc-fee-column .mp-name {
+  margin-bottom: 0.7rem;
+}
+
+.lc-fee-closing {
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .lc-fee-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--gap);
+    border-bottom: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lc-fee {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .lc-fee-head {
+    grid-column: 1 / span 5;
+  }
+
+  .lc-fee-body {
+    grid-column: 7 / span 6;
+    padding-top: clamp(2rem, 4vw, 4rem);
+  }
+}

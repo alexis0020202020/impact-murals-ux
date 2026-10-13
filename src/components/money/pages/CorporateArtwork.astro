@@ -1,0 +1,311 @@
+---
+/**
+ * Corporate Artwork Dubai.
+ *
+ * Organising idea: read the floor plan. The page is arranged the way a
+ * workplace is: zone by zone, with one annotated plan strip as its device and
+ * an honest section on working inside a building that is still in use. Light,
+ * quiet surfaces and thin architectural linework; the one real image is a
+ * hand-painted mural in a working interior, captioned as what it is.
+ *
+ * No workplace commission is claimed anywhere. Copy is in
+ * src/content/money/corporate-artwork.ts.
+ */
+import "@/styles/money/corporate-artwork.css";
+import { ca } from "@/content/money/corporate-artwork";
+import { moneyPage } from "@/content/money/pages";
+import { mediaSlots } from "@/content/money/media";
+import { resolveSlot } from "@/lib/money-media";
+import { resolveLink } from "@/lib/money-links";
+import Section from "../Section.astro";
+import Media from "../Media.astro";
+import Cta from "../Cta.astro";
+import Paths from "../Paths.astro";
+import Faq from "../Faq.astro";
+import Guides from "../Guides.astro";
+import Closing from "../Closing.astro";
+import InvestmentNote from "../InvestmentNote.astro";
+import Tight from "../Tight.astro";
+import Link from "../Link.astro";
+import Track from "../Track.astro";
+import WorkplacePlan from "../diagrams/WorkplacePlan.astro";
+import PhasingPlan from "../diagrams/PhasingPlan.astro";
+import FormatGlyph from "../diagrams/FormatGlyph.astro";
+
+const page = moneyPage("corporate-artwork");
+const heroRatio = resolveSlot("CA_HERO").ratio;
+const formats = await Promise.all(ca.formats.rows.map(async (row) => ({ row, link: await resolveLink(row.href) })));
+---
+
+<!-- 01. The opening: a light, quiet page; the work with a person for scale. -->
+<section class="mp-hero ca-hero" aria-labelledby="ca-title">
+  <div class="ca-hero-lines" aria-hidden="true"></div>
+  <div class="mp-wrap ca-hero-inner">
+    <div class="ca-hero-text">
+      <p class="mp-eyebrow ca-notation mp-open" style="--i:0">{ca.hero.notation}</p>
+      <h1 id="ca-title" class="headline-display mp-title-hero mp-open" style="--i:1">{page.h1}.</h1>
+      <p class="mp-hero-sub mp-open" style="--i:2">{ca.hero.statement}</p>
+      <p class="mp-hero-support mp-open" style="--i:3">{ca.hero.support}</p>
+      <div class="mp-open" style="--i:4">
+        <Cta pageKey="corporate-artwork" cta={ca.cta} where="hero" />
+        <p class="mp-micro ca-hero-event">
+          {ca.hero.event.lead}{" "}
+          <Link href={ca.hero.event.href} class="mp-inline-link">{ca.hero.event.label}</Link>.
+        </p>
+      </div>
+    </div>
+    <figure class="ca-hero-media mp-open" style="--i:2">
+      <div class="ca-crop mp-tall" style={`--r:${heroRatio};--cap:70svh`}>
+        <Media slot="CA_HERO" priority sizes="(min-width: 1024px) 34vw, 92vw" />
+      </div>
+      <figcaption class="mp-label">{mediaSlots.CA_HERO.caption}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 02. The brief and the brand. -->
+<Section labelledby="ca-brief-title">
+  <div class="ca-brief">
+    <figure class="mp-figure ca-brief-media">
+      <div data-auto-scale><Media slot="CA_BRIEF_DETAIL" sizes="(min-width: 1024px) 56vw, 92vw" /></div>
+      <figcaption class="mp-label">{mediaSlots.CA_BRIEF_DETAIL.caption}</figcaption>
+    </figure>
+    <div class="ca-brief-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{ca.brief.eyebrow}</p>
+      <h2 id="ca-brief-title" class="headline-display mp-title-lg" data-auto-reveal>{ca.brief.headline}</h2>
+      <p class="mp-lead" data-auto-reveal>{ca.brief.lead}</p>
+      <p class="mp-body" data-auto-reveal>{ca.brief.body}</p>
+      <p class="mp-small ca-aside" data-auto-reveal>{ca.brief.aside}</p>
+    </div>
+  </div>
+</Section>
+
+<!-- 03. Zone by zone: the plan strip and its four positions. -->
+<Section tone="soft" labelledby="ca-zones-title">
+  <div class="ca-zones-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{ca.zones.eyebrow}</p>
+      <h2 id="ca-zones-title" class="headline-display mp-title-lg" data-auto-reveal>{ca.zones.headline}</h2>
+    </div>
+    <p class="mp-lead" data-auto-reveal>{ca.zones.closing}</p>
+  </div>
+  <div class="ca-zones">
+    <ol class="ca-zone-list" role="list">
+      {ca.zones.items.map((zone) => (
+        <li class="ca-zone" data-auto-reveal>
+          <span class="ca-zone-n" aria-hidden="true">{zone.n}</span>
+          <h3 class="mp-name">{zone.name}</h3>
+          <p class="mp-small"><Tight text={zone.text} /></p>
+        </li>
+      ))}
+    </ol>
+    <figure class="mp-fig ca-plan" data-auto-reveal>
+      <WorkplacePlan />
+      <figcaption class="mp-label">{ca.zones.caption}</figcaption>
+    </figure>
+  </div>
+</Section>
+
+<!-- 04. Choosing the format: four ruled rows, each leading to the page that owns it. -->
+<Section labelledby="ca-formats-title">
+  <p class="mp-eyebrow" data-auto-reveal>{ca.formats.eyebrow}</p>
+  <h2 id="ca-formats-title" class="headline-display mp-title-lg ca-formats-title" data-auto-reveal>{ca.formats.headline}</h2>
+  <ul class="ca-formats" role="list">
+    {formats.map(({ row, link }) => (
+      <li class="ca-format" data-auto-reveal>
+        <FormatGlyph kind={row.glyph} />
+        <h3 class="mp-name">{row.name}</h3>
+        <div class="ca-fields">
+          <div class="ca-field">
+            <p class="mp-label">{ca.formats.labels.what}</p>
+            <p class="mp-body">{row.what}</p>
+          </div>
+          <div class="ca-field">
+            <p class="mp-label">{ca.formats.labels.suits}</p>
+            <p class="mp-body">{row.suits}</p>
+          </div>
+          <div class="ca-field">
+            <p class="mp-label">{ca.formats.labels.know}</p>
+            <p class="mp-body"><Tight text={row.know} /></p>
+            {link.href && (
+              <p class="ca-field-link"><Link href={row.href} class="mp-link" arrow>{row.linkLabel}</Link></p>
+            )}
+          </div>
+        </div>
+      </li>
+    ))}
+  </ul>
+</Section>
+
+<!-- 05. Existing direction, or direction needed. -->
+<Section tone="soft" labelledby="ca-direction-title">
+  <div class="ca-direction">
+    <div class="ca-direction-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ca.direction.eyebrow}</p>
+      <h2 id="ca-direction-title" class="headline-display mp-title-lg" data-auto-reveal>{ca.direction.headline}</h2>
+    </div>
+    <div class="ca-direction-body">
+      <Paths paths={ca.direction.paths} />
+      <div class="ca-send" data-auto-reveal>
+        <p class="mp-eyebrow">{ca.direction.sendLabel}</p>
+        <ul class="mp-tags" role="list">
+          {ca.direction.send.map((item) => <li>{item}</li>)}
+        </ul>
+        <p class="mp-small">{ca.direction.sendNote} {ca.direction.note}</p>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<!-- 06. Working around an office that is still in use. -->
+<Section tone="dark" labelledby="ca-occ-title">
+  <div class="ca-occ-head">
+    <div class="ca-occ-title">
+      <p class="mp-eyebrow" data-auto-reveal>{ca.occupied.eyebrow}</p>
+      <h2 id="ca-occ-title" class="headline-display mp-title-lg" data-auto-reveal>{ca.occupied.headline}</h2>
+    </div>
+    <div class="ca-occ-copy">
+      <p class="mp-lead" data-auto-reveal>{ca.occupied.body}</p>
+      <p class="mp-body" data-auto-reveal>{ca.occupied.hours}</p>
+    </div>
+  </div>
+  <ul class="ca-occ-items" role="list">
+    {ca.occupied.items.map((item) => <li class="mp-label" data-auto-reveal>{item}</li>)}
+  </ul>
+  <div class="ca-occ-visual">
+    <ol class="ca-seq" role="list" aria-label="Protected, in progress, cleaned down">
+      {ca.occupied.sequence.map((frame) => {
+        const ratio = resolveSlot(frame.slot).ratio;
+        return (
+          <li class="ca-seq-item" style={`--r:${ratio}`}>
+            <figure class="mp-figure">
+              <div data-auto-scale><Media slot={frame.slot} sizes="(min-width: 1024px) 18vw, 30vw" /></div>
+              <figcaption>
+                <span class="mp-label">{frame.n} {frame.label}</span>
+                <span class="mp-small">{frame.text}</span>
+              </figcaption>
+            </figure>
+          </li>
+        );
+      })}
+    </ol>
+    <figure class="mp-fig ca-phase" data-auto-reveal>
+      <PhasingPlan />
+      <ul class="ca-key" role="list">
+        <li><i class="ca-key-hatch" aria-hidden="true"></i>Protected and closed</li>
+        <li><i class="ca-key-solid" aria-hidden="true"></i>Painting</li>
+        <li><i class="ca-key-line" aria-hidden="true"></i>Cleaned down, handed back</li>
+      </ul>
+      <figcaption class="mp-label">{ca.occupied.phasingCaption}</figcaption>
+    </figure>
+  </div>
+</Section>
+
+<!-- 07. Who decides what, and the schedule that records it. -->
+<Section labelledby="ca-decides-title">
+  <div class="ca-decides">
+    <div class="ca-decides-roles">
+      <p class="mp-eyebrow" data-auto-reveal>{ca.decides.eyebrow}</p>
+      <h2 id="ca-decides-title" class="headline-display mp-title-lg" data-auto-reveal>{ca.decides.headline}</h2>
+      <ul class="mp-rows ca-roles" role="list">
+        {ca.decides.roles.map((role) => (
+          <li class="mp-row" data-auto-reveal>
+            <h3 class="mp-name">{role.name}</h3>
+            <p class="mp-body"><Tight text={role.text} /></p>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <figure class="mp-fig ca-schedule" data-auto-reveal>
+      <figcaption class="ca-schedule-head">
+        <span class="mp-eyebrow">{ca.decides.scheduleLabel}</span>
+        <span class="mp-micro">{ca.decides.scheduleNote}</span>
+      </figcaption>
+      <table class="mp-table mp-table--stack" role="table" aria-label="Illustrative artwork schedule">
+        <thead>
+          <tr role="row">
+            <th scope="col" role="columnheader">{ca.decides.columns.location}</th>
+            <th scope="col" role="columnheader">{ca.decides.columns.format}</th>
+            <th scope="col" role="columnheader">{ca.decides.columns.size}</th>
+            <th scope="col" role="columnheader">{ca.decides.columns.window}</th>
+            <th scope="col" role="columnheader">{ca.decides.columns.status}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ca.decides.rows.map((row) => (
+            <tr role="row">
+              <th scope="row" role="rowheader">{row.location}</th>
+              <td role="cell" data-label={ca.decides.columns.format}>{row.format}</td>
+              <td role="cell" data-label={ca.decides.columns.size}>{row.size}</td>
+              <td role="cell" data-label={ca.decides.columns.window}>{row.window}</td>
+              <td role="cell" data-label={ca.decides.columns.status}>{row.status}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </figure>
+  </div>
+</Section>
+
+<!-- 08. Six steps, two decisions. -->
+<Section tone="soft" labelledby="ca-process-title">
+  <p class="mp-eyebrow" data-auto-reveal>{ca.process.eyebrow}</p>
+  <h2 id="ca-process-title" class="headline-display mp-title-lg" data-auto-reveal>{ca.process.headline}</h2>
+  <Track steps={ca.process.steps} label="Programme steps and decisions" />
+</Section>
+
+<!-- 09. What a workplace art budget is made of. -->
+<Section labelledby="ca-budget-title">
+  <div class="ca-budget">
+    <div class="ca-budget-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ca.budget.eyebrow}</p>
+      <h2 id="ca-budget-title" class="headline-display mp-title-lg" data-auto-reveal>{ca.budget.headline}</h2>
+      <p class="mp-body" data-auto-reveal>{ca.budget.body}</p>
+      <p class="mp-body" data-auto-reveal>{ca.budget.closing}</p>
+    </div>
+    <div class="ca-budget-compare" data-auto-reveal>
+      <table class="mp-table mp-table--stack" role="table" aria-label="One feature piece compared with a multi-floor programme">
+        <thead>
+          <tr role="row">
+            <th scope="col" role="columnheader"><span class="sr-only">Factor</span></th>
+            {ca.budget.columns.map((column) => <th scope="col" role="columnheader">{column}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {ca.budget.rows.map((row) => (
+            <tr role="row">
+              <th scope="row" role="rowheader">{row.label}</th>
+              {row.cells.map((cell, index) => (
+                <td role="cell" data-label={ca.budget.columns[index]}>{cell}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="ca-budget-invest"><InvestmentNote /></div>
+</Section>
+
+<!-- 10. Questions and guides. -->
+<Section tone="soft" labelledby="ca-faq-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ca.faq.eyebrow}</p>
+      <h2 id="ca-faq-title" class="headline-display mp-title-lg" data-auto-reveal>{ca.faq.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Faq items={ca.faq.items} /></div>
+  </div>
+</Section>
+
+<Section labelledby="ca-guides-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ca.guides.eyebrow}</p>
+      <h2 id="ca-guides-title" class="headline-display mp-title-md" data-auto-reveal>{ca.guides.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Guides guides={ca.guides.items} /></div>
+  </div>
+</Section>
+
+<Closing pageKey="corporate-artwork" closing={ca.closing} cta={ca.cta} />

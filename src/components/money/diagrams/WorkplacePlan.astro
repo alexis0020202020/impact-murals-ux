@@ -1,0 +1,65 @@
+---
+/*
+  An illustrative key plan of a workplace, drawn in thin line as four cells:
+  reception, a boardroom, a corridor and an atrium, each with a numbered
+  position for the art. The numerals match the four lines of the list beside or
+  under it. From a large screen the cells abut as one strip, each in the same
+  quarter of the width as its line; on a phone they stack two by two so every
+  drawing stays legible. It is an example, labelled as one wherever it appears;
+  it is not a plan of any real building.
+*/
+const label =
+  "Illustrative plan of a workplace with four positions for art: a reception with a desk and a wall piece, a boardroom with a long table, a corridor with a series of five works along one wall, and a double-height atrium with a stair and a piece suspended in the void.";
+---
+<div class="ca-plan-cells" role="img" aria-label={label}>
+  <!-- 1. Reception: a wall piece, a desk, two visitors for scale -->
+  <svg class="mp-svg ca-plan-cell" viewBox="0 0 240 200" style="--tm:24px" aria-hidden="true" focusable="false">
+    <circle class="l" cx="120" cy="38" r="16" />
+    <text class="t-mid t-num" x="120" y="44">1</text>
+    <path class="l" d="M62 94H44V178H196V94H178" />
+    <rect class="fill-ink" x="62" y="91" width="116" height="6" />
+    <path class="l-soft" d="M120 54V89" />
+    <rect class="l" x="84" y="130" width="72" height="22" rx="3" />
+    <circle class="fill-ink" cx="108" cy="166" r="3.4" />
+    <circle class="fill-ink" cx="132" cy="166" r="3.4" />
+  </svg>
+
+  <!-- 2. Boardroom: a long table, chairs, a wall piece at the head -->
+  <svg class="mp-svg ca-plan-cell" viewBox="0 0 240 200" style="--tm:24px" aria-hidden="true" focusable="false">
+    <circle class="l" cx="120" cy="38" r="16" />
+    <text class="t-mid t-num" x="120" y="44">2</text>
+    <rect class="l" x="24" y="94" width="192" height="84" />
+    <rect class="fill-ink" x="66" y="91" width="108" height="6" />
+    <path class="l-soft" d="M120 54V89" />
+    <rect class="l" x="60" y="122" width="120" height="30" rx="15" />
+    {[78, 99, 120, 141, 162].map((x) => (
+      <>
+        <circle class="l-soft" cx={x} cy="112" r="4" />
+        <circle class="l-soft" cx={x} cy="162" r="4" />
+      </>
+    ))}
+  </svg>
+
+  <!-- 3. Corridor: a series of five along one wall, two people walking -->
+  <svg class="mp-svg ca-plan-cell" viewBox="0 0 240 200" style="--tm:24px" aria-hidden="true" focusable="false">
+    <circle class="l" cx="120" cy="38" r="16" />
+    <text class="t-mid t-num" x="120" y="44">3</text>
+    <path class="l" d="M16 100H224M16 148H224" />
+    {[26, 68, 110, 152, 194].map((x) => <rect class="fill-ink" x={x} y="97" width="20" height="6" />)}
+    <path class="l-soft" d="M120 54V94" />
+    <circle class="fill-ink" cx="80" cy="126" r="3.4" />
+    <circle class="fill-ink" cx="166" cy="126" r="3.4" />
+  </svg>
+
+  <!-- 4. Atrium: a double-height void, a stair, a piece suspended in it -->
+  <svg class="mp-svg ca-plan-cell" viewBox="0 0 240 200" style="--tm:24px" aria-hidden="true" focusable="false">
+    <circle class="l" cx="120" cy="38" r="16" />
+    <text class="t-mid t-num" x="120" y="44">4</text>
+    <rect class="l-dash" x="42" y="94" width="156" height="84" />
+    <path class="l-soft" d="M52 178h20v-8h20v-8h20v-8h20v-8h20" />
+    <path class="l-soft" d="M106 94V127.5M134 94V127.5" />
+    <path class="l" d="M120 120L146 134L120 148L94 134Z" />
+    <path class="l-soft" d="M94 134H146M120 120V148" />
+    <path class="l-soft" d="M120 54V92" />
+  </svg>
+</div>

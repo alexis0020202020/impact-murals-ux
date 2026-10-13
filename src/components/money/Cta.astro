@@ -1,0 +1,44 @@
+---
+import { moneyPage, type MoneyKey } from "@/content/money/pages";
+import { resolveCta } from "@/content/money/shared";
+import type { PageCta } from "@/content/money/types";
+
+/*
+  The page's call to action: one primary button carrying the service in its
+  label, and one quiet second route where the specification gives one. While the
+  guided form is not connected (src/content/money/shared.ts), the button opens
+  WhatsApp with the service and the first useful questions already written, and
+  the quiet route is email; once it is, the button opens the form with the offer
+  preselected. `where` names the placement for the tracking hook.
+*/
+interface Props {
+  pageKey: MoneyKey;
+  cta: PageCta;
+  where: string;
+  secondary?: boolean;
+  micro?: string;
+}
+
+const { pageKey, cta, where, secondary = true, micro } = Astro.props;
+const resolved = resolveCta(moneyPage(pageKey), cta);
+const external = (kind: string) => (kind === "whatsapp" ? { target: "_blank", rel: "noopener noreferrer" } : {});
+---
+<div class="mp-cta">
+  <a
+    class="contact-btn contact-btn-primary mp-btn"
+    href={resolved.primary.href}
+    data-track={`${resolved.primary.track}_${where}`}
+    {...external(resolved.primary.kind)}
+  >
+    <span>{resolved.primary.label}</span><span class="mp-btn-arrow" aria-hidden="true">↗</span>
+  </a>
+  {secondary && resolved.secondary && (
+    <a
+      class="mp-link"
+      href={resolved.secondary.href}
+      data-track={`${resolved.secondary.track}_${where}`}
+      {...external(resolved.secondary.kind)}
+    >{resolved.secondary.label}{" "}<span class="mp-link-arrow" aria-hidden="true">→</span></a>
+  )}
+</div>
+{micro && <p class="mp-micro">{micro}</p>}

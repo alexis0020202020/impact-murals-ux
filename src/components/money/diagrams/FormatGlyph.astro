@@ -1,0 +1,51 @@
+---
+/*
+  A small thin-line drawing of one art format: a wall, a canvas, a series, a
+  dimensional piece. Decorative (the row's name carries the meaning), so it is
+  hidden from assistive technology. Stands in for a photograph per format until
+  the studio has one worth showing for each.
+*/
+interface Props {
+  kind: "mural" | "canvas" | "series" | "collaboration" | "dimensional";
+}
+
+const { kind } = Astro.props;
+---
+<svg class="mp-svg mp-glyph" viewBox="0 0 96 64" aria-hidden="true" focusable="false">
+  {kind === "mural" && (
+    <>
+      <rect class="l" x="6" y="6" width="84" height="48" />
+      <path class="l-soft" d="M2 58H94" />
+      <path class="l" d="M14 38C28 16 40 54 54 32S76 24 84 34" />
+      <path class="l-soft" d="M14 46C30 30 42 58 58 40S78 36 84 44" />
+    </>
+  )}
+  {kind === "canvas" && (
+    <>
+      <rect class="l" x="22" y="5" width="52" height="54" />
+      <rect class="l-soft" x="28" y="11" width="40" height="42" />
+      <path class="l-soft" d="M28 44L40 31L50 41L57 34L68 46" />
+    </>
+  )}
+  {kind === "series" && (
+    <>
+      <rect class="l" x="6" y="14" width="24" height="36" />
+      <rect class="l" x="36" y="14" width="24" height="36" />
+      <rect class="l" x="66" y="14" width="24" height="36" />
+      <path class="l-soft" d="M10 42L18 33L26 43M40 40L48 30L56 41M70 43L78 32L86 42" />
+    </>
+  )}
+  {kind === "collaboration" && (
+    <>
+      <rect class="l" x="20" y="5" width="56" height="38" />
+      <rect class="l-soft" x="26" y="11" width="44" height="26" />
+      <path class="l-soft" d="M26 56C36 48 42 62 52 52S64 54 70 48" />
+    </>
+  )}
+  {kind === "dimensional" && (
+    <>
+      <path class="l" d="M48 4L82 22V42L48 60L14 42V22Z" />
+      <path class="l-soft" d="M14 22L48 40L82 22M48 40V60" />
+    </>
+  )}
+</svg>

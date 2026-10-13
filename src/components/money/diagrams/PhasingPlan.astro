@@ -1,0 +1,50 @@
+---
+/*
+  Illustrative phasing of work in an occupied building: three zones, time
+  running left to right. Each zone is protected and closed, painted, then
+  cleaned down and handed back, one step behind the zone before it, so the
+  others stay in use. The key is HTML beside the drawing. An example, labelled
+  as one; it promises nothing about any real building.
+*/
+const rows = [
+  { label: "ZONE A", y: 22, start: 0 },
+  { label: "ZONE B", y: 98, start: 1 },
+  { label: "ZONE C", y: 174, start: 2 }
+];
+const col = 84;
+const x0 = 96;
+const h = 56;
+---
+<svg
+  class="mp-svg ca-phase-svg"
+  viewBox="0 0 520 252"
+  style="--tm:17px"
+  role="img"
+  aria-labelledby="ca-phase-title ca-phase-desc"
+  focusable="false"
+>
+  <title id="ca-phase-title">Illustrative phasing by zone</title>
+  <desc id="ca-phase-desc">
+    Three zones over five stretches of time. Zone A is protected first, painted second and cleaned down third. Zone B
+    follows one stretch later and zone C one stretch after that, so at any moment most of the office remains in use.
+  </desc>
+  <defs>
+    <pattern id="ca-hatch" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="7" style="stroke: var(--svg-soft); stroke-width: 1" />
+    </pattern>
+  </defs>
+
+  <!-- Time, left to right -->
+  <path class="l-faint" d={`M${x0} 8H${x0 + col * 5}`} />
+  {[0, 1, 2, 3, 4, 5].map((i) => <path class="l-faint" d={`M${x0 + col * i} 3V13`} />)}
+
+  {rows.map((row) => (
+    <g>
+      <text class="t-soft" x="0" y={row.y + h / 2 + 4}>{row.label}</text>
+      <path class="l-faint" d={`M${x0} ${row.y + h / 2}H${x0 + col * 5}`} />
+      <rect class="l" x={x0 + col * row.start + 2} y={row.y} width={col - 4} height={h} style="fill: url(#ca-hatch)" />
+      <rect class="fill-ink" x={x0 + col * (row.start + 1) + 2} y={row.y} width={col - 4} height={h} />
+      <rect class="l" x={x0 + col * (row.start + 2) + 2} y={row.y} width={col - 4} height={h} />
+    </g>
+  ))}
+</svg>

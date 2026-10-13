@@ -1,0 +1,20 @@
+---
+import type { FactorGroup } from "@/content/money/types";
+
+/* What a fee depends on: groups of variables, kept apart on purpose. */
+interface Props {
+  groups: FactorGroup[];
+}
+
+const { groups } = Astro.props;
+---
+<div class="mp-factors">
+  {groups.map((group) => (
+    <div class="mp-factor-group" data-auto-reveal>
+      <h3 class="mp-name">{group.title}</h3>
+      <ul class="mp-factor-list" role="list">
+        {group.items.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+  ))}
+</div>

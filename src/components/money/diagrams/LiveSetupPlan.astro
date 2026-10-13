@@ -1,0 +1,82 @@
+---
+/*
+  Illustrative plan of a live painting set-up, drawn in thin line with real
+  text: the surface, the protected floor, the artist's zone, the light, the
+  audience and its sightlines, the camera line and the load-in route. It is an
+  example layout, labelled as one wherever it appears; every real setup is drawn
+  for its own venue.
+*/
+const rows = [
+  { y: 246, from: 176, to: 464, step: 32 },
+  { y: 268, from: 160, to: 480, step: 32 },
+  { y: 290, from: 144, to: 496, step: 32 }
+];
+const people = rows.flatMap((row, r) =>
+  Array.from({ length: Math.floor((row.to - row.from) / row.step) + 1 }, (_unused, i) => ({
+    x: row.from + i * row.step + (r % 2 === 0 ? 0 : 0),
+    y: row.y
+  }))
+);
+---
+<svg
+  class="mp-svg"
+  viewBox="0 0 640 440"
+  style="--tm:21px"
+  role="img"
+  aria-labelledby="lp-plan-title lp-plan-desc"
+  focusable="false"
+>
+  <title id="lp-plan-title">Illustrative plan of a live painting set-up</title>
+  <desc id="lp-plan-desc">
+    A venue plan with the painting surface at the top, a protected floor in front of it, the artist's zone,
+    lighting at either side, an audience area facing the surface with sightlines, a camera line, and a load-in
+    and strike route entering from the lower left.
+  </desc>
+
+  <rect class="l-faint" x="16" y="16" width="608" height="408" />
+
+  <!-- Surface -->
+  <rect class="fill-ink" x="190" y="42" width="260" height="10" />
+  <text class="t-mid t-small" x="320" y="34">SURFACE</text>
+
+  <!-- Protected floor -->
+  <rect class="l-dash" x="150" y="60" width="340" height="124" />
+  <text class="t-soft t-small t-minor" x="160" y="76">PROTECTED FLOOR</text>
+
+  <!-- Artist zone -->
+  <rect class="l" x="206" y="86" width="228" height="68" />
+  <text class="t-mid" x="320" y="124">ARTIST ZONE</text>
+
+  <!-- Light -->
+  <g>
+    <circle class="l" cx="176" cy="104" r="6" />
+    <path class="l-soft" d="M176 92v-7M164 104h-7M188 104h7M167.5 95.5l-5-5M184.5 95.5l5-5" />
+    <circle class="l" cx="464" cy="104" r="6" />
+    <path class="l-soft" d="M464 92v-7M452 104h-7M476 104h7M455.5 95.5l-5-5M472.5 95.5l5-5" />
+    <text class="t-soft t-small t-mid t-minor" x="176" y="128">LIGHT</text>
+    <text class="t-soft t-small t-mid t-minor" x="464" y="128">LIGHT</text>
+  </g>
+
+  <!-- Audience area and sightlines -->
+  <path class="fill" d="M110 324L172 214H468L530 324Z" />
+  <path class="l-dash" d="M172 214L206 154M468 214L434 154" />
+  <text class="t-soft t-small t-minor" x="52" y="196">SIGHTLINES</text>
+  <path class="l-soft" d="M100 196H140L186 196" />
+  {people.map((p) => <circle class="fill-ink" cx={p.x} cy={p.y} r="3.4" />)}
+  <text class="t-mid" x="320" y="346">AUDIENCE</text>
+
+  <!-- Camera line -->
+  <g>
+    <path class="l" d="M72 250h14v12H72zM86 253l9-5v18l-9-5z" />
+    <path class="l-dash" d="M96 252L206 130" />
+    <path class="l" d="M554 250h14v12h-14zM554 253l-9-5v18l9-5z" />
+    <path class="l-dash" d="M544 252L434 130" />
+    <text class="t-soft t-small t-minor" x="48" y="282">CAMERA LINE</text>
+    <text class="t-soft t-small t-end t-minor" x="592" y="282">CAMERA LINE</text>
+  </g>
+
+  <!-- Load-in and strike route -->
+  <path class="l-signal" d="M16 404H66V170H140" />
+  <path class="signal" d="M146 170l-10-5v10z" />
+  <text class="t-signal t-small" x="76" y="396">LOAD-IN AND STRIKE</text>
+</svg>

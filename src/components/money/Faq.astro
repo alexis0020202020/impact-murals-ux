@@ -1,0 +1,25 @@
+---
+import type { Faq } from "@/content/money/types";
+
+/*
+  The page's questions as native <details> disclosures: every answer is in the
+  HTML for readers and search engines, nothing needs script, and each summary is
+  a real, keyboard-operable control.
+*/
+interface Props {
+  items: Faq[];
+}
+
+const { items } = Astro.props;
+---
+<div class="mp-faq">
+  {items.map((item) => (
+    <details class="mp-q">
+      <summary>
+        <span>{item.q}</span>
+        <span class="mp-q-mark" aria-hidden="true"></span>
+      </summary>
+      <div class="mp-q-answer"><p>{item.a}</p></div>
+    </details>
+  ))}
+</div>

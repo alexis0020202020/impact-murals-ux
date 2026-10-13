@@ -1,0 +1,27 @@
+---
+/*
+  One illustrative programme track: a line with a short label at each of its
+  milestones. The milestone the whole track is planned back from (an opening
+  date, a room release) is a signal diamond. Horizontal from a tablet up, a
+  vertical rule on a phone. Type and a line only.
+*/
+interface Milestone {
+  label: string;
+  key?: boolean;
+}
+
+interface Props {
+  name: string;
+  milestones: Milestone[];
+}
+
+const { name, milestones } = Astro.props;
+---
+<ol class="mp-miles" style={`--n:${milestones.length}`} role="list" aria-label={name}>
+  {milestones.map((milestone) => (
+    <li class:list={["mp-mile", milestone.key && "mp-mile--key"]}>
+      <span class="mp-mile-node" aria-hidden="true"></span>
+      <span class="mp-label">{milestone.label}</span>
+    </li>
+  ))}
+</ol>

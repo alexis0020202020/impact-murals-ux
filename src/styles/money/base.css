@@ -1,0 +1,2050 @@
+/*
+  Money pages: shared primitives.
+
+  Imported by MoneyBody.astro only, so none of this ships on any other route.
+  It reuses the site's tokens (--color-*, --font-*) and adds no colour or font
+  of its own. The conventions are the Automotive page's: uppercase display
+  titles that end in a full stop, small mono labels with the logo's slanted
+  signal notch, ruled lists and ledgers instead of cards, one picture per idea
+  at its own proportion, paper and ink surfaces that alternate.
+
+  What differs from Automotive is that these pages sit inside the site's
+  header and footer, and that each page has its own organising idea. The
+  primitives here are the shared vocabulary; each page's own stylesheet
+  (src/styles/money/<page>.css) holds its signature composition.
+
+  Breakpoints: 768px (md) and 1024px (lg). Below md is a recomposition for
+  phones, not a collapsed desktop. Everything is unlayered on purpose: these
+  rules must beat the shared layered component colours wherever they overlap.
+  No box-shadow, no border-radius, no scroll snapping, nothing sticky or pinned.
+*/
+
+.mp-page {
+  --gap: 1.25rem;
+  --pad: clamp(3.25rem, 6.6vw, 6.75rem);
+  --hair: color-mix(in srgb, var(--color-ink) 16%, transparent);
+  /* What a frame shows for the instant before its picture has decoded: a calm tone. */
+  --frame-light: color-mix(in srgb, var(--color-sand) 55%, var(--color-paper));
+  --frame-dark: color-mix(in srgb, var(--color-ink) 88%, var(--color-paper));
+  /* The one tonal step between paper and ink: a quiet second light surface. */
+  --surface-soft: color-mix(in srgb, var(--color-sand) 55%, var(--color-paper));
+  /* Distance from the content edge to the edge of the page, for a picture that bleeds. */
+  --bleed: calc(max(0px, (100vw - 1800px) / 2) + var(--gutter));
+  position: relative;
+  /* clip, not hidden: nothing bleeds sideways, and nothing here is sticky. */
+  overflow-x: clip;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+@media (min-width: 1024px) {
+  .mp-page {
+    --gap: 2.5rem;
+  }
+}
+
+.mp-page .surface-dark {
+  --hair: color-mix(in srgb, var(--color-paper) 18%, transparent);
+}
+
+.mp-wrap {
+  width: 100%;
+  max-width: 1800px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.mp-section {
+  position: relative;
+  padding-block: var(--pad);
+}
+
+.mp-section--soft {
+  background: var(--surface-soft);
+}
+
+.mp-section--tight {
+  padding-block: calc(var(--pad) * 0.7);
+}
+
+/* A section that follows another of the same surface reads as its continuation: only a rule, less air above. */
+.mp-section--ruled {
+  padding-top: calc(var(--pad) * 0.5);
+}
+
+.mp-section--ruled > .mp-wrap > :first-child {
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--hair);
+}
+
+@media (min-width: 768px) {
+  .mp-section--ruled > .mp-wrap > :first-child {
+    padding-top: clamp(1.75rem, 3vw, 2.75rem);
+  }
+}
+
+.mp-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .mp-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+  }
+}
+
+/* ------------------------------------------------------------------- type */
+
+.mp-title-hero {
+  font-size: clamp(2.7rem, 12.4vw, 4.6rem);
+}
+
+.mp-title-xl {
+  font-size: clamp(2.3rem, 10.4vw, 3.6rem);
+}
+
+.mp-title-lg {
+  font-size: clamp(2rem, 9.4vw, 2.9rem);
+}
+
+.mp-title-md {
+  font-size: clamp(1.7rem, 7.6vw, 2.3rem);
+}
+
+.mp-title-sm {
+  font-size: clamp(1.2rem, 5.4vw, 1.5rem);
+}
+
+.mp-title-hero,
+.mp-title-xl,
+.mp-title-lg,
+.mp-title-md {
+  text-wrap: balance;
+}
+
+/* A long word never runs past its column; it only matters when a visitor has raised the default text size. */
+.mp-title-hero,
+.mp-title-xl,
+.mp-title-lg,
+.mp-title-md,
+.mp-title-sm,
+.mp-name {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 768px) {
+  .mp-title-hero {
+    font-size: clamp(3.4rem, 8vw, 6rem);
+  }
+
+  .mp-title-xl {
+    font-size: clamp(2.6rem, 4.6vw, 5.4rem);
+  }
+
+  .mp-title-lg {
+    font-size: clamp(2.2rem, 3.7vw, 4.4rem);
+  }
+
+  .mp-title-md {
+    font-size: clamp(1.8rem, 3vw, 3.5rem);
+  }
+
+  .mp-title-sm {
+    font-size: clamp(1.3rem, 1.9vw, 2.25rem);
+  }
+}
+
+.mp-lead {
+  max-width: 34ch;
+  font-family: var(--font-body);
+  font-size: clamp(1.125rem, 4.9vw, 1.375rem);
+  line-height: 1.42;
+  color: var(--color-paper-dim);
+  text-wrap: pretty;
+}
+
+.mp-body {
+  max-width: 46ch;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--color-paper-dim);
+  text-wrap: pretty;
+}
+
+.mp-small {
+  max-width: 44ch;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--color-paper-dim);
+  text-wrap: pretty;
+}
+
+@media (min-width: 768px) {
+  .mp-lead {
+    font-size: clamp(1.15rem, 1.5vw, 1.55rem);
+  }
+
+  .mp-body {
+    font-size: clamp(1rem, 1.15vw, 1.15rem);
+  }
+}
+
+.surface-dark .mp-lead {
+  color: color-mix(in srgb, var(--color-paper) 86%, transparent);
+}
+
+.surface-dark .mp-body,
+.surface-dark .mp-small {
+  color: color-mix(in srgb, var(--color-paper) 72%, transparent);
+}
+
+/* Small mono label with the logo's slanted signal notch. */
+.mp-eyebrow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+}
+
+.mp-eyebrow::before {
+  content: "";
+  flex: none;
+  width: 1.1rem;
+  height: 3px;
+  margin-top: 0.62em;
+  background: var(--color-signal);
+  transform: skewX(-22deg);
+}
+
+.surface-dark .mp-eyebrow {
+  color: color-mix(in srgb, var(--color-paper) 68%, transparent);
+}
+
+/* A plain small mono label: a picture's note, a notation line. */
+.mp-label {
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-paper-dim);
+}
+
+.surface-dark .mp-label {
+  color: color-mix(in srgb, var(--color-paper) 68%, transparent);
+}
+
+/* The same label, quieter: a micro-line under a call to action, a caption. */
+.mp-micro {
+  max-width: 40ch;
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: 0.06em;
+  color: var(--color-stone);
+}
+
+.surface-dark .mp-micro {
+  color: color-mix(in srgb, var(--color-paper) 62%, transparent);
+}
+
+/* A heading right under its eyebrow: one measure of air, everywhere. */
+.mp-eyebrow + h2,
+.mp-eyebrow + h3 {
+  margin-top: 1rem;
+}
+
+/* Text set exactly as written in the content (a brand such as iCAUR keeps its lower-case i). */
+.mp-asis {
+  text-transform: none;
+}
+
+/* A hyphenated word in a paragraph is set whole: a line never breaks inside it. */
+.mp-tight {
+  white-space: nowrap;
+}
+
+/*
+  A link set as a label: small mono capitals, underlined, with the signal arrow
+  after it. The padding widens the tap target without moving the line.
+*/
+.mp-link {
+  display: inline-block;
+  margin-block: -0.7rem;
+  padding-block: 0.7rem;
+  font-family: var(--font-notation);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentcolor 40%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.45em;
+  transition: text-decoration-color 180ms ease;
+}
+
+.surface-dark .mp-link {
+  color: var(--color-paper-bright);
+}
+
+.mp-link:hover {
+  text-decoration-color: currentcolor;
+}
+
+.mp-link-arrow {
+  display: inline-block;
+  color: var(--color-signal);
+  transition: transform 220ms cubic-bezier(0.32, 0, 0.2, 1);
+}
+
+.mp-link:hover .mp-link-arrow {
+  transform: translateX(3px);
+}
+
+/* A link inside running text: quiet, underlined, never a button. */
+.mp-inline-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentcolor 38%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color 180ms ease;
+}
+
+.mp-inline-link:hover {
+  text-decoration-color: var(--color-signal);
+}
+
+/* The name on a ruled line: a format, a step, a zone. */
+.mp-name {
+  font-family: var(--font-display);
+  font-weight: 610;
+  font-size: clamp(1.2rem, 5.4vw, 1.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.surface-dark .mp-name {
+  color: var(--color-paper-bright);
+}
+
+@media (min-width: 768px) {
+  .mp-name {
+    font-size: clamp(1.2rem, 1.7vw, 2rem);
+  }
+}
+
+/* ------------------------------------------------------------ ruled rows */
+
+/* One ruled line per entry: the name at the left, its words at the right. No cards, no icons. */
+.mp-rows {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-bottom: 1px solid var(--hair);
+}
+
+.mp-row {
+  position: relative;
+  display: grid;
+  gap: 0.5rem;
+  padding-block: 1.15rem 1.4rem;
+  border-top: 1px solid var(--hair);
+}
+
+/* A short signal tick on the rule, the logo's stroke in miniature. */
+.mp-row::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 2.25rem;
+  height: 2px;
+  background: var(--color-signal);
+}
+
+.mp-row-copy {
+  display: grid;
+  gap: 0.6rem;
+  align-content: start;
+}
+
+.mp-row-copy .mp-body {
+  max-width: 62ch;
+}
+
+.mp-row-note {
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: 0.08em;
+  color: var(--color-stone);
+}
+
+.surface-dark .mp-row-note {
+  color: color-mix(in srgb, var(--color-paper) 62%, transparent);
+}
+
+@media (min-width: 768px) {
+  .mp-row {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--gap);
+    align-items: baseline;
+    padding-block: clamp(1.1rem, 1.5vw, 1.6rem);
+  }
+
+  .mp-row .mp-name {
+    margin: 0;
+  }
+}
+
+/* ----------------------------------------------------------------- ledger */
+
+/*
+  A numbered ledger: a numeral, a name and its text on a ruled line. Four to
+  six columns on a large screen, two on a tablet, one on a phone. Type and
+  whitespace only, no cards, icons or timeline graphics. A step may carry a gate,
+  a decision point drawn as a small signal diamond with its label.
+*/
+.mp-steps {
+  --cols: 4;
+  margin-top: clamp(1.75rem, 4vw, 3.5rem);
+  border-bottom: 1px solid var(--hair);
+}
+
+.mp-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.9rem minmax(0, 1fr);
+  column-gap: 1rem;
+  padding-block: 1.3rem 1.5rem;
+  border-top: 1px solid var(--hair);
+}
+
+.mp-step-n {
+  grid-column: 1;
+  grid-row: 1;
+  padding-top: 0.15rem;
+  font-family: var(--font-notation);
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  color: var(--color-stone);
+}
+
+.mp-step .mp-name,
+.mp-step .mp-body,
+.mp-step .mp-gate {
+  grid-column: 2;
+}
+
+.mp-step .mp-body {
+  margin-top: 0.5rem;
+}
+
+.mp-gate {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.85rem;
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.mp-gate::before {
+  content: "";
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  background: var(--color-signal);
+  transform: rotate(45deg);
+}
+
+.surface-dark .mp-step-n {
+  color: color-mix(in srgb, var(--color-paper) 62%, transparent);
+}
+
+.surface-dark .mp-gate {
+  color: var(--color-paper-bright);
+}
+
+@media (min-width: 768px) {
+  .mp-steps {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--gap);
+    row-gap: 1.5rem;
+    border-bottom: 0;
+  }
+
+  .mp-step {
+    display: block;
+    padding-block: 1.25rem 0;
+  }
+
+  .mp-step-n {
+    display: block;
+    margin-bottom: 1.5rem;
+    padding-top: 0;
+    font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+  }
+
+  .mp-step .mp-body {
+    margin-top: 0.7rem;
+    max-width: 38ch;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mp-steps {
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    row-gap: 2rem;
+  }
+
+  .mp-step .mp-body {
+    max-width: 30ch;
+  }
+}
+
+/* ------------------------------------------------------------ two paths */
+
+/* Two ways in, set side by side with a hairline between them. */
+.mp-paths {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-top: 1px solid var(--hair);
+}
+
+.mp-path {
+  padding-block: 1.4rem 1.6rem;
+  border-bottom: 1px solid var(--hair);
+}
+
+.mp-path .mp-name {
+  margin-bottom: 0.7rem;
+}
+
+@media (min-width: 768px) {
+  .mp-paths {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .mp-path {
+    padding: clamp(1.4rem, 2vw, 2.1rem) clamp(1.25rem, 3vw, 3rem) clamp(1.4rem, 2vw, 2.1rem) 0;
+    border-bottom: 0;
+  }
+
+  .mp-path + .mp-path {
+    padding-left: clamp(1.25rem, 3vw, 3rem);
+    padding-right: 0;
+    border-left: 1px solid var(--hair);
+  }
+}
+
+.surface-dark .mp-path .mp-name {
+  color: var(--color-paper-bright);
+}
+
+/* The same two paths, one above the other, for a column too narrow to split. */
+@media (min-width: 768px) {
+  .mp-paths--stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mp-paths--stack .mp-path,
+  .mp-paths--stack .mp-path + .mp-path {
+    padding: clamp(1.25rem, 2vw, 1.9rem) 0;
+    border-left: 0;
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .mp-paths--stack .mp-path + .mp-path {
+    border-top: 0;
+  }
+}
+
+/* ----------------------------------------------------------------- factors */
+
+/* What a price depends on: two groups of variables, kept apart on purpose. */
+.mp-factors {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+}
+
+.mp-factor-group h3 {
+  margin-bottom: 0.9rem;
+}
+
+.mp-factor-list {
+  border-top: 1px solid var(--hair);
+}
+
+.mp-factor-list li {
+  padding-block: 0.7rem;
+  border-bottom: 1px solid var(--hair);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--color-paper-dim);
+}
+
+.surface-dark .mp-factor-list li {
+  color: color-mix(in srgb, var(--color-paper) 80%, transparent);
+}
+
+@media (min-width: 768px) {
+  .mp-factors {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--gap);
+  }
+}
+
+/* ----------------------------------------------------------------- frames */
+
+/*
+  A frame is a still, or a clip over its poster. Its proportions come from `--r`,
+  written inline from the picture's own size, so the space is reserved before
+  anything loads and a portrait clip keeps its native framing.
+*/
+.mp-frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--frame-light);
+  aspect-ratio: var(--r);
+}
+
+.surface-dark .mp-frame {
+  background: var(--frame-dark);
+}
+
+.mp-frame > img,
+.mp-frame > video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* A frame that fills its container (an opening panel) instead of keeping its own proportion. */
+.mp-frame--fill {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+/*
+  A portrait frame no taller than its own share of the screen: the column sets
+  the width, `--cap` (a share of the viewport height) limits it.
+*/
+.mp-tall {
+  width: min(100%, calc(var(--cap, 80svh) * var(--r)));
+}
+
+.mp-figure {
+  min-width: 0;
+  margin: 0;
+}
+
+.mp-figure figcaption {
+  margin-top: 0.75rem;
+}
+
+/* A clip lies over its poster, invisible until it has painted a real frame, then fades in. */
+.mp-video {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.mp-video.is-live {
+  opacity: 1;
+}
+
+/* The pause / play control: the whole frame is the target, with a small flat square at its corner. */
+.mp-video-toggle {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-paper-bright);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mp-video-toggle[hidden] {
+  display: none;
+}
+
+.mp-video-toggle:focus-visible {
+  outline: 3px solid var(--color-signal);
+  outline-offset: -3px;
+}
+
+.mp-video-icon {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.22rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: color-mix(in srgb, var(--color-ink) 78%, transparent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.mp-video-icon i {
+  display: block;
+  width: 0.2rem;
+  height: 0.9rem;
+  background: currentcolor;
+}
+
+.mp-video-toggle[data-paused="true"] .mp-video-icon i:first-child {
+  width: 0.8rem;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.mp-video-toggle[data-paused="true"] .mp-video-icon i:last-child {
+  display: none;
+}
+
+.mp-video-toggle:hover .mp-video-icon,
+.mp-video-toggle:focus-visible .mp-video-icon,
+.mp-video-toggle[data-paused="true"] .mp-video-icon {
+  opacity: 1;
+}
+
+@media (forced-colors: active) {
+  .mp-video-icon {
+    forced-color-adjust: none;
+    background: Canvas;
+    outline: 1px solid CanvasText;
+  }
+
+  .mp-video-icon i {
+    background: CanvasText;
+  }
+}
+
+/* ------------------------------------------------------------ placeholder */
+
+/*
+  A slot with no asset yet: a plate, not a broken picture. It holds the
+  proportion the layout was built for and states the asset to source, so the
+  page reads as finished while it is reviewed and the file can be dropped in
+  later with no redesign. A launch build refuses to ship one.
+*/
+.mp-slot {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(0.9rem, 2.2vw, 1.4rem);
+  color: var(--color-stone);
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0,
+      transparent 13px,
+      color-mix(in srgb, var(--color-ink) 4%, transparent) 13px,
+      color-mix(in srgb, var(--color-ink) 4%, transparent) 14px
+    ),
+    var(--frame-light);
+}
+
+.mp-slot::after {
+  content: "";
+  position: absolute;
+  inset: 0.55rem;
+  pointer-events: none;
+  border: 1px solid color-mix(in srgb, currentcolor 22%, transparent);
+}
+
+.surface-dark .mp-slot {
+  color: color-mix(in srgb, var(--color-paper) 62%, transparent);
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0,
+      transparent 13px,
+      color-mix(in srgb, var(--color-paper) 5%, transparent) 13px,
+      color-mix(in srgb, var(--color-paper) 5%, transparent) 14px
+    ),
+    var(--frame-dark);
+}
+
+.mp-slot-tag {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-family: var(--font-notation);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.mp-slot-tag::before {
+  content: "";
+  flex: none;
+  width: 0.95rem;
+  height: 3px;
+  margin-top: 0.62em;
+  background: var(--color-signal);
+  transform: skewX(-22deg);
+}
+
+.mp-slot-brief {
+  position: relative;
+  z-index: 1;
+  max-width: 26ch;
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 3.6vw, 1.15rem);
+  font-weight: 560;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-paper-dim);
+}
+
+.surface-dark .mp-slot-brief {
+  color: color-mix(in srgb, var(--color-paper) 86%, transparent);
+}
+
+.mp-slot-ratio {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-notation);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
+/* ---------------------------------------------------------------- figure */
+
+/* An illustrative drawing: thin line, real text, always labelled as illustrative. */
+.mp-fig {
+  margin: 0;
+  min-width: 0;
+}
+
+.mp-fig svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.mp-fig figcaption {
+  margin-top: 0.8rem;
+}
+
+.mp-svg {
+  --svg-ink: var(--color-ink);
+  --svg-soft: color-mix(in srgb, var(--color-ink) 38%, transparent);
+  --svg-faint: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  --svg-fill: color-mix(in srgb, var(--color-ink) 7%, transparent);
+  color: var(--svg-ink);
+  font-family: var(--font-notation);
+}
+
+/* What a drawing's own marks are filled with where they sit over a line: the surface they are on. */
+.mp-svg {
+  --svg-bg: var(--color-paper);
+}
+
+.mp-section--soft .mp-svg {
+  --svg-bg: var(--surface-soft);
+}
+
+.surface-dark .mp-svg {
+  --svg-bg: var(--color-ink);
+  --svg-ink: var(--color-paper-bright);
+  --svg-soft: color-mix(in srgb, var(--color-paper) 50%, transparent);
+  --svg-faint: color-mix(in srgb, var(--color-paper) 18%, transparent);
+  --svg-fill: color-mix(in srgb, var(--color-paper) 8%, transparent);
+}
+
+.mp-svg .l {
+  fill: none;
+  stroke: var(--svg-ink);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.mp-svg .l-soft {
+  fill: none;
+  stroke: var(--svg-soft);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.mp-svg .l-faint {
+  fill: none;
+  stroke: var(--svg-faint);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.mp-svg .l-dash {
+  fill: none;
+  stroke: var(--svg-soft);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.mp-svg .fill {
+  fill: var(--svg-fill);
+  stroke: none;
+}
+
+.mp-svg .fill-ink {
+  fill: var(--svg-ink);
+  stroke: none;
+}
+
+.mp-svg .signal {
+  fill: var(--color-signal);
+  stroke: none;
+}
+
+.mp-svg .l-signal {
+  fill: none;
+  stroke: var(--color-signal);
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+}
+
+.mp-svg text {
+  fill: var(--svg-ink);
+  font-family: var(--font-notation);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mp-svg text.t-soft {
+  fill: var(--svg-soft);
+}
+
+.mp-svg text.t-small {
+  font-size: 9px;
+}
+
+.mp-svg text.t-signal {
+  fill: var(--color-signal);
+}
+
+.mp-svg text.t-mid {
+  text-anchor: middle;
+}
+
+.mp-svg text.t-end {
+  text-anchor: end;
+}
+
+/*
+  On a phone a drawing is shown at about half its drawn size: the text is set
+  larger in the drawing's own units (`--tm` on the svg) and the minor labels
+  step aside. Everything they say is also in the HTML beside the drawing.
+*/
+@media (max-width: 767px) {
+  .mp-svg text {
+    font-size: var(--tm, 18px);
+  }
+
+  .mp-svg text.t-small {
+    font-size: calc(var(--tm, 18px) * 0.85);
+  }
+
+  .mp-svg text.t-minor {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------ preview bar */
+
+/* Shown while the pages are not live: the pages are unpublished drafts, and this says so. */
+.mp-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1.25rem;
+  padding: 0.55rem var(--gutter);
+  background: var(--color-ink);
+  color: color-mix(in srgb, var(--color-paper) 78%, transparent);
+  font-family: var(--font-notation);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mp-preview b {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 500;
+  color: var(--color-paper-bright);
+}
+
+.mp-preview b::before {
+  content: "";
+  width: 0.95rem;
+  height: 3px;
+  background: var(--color-signal);
+  transform: skewX(-22deg);
+}
+
+/* On a phone the strip is one short line; the detail returns from a tablet up. */
+.mp-preview-detail {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mp-preview-detail {
+    display: inline;
+  }
+}
+
+.mp-preview--provisional {
+  background: var(--color-signal);
+  color: var(--color-paper-bright);
+}
+
+.mp-preview--provisional b::before {
+  background: var(--color-paper-bright);
+}
+
+/* ------------------------------------------------------------------- cta */
+
+.mp-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.1rem 1.75rem;
+}
+
+/* The shared primary button (global .contact-btn-primary), allowed to wrap on a narrow phone. */
+.mp-btn {
+  max-width: 100%;
+  text-align: left;
+  line-height: 1.15;
+  font-size: 0.9375rem;
+  letter-spacing: 0.04em;
+}
+
+.mp-btn {
+  flex: 0 1 auto;
+}
+
+.mp-btn-arrow {
+  color: var(--color-signal);
+}
+
+.surface-dark .mp-btn {
+  flex: 0 1 auto;
+}
+
+.mp-btn-arrow {
+  color: var(--color-signal);
+}
+
+.mp-btn:hover .mp-btn-arrow {
+  color: currentcolor;
+}
+
+/* ------------------------------------------------------------------- faq */
+
+.mp-faq {
+  border-top: 1px solid var(--hair);
+}
+
+.mp-q {
+  border-bottom: 1px solid var(--hair);
+}
+
+.mp-q summary {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 1.25rem;
+  padding-block: 1.15rem;
+  list-style: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-size: clamp(1.1rem, 4.6vw, 1.35rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+.mp-q summary::-webkit-details-marker {
+  display: none;
+}
+
+.mp-q summary:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
+}
+
+/* A plus that turns into a minus: two flat bars, no icon font. */
+.mp-q-mark {
+  position: relative;
+  width: 0.95rem;
+  height: 0.95rem;
+  flex: none;
+}
+
+.mp-q-mark::before,
+.mp-q-mark::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  margin-top: -1px;
+  background: var(--color-signal);
+  transition: transform 220ms cubic-bezier(0.32, 0, 0.2, 1);
+}
+
+.mp-q-mark::after {
+  transform: rotate(90deg);
+}
+
+.mp-q[open] .mp-q-mark::after {
+  transform: rotate(0deg);
+}
+
+.mp-q-answer {
+  padding: 0 2.5rem 1.5rem 0;
+}
+
+.mp-q-answer p {
+  max-width: 62ch;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--color-paper-dim);
+  text-wrap: pretty;
+}
+
+@media (min-width: 768px) {
+  .mp-q summary {
+    font-size: clamp(1.2rem, 1.7vw, 1.8rem);
+    padding-block: clamp(1.1rem, 1.5vw, 1.5rem);
+  }
+}
+
+/* ---------------------------------------------------------------- guides */
+
+.mp-guides {
+  border-top: 1px solid var(--hair);
+}
+
+.mp-guide {
+  border-bottom: 1px solid var(--hair);
+}
+
+.mp-guide-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35rem 1.25rem;
+  padding-block: 1.1rem;
+  color: inherit;
+}
+
+.mp-guide-title {
+  font-family: var(--font-display);
+  font-weight: 560;
+  font-size: clamp(1.05rem, 4.4vw, 1.3rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  transition: color 180ms ease;
+}
+
+.mp-guide-why {
+  grid-column: 1;
+  max-width: 62ch;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--color-stone);
+}
+
+.mp-guide-arrow {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  font-size: 1.25rem;
+  color: var(--color-signal);
+  transition: transform 220ms cubic-bezier(0.32, 0, 0.2, 1);
+}
+
+a.mp-guide-row:hover .mp-guide-title {
+  color: var(--color-clay);
+}
+
+a.mp-guide-row:hover .mp-guide-arrow {
+  transform: translate(3px, -3px);
+}
+
+@media (min-width: 768px) {
+  .mp-guide-row {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr) auto;
+    column-gap: var(--gap);
+    padding-block: clamp(1rem, 1.4vw, 1.4rem);
+  }
+
+  .mp-guide-title {
+    font-size: clamp(1.1rem, 1.5vw, 1.6rem);
+  }
+
+  .mp-guide-why {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+  }
+
+  .mp-guide-arrow {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+
+/* --------------------------------------------------------------- closing */
+
+.mp-closing {
+  padding-block: calc(var(--pad) * 0.9);
+}
+
+.mp-closing-layout {
+  display: grid;
+  gap: 2rem;
+}
+
+/* The question, then the short paragraph that answers it. */
+.mp-closing-copy {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.mp-closing-ask .mp-cta {
+  margin-top: 1.75rem;
+}
+
+.mp-route-list {
+  border-top: 1px solid var(--hair);
+}
+
+.mp-route {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "label arrow"
+    "value arrow";
+  row-gap: 0.35rem;
+  align-items: center;
+  padding-block: 1.25rem;
+  border-bottom: 1px solid var(--hair);
+  color: var(--color-paper-bright);
+}
+
+.mp-route-label {
+  grid-area: label;
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-paper) 68%, transparent);
+}
+
+.mp-route-value {
+  grid-area: value;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 7.3vw, 2.4rem);
+  font-weight: 560;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+  transition: color 180ms ease;
+}
+
+.mp-route-arrow {
+  grid-area: arrow;
+  font-size: clamp(1.5rem, 5vw, 1.75rem);
+  color: var(--color-signal);
+  transition: transform 220ms cubic-bezier(0.32, 0, 0.2, 1);
+}
+
+.mp-route:hover .mp-route-value {
+  color: var(--color-clay);
+}
+
+.mp-route:hover .mp-route-arrow {
+  transform: translate(3px, -3px);
+}
+
+.mp-closing-foot {
+  display: grid;
+  gap: 0.6rem 2rem;
+  margin-top: 1.75rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--color-paper) 72%, transparent);
+}
+
+.mp-closing-foot p:last-child {
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+  .mp-closing-layout {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: end;
+  }
+
+  .mp-closing-ask {
+    grid-column: 1 / span 5;
+  }
+
+  .mp-closing-routes {
+    grid-column: 7 / span 6;
+  }
+
+  .mp-route {
+    padding-block: clamp(1.2rem, 1.8vw, 1.75rem);
+  }
+
+  .mp-route-value {
+    font-size: clamp(1.5rem, 2.7vw, 3.1rem);
+  }
+
+  .mp-route-arrow {
+    align-self: center;
+  }
+}
+
+/* ------------------------------------------------------------ investment */
+
+/*
+  The provisional investment note, set like Automotive's: a figure as the
+  anchor, three quiet sentences beside it. No card, tier or button.
+*/
+.mp-invest {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 1.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hair);
+}
+
+.mp-invest-figure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.32em;
+  font-size: clamp(2rem, 10.6vw, 3.4rem);
+  line-height: 1;
+}
+
+.mp-invest-unit {
+  font-size: 0.36em;
+  font-weight: 560;
+  letter-spacing: 0.06em;
+  color: var(--color-paper-dim);
+}
+
+.mp-invest-amount {
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+.mp-invest-copy {
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+}
+
+.mp-invest-copy .mp-body {
+  max-width: 40ch;
+}
+
+.mp-invest-deposit {
+  position: relative;
+  max-width: 40ch;
+  margin-top: 0.4rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--hair);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--color-paper-dim);
+  text-wrap: pretty;
+}
+
+.mp-invest-deposit::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 2.25rem;
+  height: 2px;
+  background: var(--color-signal);
+}
+
+@media (min-width: 768px) {
+  .mp-invest {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+    padding-top: clamp(1.5rem, 2.6vw, 2.25rem);
+  }
+
+  .mp-invest-figure {
+    grid-column: 1 / span 6;
+    font-size: clamp(2.6rem, 5vw, 5.4rem);
+  }
+
+  .mp-invest-copy {
+    grid-column: 8 / span 5;
+  }
+}
+
+/* ------------------------------------------------------------- hero opening */
+
+@keyframes mp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Short and early on purpose: the opening title is the largest text paint, so it must not wait. */
+.mp-open {
+  animation: mp-rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 90ms + 60ms);
+}
+
+/* The statement under the H1 in every hero: the same face at a fraction of the size. */
+.mp-hero-sub {
+  display: block;
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 5.6vw, 1.55rem);
+  font-weight: 560;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.mp-hero-support {
+  max-width: 32rem;
+  margin-top: 1.1rem;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--color-paper-dim);
+  text-wrap: pretty;
+}
+
+@media (min-width: 768px) {
+  .mp-hero-sub {
+    margin-top: 1.15rem;
+    font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  }
+
+  .mp-hero-support {
+    margin-top: 1.3rem;
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mp-hero-sub {
+    font-size: clamp(1.5rem, 2.1vw, 2.7rem);
+  }
+
+  .mp-hero-support {
+    font-size: clamp(1.05rem, 1.35vw, 1.4rem);
+  }
+}
+
+.surface-dark .mp-hero-support {
+  color: color-mix(in srgb, var(--color-paper) 86%, transparent);
+}
+
+.mp-hero-sub,
+.mp-hero-support,
+.mp-hero .mp-cta,
+.mp-hero .mp-micro {
+  position: relative;
+}
+
+/* A short spacing helper for the call to action inside a hero. */
+.mp-hero .mp-cta {
+  margin-top: 1.75rem;
+}
+
+.mp-hero .mp-micro {
+  margin-top: 1rem;
+}
+
+/* ----------------------------------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .mp-open {
+    animation: none;
+  }
+
+  .mp-video {
+    transition: none;
+  }
+
+  /* No clip is ever loaded for this visitor (see automotive-video.ts), so there is nothing to pause. */
+  .mp-video-toggle {
+    display: none;
+  }
+
+  .mp-route-arrow,
+  .mp-route:hover .mp-route-arrow,
+  .mp-link:hover .mp-link-arrow,
+  a.mp-guide-row:hover .mp-guide-arrow,
+  .mp-q-mark::before,
+  .mp-q-mark::after {
+    transform: none;
+    transition: none;
+  }
+
+  .mp-q-mark::after {
+    transform: rotate(90deg);
+  }
+
+  .mp-q[open] .mp-q-mark::after {
+    transform: rotate(0deg);
+  }
+}
+
+/* ------------------------------------------------------------------ track */
+
+/*
+  A programme drawn as one line. On a phone and tablet the line is a vertical
+  rule at the left with a node for each step; from a large screen it runs
+  across, the nodes on it and the text under them. A gate is a larger signal
+  diamond with its decision named above the line (large screen) or under the
+  step's words (phone).
+*/
+.mp-track {
+  --node: 0.8rem;
+  position: relative;
+  display: grid;
+  margin-top: clamp(1.75rem, 4vw, 3.5rem);
+}
+
+.mp-track-step {
+  position: relative;
+  padding: 0 0 1.9rem 2.6rem;
+}
+
+.mp-track-step::before {
+  content: "";
+  position: absolute;
+  top: 0.55rem;
+  bottom: -0.55rem;
+  left: calc(var(--node) / 2);
+  width: 1px;
+  background: var(--hair);
+}
+
+.mp-track-step:last-child::before {
+  display: none;
+}
+
+.mp-track-node {
+  position: absolute;
+  top: 0.22rem;
+  left: 0;
+  width: var(--node);
+  height: var(--node);
+  border: 1px solid currentcolor;
+  background: var(--color-paper);
+}
+
+.mp-section--soft .mp-track-node {
+  background: var(--surface-soft);
+}
+
+.surface-dark .mp-track-node {
+  background: var(--color-ink);
+}
+
+.mp-track-step--gate .mp-track-node {
+  top: 0.12rem;
+  left: -0.12rem;
+  width: calc(var(--node) + 0.24rem);
+  height: calc(var(--node) + 0.24rem);
+  border: 0;
+  background: var(--color-signal);
+  transform: rotate(45deg) scale(0.82);
+}
+
+.mp-track-n {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-family: var(--font-notation);
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  color: var(--color-stone);
+}
+
+.mp-track-step .mp-small {
+  margin-top: 0.5rem;
+}
+
+.mp-track-gate {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.6rem;
+  margin-top: 0.8rem;
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.mp-track-gate span {
+  color: var(--color-signal);
+}
+
+.surface-dark .mp-track-gate {
+  color: var(--color-paper-bright);
+}
+
+.surface-dark .mp-track-n {
+  color: color-mix(in srgb, var(--color-paper) 62%, transparent);
+}
+
+@media (min-width: 1024px) {
+  .mp-track {
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  }
+
+  .mp-track-step {
+    padding: 4.9rem 1.5rem 0 0;
+  }
+
+  .mp-track-step::before {
+    top: 3.3rem;
+    right: 0;
+    bottom: auto;
+    left: calc(var(--node) / 2);
+    width: auto;
+    height: 1px;
+  }
+
+  .mp-track-step:last-child::before {
+    display: block;
+    right: auto;
+    width: 0;
+  }
+
+  .mp-track-node {
+    top: 2.9rem;
+  }
+
+  .mp-track-step--gate .mp-track-node {
+    top: 2.8rem;
+  }
+
+  .mp-track .mp-name {
+    font-size: clamp(1.05rem, 1.35vw, 1.6rem);
+  }
+
+  .mp-track-gate {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    font-size: 0.6875rem;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .mp-track-n {
+    margin-bottom: 0.7rem;
+  }
+}
+
+/* ------------------------------------------------------------------ table */
+
+/*
+  A real table, restyled as a ruled document. From a tablet up it is a table;
+  on a phone each row becomes a short block with its column names beside the
+  values (explicit roles keep it a table for assistive technology).
+*/
+.mp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+}
+
+.mp-table th,
+.mp-table td {
+  padding: 0.85rem 1rem 0.85rem 0;
+  vertical-align: top;
+  text-align: left;
+  border-top: 1px solid var(--hair);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.mp-table thead th {
+  padding-block: 0.7rem;
+  border-top: 0;
+  border-bottom: 1px solid var(--color-ink);
+  font-family: var(--font-notation);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+}
+
+.surface-dark .mp-table {
+  color: var(--color-paper-bright);
+}
+
+.surface-dark .mp-table thead th {
+  border-bottom-color: color-mix(in srgb, var(--color-paper) 70%, transparent);
+  color: color-mix(in srgb, var(--color-paper) 62%, transparent);
+}
+
+.mp-table tbody th {
+  font-weight: 560;
+  color: var(--color-ink);
+}
+
+.surface-dark .mp-table tbody th {
+  color: var(--color-paper-bright);
+}
+
+@media (max-width: 767px) {
+  .mp-table--stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .mp-table--stack,
+  .mp-table--stack tbody,
+  .mp-table--stack tr,
+  .mp-table--stack th,
+  .mp-table--stack td {
+    display: block;
+  }
+
+  .mp-table--stack tr {
+    padding-block: 1rem;
+    border-top: 1px solid var(--hair);
+  }
+
+  .mp-table--stack th,
+  .mp-table--stack td {
+    padding: 0.2rem 0;
+    border-top: 0;
+  }
+
+  .mp-table--stack tbody th {
+    margin-bottom: 0.35rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 610;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+
+  .mp-table--stack td::before {
+    content: attr(data-label);
+    display: block;
+    font-family: var(--font-notation);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-stone);
+  }
+
+  .surface-dark .mp-table--stack td::before {
+    color: color-mix(in srgb, var(--color-paper) 62%, transparent);
+  }
+}
+
+/* ------------------------------------------------------- questions and guides */
+
+/* A short heading column beside a long list: the shape of a FAQ and of a guide list. */
+.mp-split {
+  display: grid;
+  gap: 2rem;
+}
+
+.mp-split-head {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+@media (min-width: 1024px) {
+  .mp-split {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .mp-split-head {
+    grid-column: 1 / span 4;
+  }
+
+  .mp-split-body {
+    grid-column: 5 / span 8;
+  }
+}
+
+/* ------------------------------------------------------------- wall label */
+
+/*
+  A gallery wall label: a small white card of small mono capitals beside a work.
+  It carries only confirmed facts, one per line; the first line is in ink.
+*/
+.mp-wall-label {
+  position: relative;
+  display: grid;
+  gap: 0.3rem;
+  align-content: start;
+  width: min(100%, 15rem);
+  padding: 0.95rem 1rem 1.05rem;
+  background: var(--color-paper-bright);
+  border: 1px solid var(--hair);
+}
+
+.mp-wall-label::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 2.25rem;
+  height: 2px;
+  background: var(--color-signal);
+}
+
+.mp-wall-no {
+  margin-bottom: 0.45rem;
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--color-stone);
+}
+
+.mp-wall-line {
+  font-family: var(--font-notation);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+}
+
+.mp-wall-line--lead {
+  color: var(--color-ink);
+}
+
+/* ------------------------------------------------------------------- tags */
+
+/* A short run of small mono labels, each in a hairline box: what to send, what is scoped, what is covered. */
+.mp-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.mp-tags li {
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--hair);
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.surface-dark .mp-tags li {
+  color: var(--color-paper-bright);
+}
+
+/* ------------------------------------------------------------- milestones */
+
+/*
+  An illustrative programme track: a line with a label at each milestone. The
+  key milestone, the date the track is planned back from, is a signal diamond.
+*/
+.mp-miles {
+  --node: 0.8rem;
+  display: grid;
+}
+
+.mp-section--soft {
+  --mile-bg: var(--surface-soft);
+}
+
+.surface-dark {
+  --mile-bg: var(--color-ink);
+}
+
+.mp-mile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 0 1.1rem 2rem;
+}
+
+.mp-mile::before {
+  content: "";
+  position: absolute;
+  top: 0.55rem;
+  bottom: -0.55rem;
+  left: calc(var(--node) / 2);
+  width: 1px;
+  background: var(--hair);
+}
+
+.mp-mile:last-child::before {
+  display: none;
+}
+
+.mp-mile-node {
+  position: absolute;
+  top: 0.3rem;
+  left: 0;
+  width: var(--node);
+  height: var(--node);
+  border: 1px solid currentcolor;
+  background: var(--mile-bg, var(--color-paper));
+}
+
+.mp-mile--key .mp-mile-node {
+  top: 0.22rem;
+  left: -0.05rem;
+  width: calc(var(--node) + 0.1rem);
+  height: calc(var(--node) + 0.1rem);
+  border: 0;
+  background: var(--color-signal);
+  transform: rotate(45deg) scale(0.9);
+}
+
+.mp-mile .mp-label {
+  color: var(--color-ink);
+}
+
+.surface-dark .mp-mile .mp-label {
+  color: var(--color-paper-bright);
+}
+
+@media (min-width: 768px) {
+  .mp-miles {
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  }
+
+  .mp-mile {
+    display: block;
+    padding: 2.3rem 0.75rem 0 0;
+  }
+
+  .mp-mile::before {
+    top: calc(var(--node) / 2);
+    right: 0;
+    bottom: auto;
+    left: calc(var(--node) / 2);
+    width: auto;
+    height: 1px;
+  }
+
+  .mp-mile:last-child::before {
+    display: block;
+    right: auto;
+    width: 0;
+  }
+
+  .mp-mile-node {
+    top: 0;
+  }
+
+  .mp-mile--key .mp-mile-node {
+    top: -0.05rem;
+  }
+}

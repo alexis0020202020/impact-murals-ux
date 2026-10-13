@@ -1,0 +1,59 @@
+---
+/**
+ * The nine money pages (the new ones; Public Art is strengthened in place by
+ * src/pages/what-we-do/[slug].astro).
+ *
+ * One dispatcher decides which pages exist: none in a production build until
+ * launch, all of them in preview and live (src/content/money/launch.ts). Each
+ * page is its own composition in src/components/money/pages/, drawn inside the
+ * shared body (breadcrumbs, preview strip, structured data, scripts).
+ *
+ * Metadata, canonical and indexation come from the page registry and the route
+ * registry, never from this template: the meta robots tag and the sitemap are
+ * the same decision.
+ */
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import MoneyBody from "@/components/money/MoneyBody.astro";
+import LivePainting from "@/components/money/pages/LivePainting.astro";
+import CorporateArtwork from "@/components/money/pages/CorporateArtwork.astro";
+import CustomCanvas from "@/components/money/pages/CustomCanvas.astro";
+import HotelArtwork from "@/components/money/pages/HotelArtwork.astro";
+import LiveCustomisation from "@/components/money/pages/LiveCustomisation.astro";
+import { global } from "@/content/global";
+import { moneyMode } from "@/content/money/launch";
+import { moneyCanonical, moneyPage, moneyPages, type MoneyKey } from "@/content/money/pages";
+import { routeFor } from "@/lib/routes";
+
+export function getStaticPaths() {
+  if (moneyMode() === "off") return [];
+  return moneyPages
+    .filter((page) => !page.existing)
+    .map((page) => ({ params: { money: page.path.slice(1) }, props: { pageKey: page.key } }));
+}
+
+const { pageKey } = Astro.props as { pageKey: MoneyKey };
+const page = moneyPage(pageKey);
+const route = await routeFor(page.path);
+
+const components: Partial<Record<MoneyKey, typeof LivePainting>> = {
+  "live-painting": LivePainting,
+  "corporate-artwork": CorporateArtwork,
+  "custom-canvas": CustomCanvas,
+  "hotel-artwork": HotelArtwork,
+  "live-customisation": LiveCustomisation
+};
+const Page = components[pageKey];
+if (!Page) throw new Error(`Money page ${pageKey} has no component yet.`);
+---
+
+<BaseLayout
+  title={page.title}
+  useTemplate={false}
+  description={page.description}
+  canonical={moneyCanonical(page, global.domain)}
+  noindex={route?.noIndex ?? true}
+>
+  <MoneyBody pageKey={pageKey}>
+    <Page />
+  </MoneyBody>
+</BaseLayout>

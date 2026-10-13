@@ -1,0 +1,35 @@
+---
+import type { GuideRef } from "@/content/money/types";
+import { resolveLink } from "@/lib/money-links";
+
+/*
+  Four to six supporting guides, each with the question it answers: a ruled
+  list, not a wall of cards. A guide the current build cannot link to safely
+  (see src/lib/money-links.ts) is still listed, as text, so the list never
+  carries a link that goes nowhere.
+*/
+interface Props {
+  guides: GuideRef[];
+}
+
+const { guides } = Astro.props;
+const resolved = await Promise.all(guides.map(async (guide) => ({ guide, link: await resolveLink(guide.href) })));
+---
+<ul class="mp-guides" role="list">
+  {resolved.map(({ guide, link }) => (
+    <li class="mp-guide" data-auto-reveal>
+      {link.href ? (
+        <a class="mp-guide-row" href={link.href} data-track="money_guide">
+          <span class="mp-guide-title">{guide.title}</span>
+          <span class="mp-guide-why">{guide.why}</span>
+          <span class="mp-guide-arrow" aria-hidden="true">↗</span>
+        </a>
+      ) : (
+        <div class="mp-guide-row">
+          <span class="mp-guide-title">{guide.title}</span>
+          <span class="mp-guide-why">{guide.why}</span>
+        </div>
+      )}
+    </li>
+  ))}
+</ul>
