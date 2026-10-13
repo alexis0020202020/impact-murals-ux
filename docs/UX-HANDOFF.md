@@ -1518,3 +1518,24 @@ Unchanged: `WhatWeDo`, `Realism`, `Bmw`, `Exterior`, `Launch`, `About`, `Process
 1. Open the page on a laptop and a phone: the first screen (campaign line, strip), then scroll to the note before How we work, and answer "Decisions to confirm" (above all the H1 and the right to show the marks).
 2. Send real vector logos if they exist (each replaces one file).
 3. When you are happy, commit and push (nothing is committed); the live page will then change in three places: the hero's type, the strip and the note.
+
+# Part 21: money page production specification (brief received 13 October 2026)
+
+This part is documentation only. No website source file was changed and nothing was published, redirected or deployed.
+
+## State
+
+The complete production specification for the nine money pages is in `docs/money-pages/`: `README.md` (master index, system map, cross-page audit, QA summary), `00-shared-foundations.md` (sources, shared visual language, verified facts, existing real assets, shared enquiry model) and one file per page (`01` to `09`). The Corporate Art Workshops page is specified but its launch is on hold behind a five-item operational gate.
+
+## Blocked or not verified
+
+- The original Money Pages Master Context was not supplied; positioning came from the Strategy Master and `CONTEXT.md`.
+- The live Automotive page was not opened or rendered; its visual language was read from source (`src/content/automotive.ts`, `src/components/automotive/*`, `src/styles/automotive.css`).
+- Live-site facts quoted by the Strategy Master (Mural Artist 404, preview-mode form, trailing-slash mismatch) were not re-checked.
+
+## Exact next action
+
+1. Read `docs/money-pages/README.md`, section 5 (QA summary), and answer the confirmation table in 5.1.
+2. Approve or amend the nine specifications.
+3. Schedule the media work in 5.2, starting with one studio demonstration day.
+4. Do not build or redirect anything until the enquiry delivery dependency is cleared and the destination pages exist.
