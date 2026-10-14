@@ -30,8 +30,10 @@ import InvestmentNote from "../InvestmentNote.astro";
 import Tight from "../Tight.astro";
 import Link from "../Link.astro";
 import LiveSetupPlan from "../diagrams/LiveSetupPlan.astro";
+import SetupScene from "../diagrams/SetupScene.astro";
 
 const page = moneyPage("live-painting");
+const setupWide = resolveSlot("LP_SETUP_WIDE");
 const reel = ["LP_REEL_JETOUR", "LP_REEL_BMW", "LP_REEL_ICAUR"] as const;
 ---
 
@@ -154,7 +156,8 @@ const reel = ["LP_REEL_JETOUR", "LP_REEL_BMW", "LP_REEL_ICAUR"] as const;
     </ul>
   </div>
   <figure class="mp-figure lp-prod-wide" data-auto-reveal>
-    <div data-auto-scale><Media slot="LP_SETUP_WIDE" sizes="(min-width: 1800px) 1700px, 100vw" /></div>
+    <div data-auto-scale><Media slot="LP_SETUP_WIDE" sizes="(min-width: 1800px) 1700px, 100vw"><SetupScene /></Media></div>
+    {setupWide.state === "placeholder" && <figcaption class="mp-label">{mediaSlots.LP_SETUP_WIDE.standInCaption}</figcaption>}
   </figure>
 </Section>
 
@@ -237,7 +240,7 @@ const reel = ["LP_REEL_JETOUR", "LP_REEL_BMW", "LP_REEL_ICAUR"] as const;
       <Factors groups={lp.fee.groups} />
     </div>
   </div>
-  <div class="lp-fee-invest"><InvestmentNote /></div>
+  <InvestmentNote class="lp-fee-invest" />
 </Section>
 
 <!-- 11. Questions and guides. -->

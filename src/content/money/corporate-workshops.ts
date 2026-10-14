@@ -119,7 +119,6 @@ export const ws = {
   artist: {
     eyebrow: "FACILITATION",
     headline: "THE ARTIST LEADS THE ROOM.",
-    standInCaption: "ILLUSTRATIVE. A REAL SESSION REPLACES THIS DRAWING.",
     paragraphs: [
       "The artist introduces the idea, shows the technique, gives people enough structure to start with confidence and responds to what they actually make. Assistants support the room where the group size calls for them.",
       "The result has a single artistic coherence, however many hands made it."

@@ -154,7 +154,7 @@ const feeTail = `${factors.slice(0, -1).join(", ")} and ${factors[factors.length
   </div>
   <figure class="mp-figure ws-artist-fig" data-auto-reveal>
     <Media slot="WS_FACILITATION" sizes="(min-width: 1024px) 92vw, 94vw"><ArtistScene /></Media>
-    <figcaption class="mp-label">{facilitation.state === "placeholder" ? ws.artist.standInCaption : mediaSlots.WS_FACILITATION.caption}</figcaption>
+    <figcaption class="mp-label">{facilitation.state === "placeholder" ? mediaSlots.WS_FACILITATION.standInCaption : mediaSlots.WS_FACILITATION.caption}</figcaption>
   </figure>
   <div class="ws-artist-copy">
     {ws.artist.paragraphs.map((paragraph) => <p class="mp-body" data-auto-reveal>{paragraph}</p>)}

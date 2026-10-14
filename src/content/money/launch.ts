@@ -66,6 +66,20 @@ export function moneyMode(env: Env = process.env): MoneyMode {
 }
 
 /**
+ * The third switch: the typical-investment note on three money pages.
+ *
+ * The range is the owner's own wording from the Automotive page, but whether it
+ * belongs on any money page is the owner's decision (docs/money-pages/README.md,
+ * 5.1). Preview shows the note, tagged provisional, so it can be judged in
+ * place. A live build leaves it out until this is switched to true.
+ */
+export const INVESTMENT_NOTE_APPROVED = false;
+
+export function investmentNoteShown(mode: MoneyMode = moneyMode()): boolean {
+  return mode !== "live" || INVESTMENT_NOTE_APPROVED;
+}
+
+/**
  * Whether one of the new pages exists in a given state of the build: none in
  * "off", all in "preview", and in "live" every page whose launch is not on
  * hold. Public Art, an existing page, is never one of the new pages.

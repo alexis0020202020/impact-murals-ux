@@ -371,6 +371,13 @@ test("once the form is connected the primary action opens it with the offer chos
   assert.equal(pinned.secondary?.kind, "email");
 });
 
+test("a live build leaves the investment note out until the owner approves it, and preview shows it", () => {
+  assert.equal(launch.INVESTMENT_NOTE_APPROVED, false);
+  assert.equal(launch.investmentNoteShown("preview"), true);
+  assert.equal(launch.investmentNoteShown("live"), false);
+  assert.ok(read("src/components/money/InvestmentNote.astro").includes("investmentNoteShown"));
+});
+
 test("the provisional investment note is on exactly the three pages the owner's own range suits", () => {
   assert.deepEqual([...shared.investmentPages], ["live-painting", "corporate-artwork", "custom-canvas"]);
   assert.equal(shared.provisionalInvestment.currency, "AED");

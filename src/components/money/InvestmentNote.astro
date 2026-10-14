@@ -1,5 +1,5 @@
 ---
-import { moneyMode } from "@/content/money/launch";
+import { investmentNoteShown, moneyMode } from "@/content/money/launch";
 import { provisionalInvestment as note } from "@/content/money/shared";
 
 /*
@@ -8,10 +8,21 @@ import { provisionalInvestment as note } from "@/content/money/shared";
   performance is the purchase. While the pages are in preview it carries a
   visible "provisional" tag so a reviewer cannot mistake it for a settled
   decision; the tag disappears at launch. Never a card, a tier or a price list.
+
+  Whether it appears in a live build is a decision of its own
+  (INVESTMENT_NOTE_APPROVED in src/content/money/launch.ts): until the owner
+  makes it, a launch leaves the note out and the fee factors stand alone.
 */
+interface Props {
+  /** The page's own spacing class for the note. */
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
 const mode = moneyMode();
 ---
-<div class="mp-invest" data-auto-reveal>
+{investmentNoteShown(mode) && (
+<div class:list={["mp-invest", className]} data-auto-reveal>
   <p class="headline-display mp-invest-figure">
     <span class="mp-invest-unit">{note.currency}</span>
     <span class="mp-invest-amount">{note.amount}</span>
@@ -23,3 +34,4 @@ const mode = moneyMode();
     <p class="mp-invest-deposit">{note.deposit}</p>
   </div>
 </div>
+)}

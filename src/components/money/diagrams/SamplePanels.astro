@@ -1,0 +1,54 @@
+---
+/*
+  An illustrative row of three sample panels standing on a shelf, each with a
+  different finish drawn on it (brushed, glazed, stippled), numbered the way a
+  sample set is. It stands inside the placeholder for the real macro photographs
+  of finished sample panels and gives way to them the moment HT_SAMPLES has a
+  file. It claims no material, coating or finish: the drawing only says that a
+  sample is a small real object with its finish written down.
+*/
+import { palette } from "./mosaic";
+
+const label =
+  "Illustration: three sample panels standing on a shelf, one with a brushed finish, one with a glazed highlight and one stippled, labelled sample 01, 02 and 03.";
+
+const panels = [
+  { x: 130, turn: -1.4, fill: palette.clay, name: "SAMPLE 01" },
+  { x: 470, turn: 1, fill: palette.moss, name: "SAMPLE 02" },
+  { x: 810, turn: -0.8, fill: palette.ink, name: "SAMPLE 03" }
+];
+const lines = Array.from({ length: 11 }, (_, index) => 62 + index * 22);
+const dots = Array.from({ length: 64 }, (_, index) => ({
+  x: 18 + ((index * 37) % 224),
+  y: 18 + ((index * 53) % 234)
+}));
+---
+<svg class="mp-svg ht-samples-art" viewBox="0 0 1200 400" style="--tm:40px" role="img" aria-label={label}>
+  <!-- The shelf -->
+  <path class="l" d="M60 330H1140" />
+  <path class="l-faint" d="M60 338H1140M60 346H1140" />
+
+  {panels.map((panel, index) => (
+    <g transform={`rotate(${panel.turn} ${panel.x + 130} 200)`}>
+      <rect x={panel.x + 8} y="44" width="260" height="286" style="fill: var(--svg-faint)" />
+      <rect x={panel.x} y="36" width="260" height="286" style={`fill: ${panel.fill}`} />
+      {index === 0 && (
+        <g style="stroke: rgba(250, 248, 242, 0.32); stroke-width: 2; fill: none">
+          {lines.map((y) => <path d={`M${panel.x + 14} ${y}H${panel.x + 246}`} />)}
+        </g>
+      )}
+      {index === 1 && (
+        <>
+          <path d={`M${panel.x + 40} 322L${panel.x + 150} 36H${panel.x + 210}L${panel.x + 100} 322Z`} style="fill: rgba(250, 248, 242, 0.2)" />
+          <path d={`M${panel.x + 150} 322L${panel.x + 244} 76V36L${panel.x + 190} 322Z`} style="fill: rgba(250, 248, 242, 0.1)" />
+        </>
+      )}
+      {index === 2 && (
+        <g style="fill: rgba(250, 248, 242, 0.34)">
+          {dots.map((dot) => <circle cx={panel.x + dot.x} cy={36 + dot.y} r="2.6" />)}
+        </g>
+      )}
+      <text class="t-mid" x={panel.x + 130} y="388">{panel.name}</text>
+    </g>
+  ))}
+</svg>

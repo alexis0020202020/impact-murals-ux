@@ -39,6 +39,12 @@ export interface MediaSlot {
   alias?: AutomotiveSlot;
   /** The honest context printed under the picture. */
   caption?: string;
+  /**
+   * Printed under the drawing that stands in for the picture while the slot has
+   * no file (a page may draw one inside the placeholder). It says the drawing is
+   * an illustration and that the real picture replaces it.
+   */
+  standInCaption?: string;
   /** Hero pictures load eagerly; everything else is lazy. */
   eager?: boolean;
   /** An aliased asset that also has a clip elsewhere on the page: show only its still here. */
@@ -153,7 +159,8 @@ export const mediaSlots = {
     alt: "A wide view of a live painting set-up at an event: the surface, the artist's zone, the audience and the people for scale",
     brief: "A wider setup view: surface, artist zone, audience, people for scale",
     ratio: "12:5",
-    priority: "essential"
+    priority: "essential",
+    standInCaption: "ILLUSTRATIVE SETUP. A REAL WIDE VIEW REPLACES THIS DRAWING."
   },
   // ---- Corporate Artwork --------------------------------------------------
   CA_HERO: {
@@ -288,7 +295,8 @@ export const mediaSlots = {
     alt: "Three macro details of finished sample panels, each with the finish used noted beneath",
     brief: "Three macro details of finished sample panels, each with its real finish noted",
     ratio: "3:1",
-    priority: "essential"
+    priority: "essential",
+    standInCaption: "ILLUSTRATIVE SAMPLES. REAL SAMPLE PANELS REPLACE THIS DRAWING."
   },
   // ---- Live Customisation -------------------------------------------------
   LC_MATERIALS: {
@@ -296,7 +304,8 @@ export const mediaSlots = {
     alt: "Material test pieces, each with the technique and finish noted beneath it",
     brief: "Real material tests: three objects, each with its technique and finish noted",
     ratio: "4:1",
-    priority: "essential"
+    priority: "essential",
+    standInCaption: "ILLUSTRATIVE TEST SHEET. REAL MATERIAL TESTS REPLACE THIS DRAWING."
   },
   LC_STATION: {
     page: "live-customisation",
@@ -431,7 +440,8 @@ export const mediaSlots = {
     brief: "The artist working with participants: facilitation, not a performance. Real session footage or a labelled pilot",
     ratio: "11:5",
     priority: "essential",
-    caption: "THE ARTIST WITH THE GROUP"
+    caption: "THE ARTIST WITH THE GROUP",
+    standInCaption: "ILLUSTRATIVE. A REAL SESSION REPLACES THIS DRAWING."
   },
   WS_SETUP: {
     page: "corporate-workshops",

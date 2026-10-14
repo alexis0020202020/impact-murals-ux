@@ -15,6 +15,8 @@
 import "@/styles/money/live-customisation.css";
 import { lc } from "@/content/money/live-customisation";
 import { moneyPage } from "@/content/money/pages";
+import { mediaSlots } from "@/content/money/media";
+import { resolveSlot } from "@/lib/money-media";
 import Section from "../Section.astro";
 import Media from "../Media.astro";
 import Cta from "../Cta.astro";
@@ -28,8 +30,10 @@ import Link from "../Link.astro";
 import StationScene from "../diagrams/StationScene.astro";
 import StationPlan from "../diagrams/StationPlan.astro";
 import LcVignette from "../diagrams/LcVignette.astro";
+import MaterialSheet from "../diagrams/MaterialSheet.astro";
 
 const page = moneyPage("live-customisation");
+const materials = resolveSlot("LC_MATERIALS");
 const links = lc.techniques.starting.links;
 ---
 
@@ -186,7 +190,8 @@ const links = lc.techniques.starting.links;
   </div>
   <p class="mp-body lc-resp-body" data-auto-reveal>{lc.responsibility.body}</p>
   <figure class="mp-figure lc-materials">
-    <div data-auto-scale><Media slot="LC_MATERIALS" sizes="(min-width: 1800px) 1700px, 100vw" /></div>
+    <div data-auto-scale><Media slot="LC_MATERIALS" sizes="(min-width: 1800px) 1700px, 100vw"><MaterialSheet /></Media></div>
+    {materials.state === "placeholder" && <figcaption class="mp-label">{mediaSlots.LC_MATERIALS.standInCaption}</figcaption>}
   </figure>
 </Section>
 

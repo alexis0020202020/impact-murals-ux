@@ -1,0 +1,55 @@
+---
+/*
+  An illustrative material test sheet: three objects (a bottle, a bag, a boxed
+  gift) each with its own lines for the object, the technique and the finish, the
+  way a test is written down before a menu is promised. It stands inside the
+  placeholder for the real photographs of material tests and gives way to them
+  the moment LC_MATERIALS has a file. It names no product, brand, technique
+  result or finish: the lines are blank on purpose.
+*/
+const label =
+  "Illustration: a material test sheet with three objects, a bottle, a bag and a boxed gift, each above blank lines for the object, the technique and the finish.";
+
+const columns = [200, 600, 1000];
+const rows = [
+  { y: 196, name: "OBJECT" },
+  { y: 232, name: "TECHNIQUE" },
+  { y: 268, name: "FINISH" }
+];
+const stroke = "fill: none; stroke: var(--color-signal); stroke-width: 5; stroke-linecap: round";
+---
+<svg class="mp-svg lc-sheet" viewBox="0 0 1200 300" style="--tm:40px" role="img" aria-label={label}>
+  {columns.map((x, index) => (
+    <>
+      {index === 0 && (
+        <>
+          <rect class="l" x={x - 34} y="64" width="68" height="88" />
+          <rect class="l" x={x - 12} y="40" width="24" height="24" />
+          <rect class="l" x={x - 17} y="28" width="34" height="12" />
+          <path d={`M${x - 24} 130C${x - 8} 96 ${x + 8} 140 ${x + 24} 100`} style={stroke} />
+        </>
+      )}
+      {index === 1 && (
+        <>
+          <path class="l" d={`M${x - 52} 152L${x - 44} 80H${x + 44}L${x + 52} 152Z`} />
+          <path class="l-soft" d={`M${x - 26} 80C${x - 26} 38 ${x + 26} 38 ${x + 26} 80`} />
+          <path d={`M${x - 30} 128C${x - 10} 100 ${x + 10} 138 ${x + 30} 104`} style={stroke} />
+        </>
+      )}
+      {index === 2 && (
+        <>
+          <rect class="l" x={x - 52} y="86" width="104" height="66" />
+          <rect class="l" x={x - 58} y="66" width="116" height="20" />
+          <path class="l-soft" d={`M${x} 66V152`} />
+          <path d={`M${x} 66C${x - 22} 32 ${x - 38} 56 ${x} 66C${x + 22} 32 ${x + 38} 56 ${x} 66`} style={stroke} />
+        </>
+      )}
+      {rows.map((row) => (
+        <>
+          <text class="t-small t-soft t-minor" x={x - 140} y={row.y + 4}>{row.name}</text>
+          <path class="l-faint" d={`M${x - 20} ${row.y}H${x + 140}`} />
+        </>
+      ))}
+    </>
+  ))}
+</svg>

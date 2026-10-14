@@ -1,0 +1,65 @@
+---
+/*
+  An illustrative wide view of a live painting setup, in thin line on the dark
+  section: the surface at the back with a first few strokes on it, a light on
+  each side, the artist in a protected zone in front of it, and rows of guests
+  watching from behind. It stands inside the placeholder for the real wide
+  photograph (the surface, the artist zone, the audience, people for scale) and
+  gives way to it the moment LP_SETUP_WIDE has a file. It shows no real event,
+  venue, person or brand.
+*/
+const label =
+  "Illustration: a wide view of a live painting setup. A painting surface stands at the back with the first strokes on it, a light on each side, the artist at work in a protected zone in front of it, and two rows of guests watching.";
+
+const back = Array.from({ length: 14 }, (_, index) => 90 + index * 78);
+const front = Array.from({ length: 13 }, (_, index) => 129 + index * 78);
+---
+<svg class="mp-svg lp-scene" viewBox="0 0 1200 500" style="--tm:38px" role="img" aria-label={label}>
+  <!-- The floor -->
+  <path class="l" d="M0 372H1200" />
+  <path class="l-faint" d="M0 384H1200M0 396H1200" />
+
+  <!-- A light each side, throwing across the surface -->
+  <path class="l-soft" d="M168 372V118M1032 372V118" />
+  <path class="l" d="M142 100H194L182 130H154ZM1006 100H1058L1046 130H1018Z" />
+  <path class="l-dash" d="M194 108L420 150M194 124L420 300M1006 108L780 150M1006 124L780 300" />
+
+  <!-- The surface and its stands -->
+  <rect class="fill" x="420" y="62" width="360" height="250" />
+  <rect class="l" x="420" y="62" width="360" height="250" />
+  <path class="l-soft" d="M440 312L428 372M760 312L772 372" />
+  <path d="M454 224C502 164 548 252 600 190S702 146 748 206" style="fill: none; stroke: var(--color-signal); stroke-width: 7; stroke-linecap: round" />
+  <path d="M456 128C510 98 560 140 612 110" style="fill: none; stroke: var(--svg-ink); stroke-width: 5; stroke-linecap: round; opacity: 0.7" />
+
+  <!-- The protected zone and the artist in it -->
+  <rect class="l-dash" x="372" y="322" width="456" height="50" />
+  <g class="ink-fill">
+    <circle cx="600" cy="236" r="13" />
+    <path d="M584 254Q600 246 616 254L622 328H578Z" />
+    <rect x="586" y="328" width="11" height="44" />
+    <rect x="603" y="328" width="11" height="44" />
+  </g>
+  <path d="M616 264L650 240" style="fill: none; stroke: var(--svg-ink); stroke-width: 8; stroke-linecap: round" />
+  <path d="M650 240L666 230" style="fill: none; stroke: var(--color-signal); stroke-width: 4; stroke-linecap: round" />
+
+  <!-- The audience, from behind: two rows, the nearer one larger -->
+  {back.map((x) => (
+    <>
+      <path d={`M${x - 24} 446Q${x - 22} 418 ${x} 414Q${x + 22} 418 ${x + 24} 446Z`} class="l-soft" style="fill: var(--svg-bg)" />
+      <circle class="l-soft" style="fill: var(--svg-bg)" cx={x} cy="404" r="11" />
+    </>
+  ))}
+  {front.map((x) => (
+    <>
+      <path d={`M${x - 30} 510Q${x - 28} 470 ${x} 464Q${x + 28} 470 ${x + 30} 510Z`} class="l-soft" style="fill: var(--svg-bg)" />
+      <circle class="l-soft" style="fill: var(--svg-bg)" cx={x} cy="450" r="14" />
+    </>
+  ))}
+
+  <!-- Names -->
+  <text class="t-mid" x="600" y="44">SURFACE</text>
+  <text class="t-mid t-minor" x="462" y="352">ARTIST ZONE</text>
+  <text class="t-mid t-minor" x="168" y="84">LIGHT</text>
+  <text class="t-mid t-minor" x="1032" y="84">LIGHT</text>
+  <text class="t-end t-minor" x="1170" y="352">AUDIENCE</text>
+</svg>

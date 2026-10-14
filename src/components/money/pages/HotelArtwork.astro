@@ -18,6 +18,7 @@ import { ht } from "@/content/money/hotel-artwork";
 import { moneyPage } from "@/content/money/pages";
 import { mediaSlots } from "@/content/money/media";
 import { resolveLink } from "@/lib/money-links";
+import { resolveSlot } from "@/lib/money-media";
 import Section from "../Section.astro";
 import Media from "../Media.astro";
 import Cta from "../Cta.astro";
@@ -29,10 +30,12 @@ import Link from "../Link.astro";
 import Track from "../Track.astro";
 import Milestones from "../Milestones.astro";
 import HotelRoute from "../diagrams/HotelRoute.astro";
+import SamplePanels from "../diagrams/SamplePanels.astro";
 import HotelPlanExcerpt from "../diagrams/HotelPlanExcerpt.astro";
 import FormatGlyph from "../diagrams/FormatGlyph.astro";
 
 const page = moneyPage("hotel-artwork");
+const samples = resolveSlot("HT_SAMPLES");
 const rungs = await Promise.all(ht.formats.rungs.map(async (rung) => ({ rung, link: await resolveLink(rung.href) })));
 ---
 
@@ -176,7 +179,8 @@ const rungs = await Promise.all(ht.formats.rungs.map(async (rung) => ({ rung, li
     {ht.finish.facts.map((fact) => <li class="ht-fact headline-display" data-auto-reveal>{fact}</li>)}
   </ul>
   <figure class="mp-figure ht-samples">
-    <div data-auto-scale><Media slot="HT_SAMPLES" sizes="(min-width: 1800px) 1700px, 100vw" /></div>
+    <div data-auto-scale><Media slot="HT_SAMPLES" sizes="(min-width: 1800px) 1700px, 100vw"><SamplePanels /></Media></div>
+    {samples.state === "placeholder" && <figcaption class="mp-label">{mediaSlots.HT_SAMPLES.standInCaption}</figcaption>}
   </figure>
 </Section>
 
