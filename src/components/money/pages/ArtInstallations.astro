@@ -1,0 +1,252 @@
+---
+/**
+ * Art Installations Dubai.
+ *
+ * Organising idea: the specification sheet. The page reads as a drawing
+ * sheet: a title block, thin dimension lines, six numbered checkpoints and a
+ * responsibility matrix as its centrepiece. Dark, technical and
+ * production-led, with the buildability section given the most visual weight.
+ * It is the one page where who is responsible for what is the product.
+ *
+ * Claims fence: the studio has no documented spatial installation, so the page
+ * claims artistic direction and coordination only. Every drawing is labelled
+ * illustrative, every dimension on one is a blank the site fills, and the one
+ * real image is captioned as scaffold access on a mural. Copy is in
+ * src/content/money/art-installations.ts.
+ */
+import "@/styles/money/art-installations.css";
+import { ins } from "@/content/money/art-installations";
+import { moneyPage } from "@/content/money/pages";
+import { mediaSlots } from "@/content/money/media";
+import { resolveSlot } from "@/lib/money-media";
+import Section from "../Section.astro";
+import Media from "../Media.astro";
+import Cta from "../Cta.astro";
+import Paths from "../Paths.astro";
+import Factors from "../Factors.astro";
+import Faq from "../Faq.astro";
+import Guides from "../Guides.astro";
+import Closing from "../Closing.astro";
+import Tight from "../Tight.astro";
+import Link from "../Link.astro";
+import Track from "../Track.astro";
+import InstHero from "../diagrams/InstHero.astro";
+import SiteSketch from "../diagrams/SiteSketch.astro";
+import BuildFrame from "../diagrams/BuildFrame.astro";
+import InterfaceDetail from "../diagrams/InterfaceDetail.astro";
+
+const page = moneyPage("art-installations");
+const accessRatio = resolveSlot("INS_ACCESS").ratio;
+---
+
+<!-- 01. The sheet: an elevation, a title block, the brief lower left. -->
+<section class="mp-hero inst-hero surface-dark" aria-labelledby="inst-title">
+  <div class="mp-wrap inst-hero-inner">
+    <h1 id="inst-title" class="headline-display mp-title-hero inst-title mp-open" style="--i:1">{page.h1}.</h1>
+    <div class="inst-hero-text">
+      <p class="mp-hero-sub mp-open" style="--i:2">{ins.hero.statement}</p>
+      <p class="mp-hero-support mp-open" style="--i:3">{ins.hero.support}</p>
+      <div class="mp-open" style="--i:4">
+        <Cta pageKey="art-installations" cta={ins.cta} where="hero" />
+      </div>
+    </div>
+    <figure class="inst-sheet mp-open" style="--i:2">
+      <InstHero />
+      <figcaption class="mp-label inst-sheet-caption">{ins.hero.caption}</figcaption>
+    </figure>
+    <dl class="inst-block mp-open" style="--i:5">
+      {ins.hero.block.map((row) => (
+        <div>
+          <dt>{row.label}</dt>
+          <dd>{row.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<!-- 02. What the site can take: five kinds of site, each with a sketch and a blank dimension. -->
+<Section labelledby="inst-sites-title">
+  <div class="inst-sites-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{ins.sites.eyebrow}</p>
+      <h2 id="inst-sites-title" class="headline-display mp-title-lg" data-auto-reveal>{ins.sites.headline}</h2>
+    </div>
+    <p class="mp-body" data-auto-reveal>{ins.sites.lead}</p>
+  </div>
+  <ul class="inst-sites" role="list">
+    {ins.sites.rows.map((row) => (
+      <li class="inst-site" data-auto-reveal>
+        <div class="inst-site-sketch"><SiteSketch kind={row.kind} /></div>
+        <h3 class="mp-name">{row.name}</h3>
+        <p class="mp-body"><Tight text={row.text} /></p>
+        <p class="inst-site-note mp-label">{row.note}</p>
+      </li>
+    ))}
+  </ul>
+  <p class="mp-micro inst-sites-caption">{ins.sites.noteLabel}</p>
+</Section>
+
+<!-- 03. One site, two ways in. -->
+<Section tone="soft" labelledby="inst-start-title">
+  <div class="inst-start">
+    <div class="inst-start-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ins.start.eyebrow}</p>
+      <h2 id="inst-start-title" class="headline-display mp-title-lg" data-auto-reveal>{ins.start.headline}</h2>
+    </div>
+    <div class="inst-start-body">
+      <Paths paths={ins.start.paths} />
+      <p class="mp-body inst-start-note" data-auto-reveal>{ins.start.note}</p>
+      <p class="mp-small" data-auto-reveal>
+        {ins.start.designers.lead} <Link href={ins.start.designers.href} class="mp-inline-link">{ins.start.designers.label}</Link>.
+      </p>
+    </div>
+  </div>
+</Section>
+
+<!-- 04. From idea to something that stands: the centrepiece, six checkpoints. -->
+<Section tone="dark" class="inst-buildable" labelledby="inst-buildable-title">
+  <div class="inst-buildable-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{ins.buildable.eyebrow}</p>
+      <h2 id="inst-buildable-title" class="headline-display mp-title-xl" data-auto-reveal>{ins.buildable.headline}</h2>
+    </div>
+    <p class="mp-lead" data-auto-reveal>{ins.buildable.lead}</p>
+  </div>
+  <ol class="inst-frames" role="list">
+    {ins.buildable.points.map((point) => (
+      <li class="inst-point" data-auto-reveal>
+        <div class="inst-panel">
+          <span class="inst-point-n mp-label" aria-hidden="true">{point.n}</span>
+          <BuildFrame kind={point.kind} />
+        </div>
+        <h3 class="mp-name">{point.name}</h3>
+        <p class="mp-small"><Tight text={point.text} /></p>
+      </li>
+    ))}
+  </ol>
+  <p class="mp-micro inst-frames-caption">{ins.buildable.caption}</p>
+</Section>
+
+<!-- 05. Who is responsible for what: a real table. -->
+<Section labelledby="inst-matrix-title">
+  <div class="inst-matrix-head">
+    <p class="mp-eyebrow" data-auto-reveal>{ins.matrix.eyebrow}</p>
+    <h2 id="inst-matrix-title" class="headline-display mp-title-xl" data-auto-reveal>{ins.matrix.headline}</h2>
+  </div>
+  <div class="inst-matrix" data-auto-reveal>
+    <table role="table" aria-label="Who is responsible for what on an art installation">
+      <thead role="rowgroup">
+        <tr role="row">
+          <th scope="col" role="columnheader">{ins.matrix.columns.function}</th>
+          <th scope="col" role="columnheader">{ins.matrix.columns.responsibility}</th>
+        </tr>
+      </thead>
+      <tbody role="rowgroup">
+        {ins.matrix.rows.map((row) => (
+          <tr role="row" class:list={[row.own && "is-own"]}>
+            <th scope="row" role="rowheader">{row.name}</th>
+            <td role="cell">{row.text}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="mp-body inst-matrix-note" data-auto-reveal>{ins.matrix.note}</p>
+</Section>
+
+<!-- 06. For a week, or for years: two bars on one time axis. -->
+<Section tone="soft" labelledby="inst-time-title">
+  <p class="mp-eyebrow" data-auto-reveal>{ins.time.eyebrow}</p>
+  <h2 id="inst-time-title" class="headline-display mp-title-lg" data-auto-reveal>{ins.time.headline}</h2>
+  <div class="inst-time">
+    <div class="inst-time-chart" aria-hidden="true">
+      {ins.time.tracks.map((track) => (
+        <div class="inst-time-line">
+          <span class="inst-time-bar" data-span={track.span}></span>
+          <span class="mp-label">{track.name}</span>
+        </div>
+      ))}
+      <p class="inst-time-axis mp-label">{ins.time.axis}</p>
+    </div>
+    <div class="inst-time-text">
+      {ins.time.tracks.map((track) => (
+        <div class="inst-time-row" data-auto-reveal>
+          <h3 class="mp-name">{track.name}</h3>
+          <p class="mp-body">{track.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+  <p class="mp-body inst-time-close" data-auto-reveal>
+    {ins.time.closing.lead} <Link href={ins.time.closing.href} class="mp-inline-link">{ins.time.closing.label}</Link>.
+  </p>
+</Section>
+
+<!-- 07. Meeting the architecture. -->
+<Section tone="dark" labelledby="inst-building-title">
+  <div class="inst-building">
+    <figure class="mp-fig inst-building-fig" data-auto-reveal>
+      <InterfaceDetail />
+      <ol class="inst-legend" role="list" aria-hidden="true">
+        {ins.building.legend.map((item, index) => <li class="mp-label"><span>{index + 1}</span>{item}</li>)}
+      </ol>
+      <figcaption class="mp-label">{ins.building.caption}</figcaption>
+    </figure>
+    <div class="inst-building-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{ins.building.eyebrow}</p>
+      <h2 id="inst-building-title" class="headline-display mp-title-lg" data-auto-reveal>{ins.building.headline}</h2>
+      <p class="mp-body" data-auto-reveal>{ins.building.body}</p>
+      <figure class="mp-figure inst-access" data-auto-reveal>
+        <div class="mp-tall" style={`--r:${accessRatio};--cap:46svh`}>
+          <Media slot="INS_ACCESS" sizes="(min-width: 1024px) 22vw, 70vw" />
+        </div>
+        <figcaption class="mp-label">{mediaSlots.INS_ACCESS.caption}</figcaption>
+      </figure>
+    </div>
+  </div>
+</Section>
+
+<!-- 08. Making it, and putting it up. -->
+<Section labelledby="inst-production-title">
+  <p class="mp-eyebrow" data-auto-reveal>{ins.production.eyebrow}</p>
+  <h2 id="inst-production-title" class="headline-display mp-title-lg" data-auto-reveal>{ins.production.headline}</h2>
+  <Track steps={ins.production.steps} label="Production, installation and handover" />
+  <p class="mp-body inst-production-note" data-auto-reveal>{ins.production.note}</p>
+</Section>
+
+<!-- 09. What a reliable proposal needs. -->
+<Section tone="soft" labelledby="inst-fee-title">
+  <div class="inst-fee">
+    <div class="inst-fee-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ins.fee.eyebrow}</p>
+      <h2 id="inst-fee-title" class="headline-display mp-title-lg" data-auto-reveal>{ins.fee.headline}</h2>
+      <p class="mp-body" data-auto-reveal>{ins.fee.lead}</p>
+      <p class="mp-body" data-auto-reveal>{ins.fee.body}</p>
+    </div>
+    <div class="inst-fee-body"><Factors groups={ins.fee.groups} /></div>
+  </div>
+</Section>
+
+<!-- 10. Questions and guides. -->
+<Section labelledby="inst-faq-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ins.faq.eyebrow}</p>
+      <h2 id="inst-faq-title" class="headline-display mp-title-lg" data-auto-reveal>{ins.faq.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Faq items={ins.faq.items} /></div>
+  </div>
+</Section>
+
+<Section tone="soft" labelledby="inst-guides-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ins.guides.eyebrow}</p>
+      <h2 id="inst-guides-title" class="headline-display mp-title-md" data-auto-reveal>{ins.guides.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Guides guides={ins.guides.items} /></div>
+  </div>
+</Section>
+
+<Closing pageKey="art-installations" closing={ins.closing} cta={ins.cta} />

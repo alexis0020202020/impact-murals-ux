@@ -1,0 +1,49 @@
+---
+/*
+  An illustrative plan excerpt for the opening: two rooms of an interior in
+  thin line, with one wall marked for art and a leader line that runs out of
+  the drawing towards the artwork shown beside it ("from drawing to wall").
+  The plan and the artwork are never the same project and the page never says
+  so. Labelled illustrative wherever it appears; not a drawing of a real
+  building.
+*/
+const label =
+  "Illustrative plan excerpt of two rooms with one wall marked for a work of art: a seating room with a sofa and a table, a dining room with a table and chairs, and an entrance.";
+---
+<svg
+  class="mp-svg ds-plan"
+  viewBox="0 0 480 400"
+  style="--tm:22px"
+  role="img"
+  aria-label={label}
+  focusable="false"
+>
+  <!-- Walls, with the entrance, a partition and a door between the rooms -->
+  <path class="l" d="M110 380H460V20H20V380H60" />
+  <path class="l" d="M280 20V250M280 300V380" />
+  <path class="l-soft" d="M110 380V330A50 50 0 0 0 60 380" />
+  <path class="l-soft" d="M280 250A50 50 0 0 1 330 300M280 300H330" />
+  <path class="l-soft" d="M455 90V180M465 90V180M455 90H465M455 180H465" />
+
+  <!-- The wall marked for art, its width ticked, and the leader that runs out to the artwork -->
+  <rect class="fill-ink" x="70" y="17" width="180" height="8" />
+  <path class="l-soft" d="M70 6V12M250 6V12M70 9H250" />
+  <path class="l-soft" d="M160 25V47" />
+  <circle class="l" cx="160" cy="62" r="15" style="fill: var(--svg-bg)" />
+  <text class="t-mid t-num" x="160" y="68">1</text>
+  <path class="l-signal" d="M175 62H480" />
+
+  <!-- Seating: rug, sofa, low table -->
+  <rect class="l-dash" x="50" y="190" width="200" height="110" />
+  <rect class="l" x="70" y="316" width="150" height="40" rx="4" />
+  <rect class="l-soft" x="86" y="230" width="118" height="44" rx="3" />
+
+  <!-- Dining: table and chairs -->
+  <rect class="l" x="330" y="170" width="100" height="60" rx="4" />
+  {[348, 380, 412].map((x) => (
+    <>
+      <rect class="l-soft" x={x - 8} y="148" width="16" height="14" />
+      <rect class="l-soft" x={x - 8} y="238" width="16" height="14" />
+    </>
+  ))}
+</svg>

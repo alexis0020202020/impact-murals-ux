@@ -1,0 +1,69 @@
+---
+/*
+  An illustrative section through the interface between a work and a building,
+  in thin line: the structure above, a ceiling void with services, a lit
+  ceiling, a figure and a sightline, a form standing on the floor build-up, and
+  the access route in. The numerals match a legend in HTML. It is an example,
+  labelled as one; it is not a drawing of any real building and shows no
+  particular structural solution.
+*/
+const label =
+  "Illustrative section through the interface between an artwork and a building: the structure and services above a ceiling, the lighting, a figure's sightline to a freestanding form, and the access route into the room.";
+---
+<svg
+  class="mp-svg inst-interface"
+  viewBox="0 0 660 360"
+  style="--tm:26px"
+  role="img"
+  aria-label={label}
+  focusable="false"
+>
+  <!-- Structure, ceiling void, services -->
+  <rect class="fill" x="40" y="30" width="560" height="22" />
+  <path class="l" d="M40 30H600M40 52H600" />
+  <rect class="l-soft" x="90" y="60" width="120" height="30" />
+  <path class="l-soft" d="M230 70H420M230 82H420" />
+  <rect class="l-soft" x="440" y="64" width="90" height="14" />
+
+  <!-- Lit ceiling -->
+  <path class="l" d="M40 110H600" />
+  <rect class="fill-ink" x="176" y="110" width="22" height="8" />
+  <rect class="fill-ink" x="326" y="110" width="22" height="8" />
+  <rect class="fill-ink" x="476" y="110" width="22" height="8" />
+  <path class="l-faint" d="M326 118L286 218M348 118L388 218" />
+
+  <!-- Walls, floor, floor build-up -->
+  <path class="l" d="M40 30V300M600 30V198" />
+  <path class="l" d="M40 300H600" />
+  <path class="l-faint" d="M40 316H600" />
+
+  <!-- The form, standing -->
+  <path class="fill" d="M338 150L300 220L296 300H330Z" />
+  <path class="l" d="M296 300H356L366 214L338 150L300 220Z" />
+  <path class="l-soft" d="M338 150L330 300M300 220L330 250L366 214" />
+  <path class="l-soft" d="M390 110V150M384 110H396M384 150H396" />
+
+  <!-- A figure and the sightline -->
+  <circle class="l" cx="200" cy="246" r="6" />
+  <path class="l" d="M191 256Q200 252 209 256L212 282H188Z" />
+  <path class="l-soft" d="M195 282V300M205 282V300" />
+  <path class="l-signal" d="M206 242Q260 190 332 158" style="stroke-dasharray: 4 5" />
+
+  <!-- Access in -->
+  <path class="l-signal" d="M640 270H516" />
+  <path class="signal" d="M508 270l12-6v12z" />
+
+  <!-- Numbered points -->
+  {[
+    [1, 150, 75],
+    [2, 520, 41],
+    [3, 420, 168],
+    [4, 252, 198],
+    [5, 566, 270]
+  ].map(([n, x, y]) => (
+    <g>
+      <circle class="l" cx={x} cy={y} r="13" style="fill: var(--svg-bg)" />
+      <text class="t-mid t-num" x={x} y={Number(y) + 5}>{n}</text>
+    </g>
+  ))}
+</svg>

@@ -1,0 +1,665 @@
+/*
+  /art-installations-dubai/: the page's own composition.
+
+  Organising idea: the specification sheet. A title block, thin dimension
+  lines, six numbered checkpoints and a responsibility matrix as the centrepiece.
+  Dark, technical and production-led. The shared vocabulary is in base.css.
+*/
+
+/* ------------------------------------------------------------------- hero */
+
+.inst-hero {
+  position: relative;
+  overflow: clip;
+  background: var(--color-ink);
+  color: var(--color-paper-bright);
+}
+
+.inst-hero .headline-display {
+  color: var(--color-paper-bright);
+}
+
+/* INSTALLATIONS is a long word: the opening title is sized so it never breaks inside it. */
+.inst-hero .mp-title-hero {
+  font-size: clamp(2.2rem, 9.2vw, 3.5rem);
+}
+
+.inst-hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6.75rem;
+  grid-template-areas:
+    "title title"
+    "text sheet"
+    "block block";
+  column-gap: 1.1rem;
+  row-gap: 1.25rem;
+  padding-block: 1.5rem 2.5rem;
+}
+
+.inst-title {
+  grid-area: title;
+}
+
+.inst-hero-text {
+  grid-area: text;
+  min-width: 0;
+}
+
+.inst-sheet {
+  grid-area: sheet;
+  align-self: start;
+  margin: 0;
+}
+
+.inst-sheet-caption {
+  display: none;
+}
+
+.inst-drawing .inst-sheet-h {
+  display: none;
+}
+
+.inst-drawing .inst-sheet-v {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The title block of the sheet: boxed, three lines, small mono. */
+.inst-block {
+  grid-area: block;
+  width: min(100%, 22rem);
+  margin: 0;
+  border: 1px solid color-mix(in srgb, var(--color-paper) 40%, transparent);
+  background: var(--color-ink);
+}
+
+.inst-block > div {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  border-top: 1px solid var(--hair);
+}
+
+.inst-block > div:first-child {
+  border-top: 0;
+}
+
+.inst-block dt,
+.inst-block dd {
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  font-family: var(--font-notation);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.inst-block dt {
+  border-right: 1px solid var(--hair);
+  color: color-mix(in srgb, var(--color-paper) 62%, transparent);
+}
+
+.inst-block dd {
+  color: var(--color-paper-bright);
+}
+
+@media (min-width: 768px) {
+  .inst-hero .mp-title-hero {
+    font-size: clamp(2.6rem, 4.1vw, 4.2rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .inst-hero {
+    min-height: clamp(36rem, calc(100svh - 11rem), 52rem);
+  }
+
+  .inst-hero-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: inherit;
+    padding-block: clamp(2rem, 6svh, 4rem);
+  }
+
+  .inst-hero-inner > .inst-title,
+  .inst-hero-inner > .inst-hero-text {
+    max-width: 37%;
+  }
+
+  .inst-hero-inner > .inst-hero-text {
+    margin-top: 1.25rem;
+  }
+
+  .inst-sheet {
+    position: absolute;
+    top: 1.5rem;
+    right: var(--gutter);
+    bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    width: 56%;
+  }
+
+  .inst-drawing {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .inst-drawing .inst-sheet-h {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .inst-drawing .inst-sheet-v {
+    display: none;
+  }
+
+  .inst-sheet-caption {
+    display: block;
+    padding-top: 0.55rem;
+  }
+
+  .inst-block {
+    position: absolute;
+    right: calc(var(--gutter) + 1.5rem);
+    bottom: 3.6rem;
+    z-index: 2;
+  }
+}
+
+/* ------------------------------------------------------------------ sites */
+
+.inst-sites-head {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.inst-sites {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+  border-bottom: 1px solid var(--hair);
+}
+
+.inst-site {
+  position: relative;
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  padding-block: 1.25rem 1.4rem;
+  border-top: 1px solid var(--hair);
+}
+
+.inst-site::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 2.25rem;
+  height: 2px;
+  background: var(--color-signal);
+}
+
+.inst-site-sketch svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.inst-site .mp-body,
+.inst-site-note {
+  grid-column: 1 / -1;
+}
+
+.inst-site-note {
+  color: var(--color-stone);
+}
+
+.inst-sites-caption {
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .inst-site {
+    grid-template-columns: 9rem minmax(0, 5fr) minmax(0, 5fr) minmax(0, 3fr);
+    column-gap: var(--gap);
+    padding-block: clamp(1.2rem, 1.7vw, 1.8rem);
+  }
+
+  .inst-site .mp-body,
+  .inst-site-note {
+    grid-column: auto;
+  }
+
+  .inst-site-note {
+    text-align: right;
+  }
+}
+
+@media (min-width: 1024px) {
+  .inst-sites-head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: end;
+  }
+
+  .inst-sites-head > :first-child {
+    grid-column: 1 / span 6;
+  }
+
+  .inst-sites-head > .mp-body {
+    grid-column: 8 / span 5;
+    max-width: 52ch;
+  }
+}
+
+/* ------------------------------------------------------------------ start */
+
+.inst-start {
+  display: grid;
+  gap: 2rem;
+}
+
+.inst-start-head {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.inst-start-note {
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .inst-start {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .inst-start-head {
+    grid-column: 1 / span 5;
+  }
+
+  .inst-start-body {
+    grid-column: 7 / span 6;
+  }
+}
+
+/* -------------------------------------------------------------- buildable */
+
+.inst-buildable {
+  padding-block: calc(var(--pad) * 1.25);
+}
+
+.inst-buildable-head {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.inst-frames {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.9rem;
+  margin-top: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.inst-point {
+  min-width: 0;
+}
+
+.inst-panel {
+  position: relative;
+  margin-bottom: 1.1rem;
+  padding: 1.6rem 0.75rem 0.75rem;
+  border: 1px solid var(--hair);
+  background: color-mix(in srgb, var(--color-paper) 3%, transparent);
+}
+
+.inst-point-n {
+  position: absolute;
+  top: 0.55rem;
+  left: 0.75rem;
+}
+
+.inst-frame {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.inst-point .mp-name {
+  margin-bottom: 0.45rem;
+}
+
+.inst-frames-caption {
+  margin-top: 2rem;
+}
+
+@media (min-width: 600px) {
+  .inst-frames {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--gap);
+  }
+}
+
+@media (min-width: 768px) {
+  .inst-frames {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 2.75rem;
+  }
+}
+
+/* One continuous sheet: six panels edge to edge, the words under each. */
+@media (min-width: 1280px) {
+  .inst-frames {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: 0;
+  }
+
+  .inst-point {
+    padding-right: 1.1rem;
+  }
+
+  .inst-panel {
+    margin-right: -1px;
+  }
+
+  .inst-point .mp-name {
+    font-size: clamp(1rem, 1.2vw, 1.35rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .inst-buildable-head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: end;
+  }
+
+  .inst-buildable-head > :first-child {
+    grid-column: 1 / span 7;
+  }
+
+  .inst-buildable-head > .mp-lead {
+    grid-column: 8 / span 5;
+    max-width: 46ch;
+  }
+}
+
+/* ----------------------------------------------------------------- matrix */
+
+.inst-matrix-head {
+  display: grid;
+  gap: 1rem;
+}
+
+.inst-matrix {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+/* A real table, drawn as a ledger: its roles keep it a table for assistive technology. */
+.inst-matrix table,
+.inst-matrix tbody,
+.inst-matrix tr,
+.inst-matrix th,
+.inst-matrix td {
+  display: block;
+}
+
+.inst-matrix thead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.inst-matrix tr {
+  display: grid;
+  gap: 0.5rem;
+  padding-block: 1.15rem 1.35rem;
+  border-top: 1px solid var(--hair);
+}
+
+.inst-matrix tbody tr:last-child {
+  border-bottom: 1px solid var(--hair);
+}
+
+.inst-matrix tr.is-own {
+  border-top: 2px solid var(--color-signal);
+  background: color-mix(in srgb, var(--color-ink) 4%, transparent);
+}
+
+.inst-matrix th {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 5.2vw, 1.5rem);
+  font-weight: 610;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.inst-matrix td {
+  max-width: 62ch;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--color-paper-dim);
+}
+
+.inst-matrix-note {
+  max-width: 64ch;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 768px) {
+  .inst-matrix tr {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--gap);
+    align-items: baseline;
+    padding-block: clamp(1.2rem, 1.7vw, 1.9rem);
+  }
+
+  .inst-matrix tr.is-own {
+    padding-inline: clamp(0.75rem, 1.2vw, 1.25rem);
+  }
+
+  .inst-matrix th {
+    font-size: clamp(1.2rem, 1.9vw, 2.25rem);
+  }
+}
+
+/* ------------------------------------------------------------------- time */
+
+.inst-time {
+  display: grid;
+  gap: 2rem;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+.inst-time-chart {
+  display: grid;
+  gap: 1rem;
+}
+
+.inst-time-line {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.inst-time-bar {
+  display: block;
+  height: 0.8rem;
+  width: 14%;
+  background: var(--color-ink);
+}
+
+.inst-time-bar[data-span="long"] {
+  width: 100%;
+}
+
+.inst-time-axis {
+  position: relative;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--color-ink);
+  text-align: right;
+}
+
+.inst-time-axis::after {
+  content: " \2192";
+  color: var(--color-signal);
+}
+
+.inst-time-text {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.inst-time-row .mp-name {
+  margin-bottom: 0.6rem;
+}
+
+.inst-time-close {
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 768px) {
+  .inst-time-text {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--gap);
+  }
+}
+
+/* --------------------------------------------------------------- building */
+
+.inst-building {
+  display: grid;
+  gap: 2rem;
+}
+
+.inst-building-copy {
+  order: -1;
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.inst-interface {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.inst-legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 1rem;
+  margin-top: 1rem;
+}
+
+.inst-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--color-paper-bright);
+}
+
+.inst-legend span {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid currentcolor;
+  border-radius: 50%;
+  font-size: 0.6875rem;
+  line-height: 1;
+}
+
+.inst-access {
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .inst-legend {
+    grid-template-columns: repeat(5, auto);
+    justify-content: start;
+    gap: 0.6rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .inst-building {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .inst-building-fig {
+    grid-column: 1 / span 7;
+  }
+
+  .inst-building-copy {
+    order: 0;
+    grid-column: 9 / span 4;
+  }
+
+  .inst-legend {
+    grid-template-columns: repeat(2, auto);
+  }
+}
+
+@media (min-width: 1280px) {
+  .inst-legend {
+    grid-template-columns: repeat(5, auto);
+  }
+}
+
+/* -------------------------------------------------------------- production */
+
+.inst-production-note {
+  max-width: 62ch;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+/* -------------------------------------------------------------------- fee */
+
+.inst-fee {
+  display: grid;
+  gap: 2rem;
+}
+
+.inst-fee-head {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.inst-fee-head .mp-body {
+  max-width: 46ch;
+}
+
+@media (min-width: 1024px) {
+  .inst-fee {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .inst-fee-head {
+    grid-column: 1 / span 5;
+  }
+
+  .inst-fee-body {
+    grid-column: 7 / span 6;
+    padding-top: clamp(1rem, 3vw, 3rem);
+  }
+}

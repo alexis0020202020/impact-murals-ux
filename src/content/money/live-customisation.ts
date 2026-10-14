@@ -53,7 +53,7 @@ export const lc = {
     qualifier: "Every piece is finished by an artist, by hand. This is not a print or engraving station.",
     micro: "Date, product and guest numbers are enough to start. A photograph of the product helps.",
     hands: ["THE ARTIST", "THE OBJECT", "THE GUEST"],
-    sceneCaption: "ILLUSTRATIVE STATION / THREE HANDS, ONE OBJECT."
+    sceneCaption: "ILLUSTRATIVE STATION / ARTIST, OBJECT, GUEST."
   },
 
   /** 02. What guests receive. */

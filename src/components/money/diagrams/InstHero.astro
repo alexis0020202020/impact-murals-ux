@@ -1,0 +1,73 @@
+---
+/*
+  The opening drawing of the specification sheet: an elevation of an abstract
+  double-height space in thin line, with one tall faceted form standing in it,
+  a figure for scale, a structural grid, and dimension lines whose figures are
+  left as letters (H, W, h) because the site sets them. Two drawings of one
+  idea: the wide sheet for a screen, a narrow vertical strip for a phone.
+  Labelled illustrative wherever it appears; it is not a real space and
+  suggests no particular material, method or scale.
+*/
+---
+<div class="inst-drawing" aria-hidden="true">
+  <!-- The wide sheet -->
+  <svg class="mp-svg inst-sheet-h" viewBox="0 0 1000 560" focusable="false">
+    <rect class="l-faint" x="6" y="6" width="988" height="548" />
+    <!-- Structural grid -->
+    <path class="l-dash" d="M200 58V500M500 58V500M800 58V500" style="stroke-opacity: 0.5" />
+    {[["A", 200], ["B", 500], ["C", 800]].map(([l, x]) => (
+      <g>
+        <circle class="l" cx={x} cy="40" r="15" style="fill: var(--svg-bg)" />
+        <text class="t-mid t-num" x={x} y="45">{l}</text>
+      </g>
+    ))}
+    <!-- Walls, ceiling slab, floor -->
+    <rect class="fill" x="186" y="96" width="14" height="384" />
+    <path class="l" d="M186 96V480M200 96V480" />
+    <rect class="fill" x="800" y="96" width="14" height="384" />
+    <path class="l" d="M800 96V480M814 96V480" />
+    <rect class="fill" x="186" y="80" width="628" height="16" />
+    <path class="l" d="M186 80H814M186 96H814" />
+    <path class="l" d="M60 480H940" />
+    <path class="l-faint" d="M60 492H940" />
+    <!-- A balcony edge: why it is double height -->
+    <path class="l-soft" d="M200 288H270M262 288V262M270 288V262M262 262H270" />
+    <!-- The form: one tall faceted shape -->
+    <path class="fill" d="M584 170L528 250L520 480H566Z" />
+    <path class="l" d="M520 480H612L636 330L584 170L528 250Z" />
+    <path class="l-soft" d="M584 170L566 480M528 250L566 360L636 330" />
+    <!-- A figure for scale -->
+    <circle class="l" cx="440" cy="412" r="5.5" />
+    <path class="l" d="M431 424Q440 420 449 424L452 452H428Z" />
+    <path class="l-soft" d="M435 452V480M445 452V480" />
+    <!-- Dimension lines: letters, not figures -->
+    <path class="l-soft" d="M140 96V480M132 96H148M132 480H148" />
+    <text class="t-soft t-small t-mid" x="122" y="294">H</text>
+    <path class="l-soft" d="M200 524H800M200 516V532M800 516V532" />
+    <text class="t-soft t-small t-mid" x="500" y="544">W</text>
+    <path class="l-soft" d="M690 170V480M682 170H698M682 480H698" />
+    <text class="t-soft t-small t-mid" x="712" y="328">h</text>
+  </svg>
+
+  <!-- The same idea, standing: a phone -->
+  <svg class="mp-svg inst-sheet-v" viewBox="0 0 180 520" focusable="false">
+    <rect class="l-faint" x="2" y="2" width="176" height="516" />
+    <circle class="l" cx="90" cy="32" r="13" style="fill: var(--svg-bg)" />
+    <text class="t-mid t-num" x="90" y="38">A</text>
+    <path class="l-dash" d="M90 48V470" style="stroke-opacity: 0.5" />
+    <rect class="fill" x="30" y="80" width="10" height="390" />
+    <path class="l" d="M30 80V470M40 80V470" />
+    <rect class="fill" x="140" y="80" width="10" height="390" />
+    <path class="l" d="M140 80V470M150 80V470" />
+    <rect class="fill" x="30" y="70" width="120" height="10" />
+    <path class="l" d="M30 70H150M30 80H150" />
+    <path class="l" d="M10 470H170" />
+    <path class="fill" d="M104 160L76 214L72 470H98Z" />
+    <path class="l" d="M72 470H124L134 340L104 160L76 214Z" />
+    <path class="l-soft" d="M104 160L98 470M76 214L98 330L134 340" />
+    <circle class="l" cx="54" cy="428" r="4.5" />
+    <path class="l" d="M47 438Q54 435 61 438L63 458H45Z" />
+    <path class="l-soft" d="M50 458V470M58 458V470" />
+    <path class="l-soft" d="M16 80V470M10 80H22M10 470H22" />
+  </svg>
+</div>

@@ -1,0 +1,765 @@
+/*
+  /art-for-interior-designers-dubai/: the page's own composition.
+
+  Organising idea: send and receive. A plain, document-like page: two columns,
+  what you send and what comes back, at its centre; a ledger of when to involve
+  the studio; a swimlane of who signs off what; a three-part fee split. Light,
+  quiet, typographic. The shared vocabulary is in base.css.
+*/
+
+/* ------------------------------------------------------------------- hero */
+
+.ds-hero {
+  background: var(--color-paper);
+  border-bottom: 1px solid var(--hair);
+}
+
+.ds-hero-inner {
+  display: grid;
+  gap: 2rem;
+  padding-block: 1.5rem 3rem;
+}
+
+.ds-hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* A long title: sized so ARCHITECTS and the lines around it never break inside a word. */
+.ds-hero .ds-title {
+  font-size: clamp(2.1rem, 9.2vw, 3.4rem);
+}
+
+.ds-pair {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  margin: 0;
+}
+
+.ds-pair-plan svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ds-pair-plate .mp-frame {
+  aspect-ratio: 5 / 4;
+}
+
+.ds-pair figcaption {
+  margin-top: 0.25rem;
+}
+
+@media (min-width: 768px) {
+  .ds-hero .ds-title {
+    font-size: clamp(2.6rem, 4.7vw, 4.6rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .ds-hero-inner {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: center;
+    min-height: clamp(34rem, calc(100svh - 11rem), 48rem);
+    padding-block: clamp(2rem, 5svh, 4rem);
+  }
+
+  .ds-hero-text {
+    grid-column: 1 / span 6;
+  }
+
+  .ds-pair {
+    grid-column: 7 / span 6;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    column-gap: 1.5rem;
+    row-gap: 0.9rem;
+    align-items: stretch;
+  }
+
+  .ds-pair-plan {
+    position: relative;
+  }
+
+  /* The hairline from the marked wall to the artwork: "from drawing to wall". */
+  .ds-pair-plan::after {
+    content: "";
+    position: absolute;
+    top: 15.5%;
+    left: 100%;
+    width: 1.5rem;
+    height: 1px;
+    background: var(--color-signal);
+  }
+
+  .ds-pair-plate .mp-frame {
+    height: 100%;
+    aspect-ratio: auto;
+  }
+
+  .ds-pair figcaption {
+    grid-column: 1 / -1;
+  }
+}
+
+/* --------------------------------------------------------------- exchange */
+
+.ds-exchange {
+  display: grid;
+  gap: 0;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+.ds-col .mp-eyebrow {
+  margin-bottom: 1rem;
+}
+
+.ds-list {
+  border-bottom: 1px solid var(--hair);
+}
+
+.ds-list li {
+  padding-block: 0.95rem;
+  border-top: 1px solid var(--hair);
+  font-family: var(--font-body);
+  font-size: clamp(1.05rem, 4.5vw, 1.3rem);
+  line-height: 1.35;
+  color: var(--color-ink);
+}
+
+/* The arrow drawn in the divider: down between the stacked columns, across between the side-by-side ones. */
+.ds-arrow {
+  position: relative;
+  height: 4rem;
+}
+
+.ds-arrow::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--hair);
+}
+
+.ds-arrow::after {
+  content: "\2193";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 0.4rem 0;
+  transform: translate(-50%, -50%);
+  background: var(--color-paper);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-signal);
+}
+
+.ds-exchange-note {
+  max-width: 56ch;
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.ds-docs {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.ds-doc {
+  margin: 0;
+  padding: 1rem 1rem 1.1rem;
+  background: var(--color-paper-bright);
+  border: 1px solid var(--hair);
+}
+
+.ds-doc-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--color-ink);
+}
+
+.ds-doc-head .mp-label {
+  color: var(--color-ink);
+}
+
+.ds-doc-stamp.mp-label {
+  padding: 0.1rem 0.45rem;
+  border: 1px solid currentcolor;
+  transform: rotate(-3deg);
+  color: var(--color-signal);
+}
+
+.ds-doc-table {
+  width: 100%;
+  margin-top: 0.3rem;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+}
+
+.ds-doc-table th,
+.ds-doc-table td {
+  padding: 0.55rem 0.6rem 0.55rem 0;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid var(--hair);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--color-ink);
+}
+
+.ds-doc-table thead th {
+  border-top: 0;
+  font-family: var(--font-notation);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-stone);
+}
+
+.ds-docs-caption {
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .ds-docs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--gap);
+  }
+}
+
+@media (min-width: 1024px) {
+  .ds-exchange {
+    grid-template-columns: minmax(0, 1fr) 4rem minmax(0, 1fr);
+  }
+
+  .ds-list li {
+    font-size: clamp(1.1rem, 1.5vw, 1.55rem);
+  }
+
+  .ds-arrow {
+    height: auto;
+  }
+
+  .ds-arrow::before {
+    top: 0;
+    right: auto;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    height: auto;
+  }
+
+  .ds-arrow::after {
+    content: "\2192";
+    padding: 0.4rem 0;
+  }
+}
+
+/* ------------------------------------------------------------------ paths */
+
+.ds-paths {
+  display: grid;
+  gap: 2rem;
+}
+
+.ds-paths-head {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.ds-paths-note {
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .ds-paths {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .ds-paths-head {
+    grid-column: 1 / span 5;
+  }
+
+  .ds-paths-body {
+    grid-column: 7 / span 6;
+  }
+}
+
+/* ------------------------------------------------------------- commission */
+
+.ds-commission {
+  display: grid;
+  gap: 2.5rem;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+.ds-formats .mp-eyebrow,
+.ds-projects .mp-eyebrow {
+  margin-bottom: 1rem;
+}
+
+.ds-format-list,
+.ds-project-list {
+  border-bottom: 1px solid var(--hair);
+}
+
+.ds-format {
+  display: grid;
+  gap: 0.3rem;
+  padding-block: 1.15rem 1.3rem;
+  border-top: 1px solid var(--hair);
+}
+
+.ds-format-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 7vw, 2.4rem);
+  font-weight: 610;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.ds-format-link,
+.ds-project-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: border-color 180ms ease;
+}
+
+.ds-format-link:hover,
+.ds-project-link:hover {
+  border-bottom-color: var(--color-signal);
+}
+
+.ds-project-list li {
+  padding-block: 0.85rem;
+  border-top: 1px solid var(--hair);
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 4.6vw, 1.5rem);
+  font-weight: 610;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+@media (min-width: 1024px) {
+  .ds-commission {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .ds-formats {
+    grid-column: 1 / span 7;
+  }
+
+  .ds-projects {
+    grid-column: 9 / span 4;
+  }
+
+  .ds-format {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    align-items: baseline;
+    column-gap: var(--gap);
+  }
+
+  .ds-format-name {
+    font-size: clamp(1.8rem, 2.9vw, 3.2rem);
+  }
+
+  .ds-project-list li {
+    font-size: clamp(1.2rem, 1.7vw, 1.9rem);
+  }
+}
+
+/* ---------------------------------------------------------------- signoff */
+
+.ds-signoff-head {
+  display: grid;
+  gap: 2rem;
+}
+
+.ds-lanes-wrap {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.ds-lanes {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.ds-lanes thead th {
+  padding: 0 0.5rem 0.8rem;
+  border-bottom: 1px solid var(--color-ink);
+  font-family: var(--font-notation);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+  vertical-align: bottom;
+  color: var(--color-stone);
+}
+
+.ds-gate-n {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--color-ink);
+}
+
+.ds-lanes tbody tr {
+  border-bottom: 1px solid var(--hair);
+}
+
+.ds-lanes tbody th {
+  width: 11rem;
+  padding: 1rem 0.5rem 1rem 0;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 610;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.ds-lanes td {
+  position: relative;
+  padding: 1rem 0.5rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* The lane: a thin line the gates sit on. */
+.ds-lanes td::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--hair);
+}
+
+.ds-mark {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  width: 0.95rem;
+  height: 0.95rem;
+  transform: rotate(45deg) scale(0.85);
+}
+
+.ds-mark--signs {
+  background: var(--color-signal);
+}
+
+.ds-mark--submits {
+  border: 1px solid var(--color-ink);
+  background: var(--surface-soft);
+}
+
+.ds-mark-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.ds-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.75rem;
+  margin-top: 1.25rem;
+  font-family: var(--font-notation);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.ds-key li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.ds-lanes-wrap .mp-micro {
+  margin-top: 0.8rem;
+}
+
+.ds-signoff-foot {
+  display: grid;
+  gap: 1rem;
+  max-width: 64ch;
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+/* A phone: each lane becomes a short list of the gates it is at. */
+@media (max-width: 767px) {
+  .ds-lanes thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .ds-lanes,
+  .ds-lanes tbody,
+  .ds-lanes tr,
+  .ds-lanes th,
+  .ds-lanes td {
+    display: block;
+  }
+
+  .ds-lanes tbody tr {
+    padding-block: 1rem;
+  }
+
+  .ds-lanes tbody th {
+    width: auto;
+    padding: 0 0 0.5rem;
+    font-size: 1.15rem;
+  }
+
+  .ds-lanes td {
+    padding: 0.35rem 0;
+    text-align: left;
+  }
+
+  .ds-lanes td[data-mark=""] {
+    display: none;
+  }
+
+  .ds-lanes td::before {
+    display: none;
+  }
+
+  .ds-lanes td {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .ds-lanes td[data-mark]:not([data-mark=""])::after {
+    content: attr(data-label);
+    order: 2;
+    font-family: var(--font-notation);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--color-ink);
+  }
+
+  .ds-mark-text {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    order: 3;
+    font-family: var(--font-notation);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    color: var(--color-stone);
+  }
+
+  .ds-mark-text::before {
+    content: "/ ";
+  }
+}
+
+@media (min-width: 768px) {
+  .ds-lanes thead th {
+    font-size: 0.625rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ds-signoff-head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .ds-signoff-head > :first-child {
+    grid-column: 1 / span 5;
+  }
+
+  .ds-signoff-rows {
+    grid-column: 7 / span 6;
+  }
+
+  .ds-signoff-rows .mp-row {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  }
+
+  .ds-lanes thead th {
+    font-size: 0.6875rem;
+  }
+}
+
+/* ------------------------------------------------------------------- wall */
+
+.ds-wall {
+  display: grid;
+  gap: 2rem;
+}
+
+.ds-wall-copy {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.ds-wall-list {
+  border-bottom: 1px solid var(--hair);
+}
+
+.ds-wall-list li {
+  padding-block: 0.85rem;
+  border-top: 1px solid var(--hair);
+  color: var(--color-ink);
+}
+
+@media (min-width: 1024px) {
+  .ds-wall {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .ds-wall-copy {
+    grid-column: 1 / span 6;
+  }
+
+  .ds-wall-list {
+    grid-column: 8 / span 5;
+    margin-top: clamp(1rem, 4vw, 4rem);
+  }
+}
+
+/* ---------------------------------------------------------------- receive */
+
+.ds-receive {
+  display: grid;
+  gap: 2rem;
+}
+
+.ds-receive-head {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.ds-receive-list {
+  border-bottom: 1px solid var(--hair);
+}
+
+.ds-receive-list li {
+  padding-block: 0.85rem;
+  border-top: 1px solid var(--hair);
+  color: var(--color-ink);
+}
+
+.ds-receive-copy {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+@media (min-width: 1024px) {
+  .ds-receive {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .ds-receive-head {
+    grid-column: 1 / span 4;
+  }
+
+  .ds-receive-list {
+    grid-column: 5 / span 4;
+  }
+
+  .ds-receive-copy {
+    grid-column: 9 / span 4;
+  }
+}
+
+/* ---------------------------------------------------------------- process */
+
+.ds-process {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.ds-fee {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+@media (min-width: 1024px) {
+  .ds-process {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .ds-process-steps {
+    grid-column: 1 / span 6;
+  }
+
+  .ds-fee {
+    grid-column: 8 / span 5;
+    padding-top: clamp(1rem, 5vw, 6rem);
+  }
+
+  /* The process as one vertical list, numeral at the left. */
+  .ds-process .mp-steps {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0;
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .ds-process .mp-step {
+    display: grid;
+    grid-template-columns: 2.9rem minmax(0, 1fr);
+    column-gap: 1rem;
+    padding-block: 1.3rem 1.5rem;
+  }
+
+  .ds-process .mp-step-n {
+    margin: 0;
+    padding-top: 0.15rem;
+    font-size: 0.9rem;
+  }
+
+  .ds-process .mp-step .mp-body {
+    max-width: 46ch;
+  }
+}

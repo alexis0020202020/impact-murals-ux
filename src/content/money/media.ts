@@ -284,7 +284,7 @@ export const mediaSlots = {
     page: "live-customisation",
     alt: "Material test pieces, each with the technique and finish noted beneath it",
     brief: "Real material tests: three objects, each with its technique and finish noted",
-    ratio: "3:1",
+    ratio: "4:1",
     priority: "essential"
   },
   LC_STATION: {
@@ -293,6 +293,29 @@ export const mediaSlots = {
     brief: "A real station or collection view from a live customisation event",
     ratio: "4:3",
     priority: "essential"
+  },
+  // ---- Art Installations --------------------------------------------------
+  INS_ACCESS: {
+    page: "art-installations",
+    alt: "A tall hand-painted chrome figure on the wall of a building, scaffolding standing against the wall beside it",
+    brief: "A real installation or making view with scale and surroundings",
+    ratio: "0.75",
+    priority: "essential",
+    alias: "EXTERIOR_MURAL_MAIN",
+    stillOnly: true,
+    caption: "SCAFFOLD ACCESS ON A BUILDING-SCALE MURAL."
+  },
+  // ---- Art for Interior Designers & Architects ----------------------------
+  DS_PLATE: {
+    page: "designers",
+    alt: "A black-and-white hand-painted mural of a woman in a long white dress between a white horse and a black horse at two stone windows",
+    brief: "One finished original-art plate, shown beside a plan",
+    ratio: "1.778",
+    priority: "essential",
+    alias: "AUTOMOTIVE_HERO",
+    stillOnly: true,
+    caption: "HAND-PAINTED MURAL / STUDIO WORK",
+    eager: true
   }
 } as const satisfies Record<string, MediaSlot>;
 

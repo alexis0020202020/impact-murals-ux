@@ -1,0 +1,97 @@
+---
+/*
+  One frame of the illustrative development diagram: one abstract form followed
+  from the site survey to installed, a frame for each checkpoint (site,
+  material, fixing, sample, care, installation). A freestanding form is drawn
+  on purpose: the drawings claim no particular material, method, rigging or
+  structural solution. Illustrative, never a drawing of a real work; hidden from
+  assistive technology since the checkpoint's own text carries the meaning.
+*/
+interface Props {
+  kind: "site" | "material" | "fixing" | "sample" | "care" | "install";
+}
+
+const { kind } = Astro.props;
+const form = "M92 172L148 172L160 98L124 36L90 104Z";
+const ridge = "M124 36L120 172M90 104L120 130L160 98";
+---
+<svg class="mp-svg inst-frame" viewBox="0 0 240 200" aria-hidden="true" focusable="false">
+  <path class="l" d="M10 172H230" />
+  {kind === "site" && (
+    <>
+      <path class="l-soft" d="M40 20V172M200 20V172M40 20H200" />
+      <path class="l-soft" d="M20 20V172M14 20H26M14 172H26M40 188H200M40 182V194M200 182V194" />
+      <path class="l-signal" d="M120 158V186M107 172H133" />
+      <circle class="l-signal" cx="120" cy="172" r="8" />
+      <path class="l-signal" d="M6 112H34" />
+      <path class="signal" d="M38 112l-8-4.5v9z" />
+    </>
+  )}
+  {kind === "material" && (
+    <>
+      <path class="fill" d="M124 36L90 104L92 172L120 172Z" />
+      <path class="l" d={form} />
+      <path class="l-soft" d={ridge} />
+      <rect class="l-soft" x="22" y="48" width="24" height="18" />
+      <rect class="l-soft" x="22" y="74" width="24" height="18" />
+      <rect class="l-soft" x="22" y="100" width="24" height="18" />
+      <path class="l-signal" d="M192 64V130" />
+      <path class="signal" d="M192 140l-6-11h12z" />
+    </>
+  )}
+  {kind === "fixing" && (
+    <>
+      <rect class="fill" x="10" y="150" width="220" height="22" />
+      <path class="l" d="M10 150H230" />
+      <rect class="l" x="84" y="140" width="72" height="10" />
+      <path class="l-soft" d="M96 150V168M144 150V168M92 140V134H100V140M140 140V134H148V140" />
+      <path class="l-soft" d="M100 134L108 64M140 134L132 64" />
+      <circle class="l-dash" cx="176" cy="56" r="28" />
+      <path class="l-dash" d="M150 144L164 82" />
+      <rect class="l" x="166" y="40" width="20" height="9" />
+      <path class="l-soft" d="M176 49V70" />
+      <rect class="l" x="170" y="62" width="12" height="6" />
+    </>
+  )}
+  {kind === "sample" && (
+    <>
+      <path class="l" d="M24 150H216" />
+      <path class="l-soft" d="M42 150V172M198 150V172" />
+      <g transform="translate(72 81) scale(0.4)">
+        <path class="fill" d="M124 36L90 104L92 172L120 172Z" />
+        <path class="l" d={form} style="stroke-width: 2.5" vector-effect="non-scaling-stroke" />
+        <path class="l-soft" d={ridge} />
+      </g>
+      <path class="l-soft" d="M70 162H170" />
+      {[70, 82, 94, 106, 118, 130, 142, 154, 166].map((x) => <path class="l-soft" d={`M${x} 162v5`} />)}
+    </>
+  )}
+  {kind === "care" && (
+    <>
+      <path class="fill" d="M124 36L90 104L92 172L120 172Z" />
+      <path class="l" d={form} />
+      <path class="l-soft" d={ridge} />
+      <path class="l-soft" d="M180 172V52M204 172V52" />
+      {[66, 88, 110, 132, 154].map((y) => <path class="l-soft" d={`M180 ${y}H204`} />)}
+      <path class="l-signal" d="M58 56A22 22 0 1 1 76 86" />
+      <path class="signal" d="M80 90l-3-11 10 2z" />
+    </>
+  )}
+  {kind === "install" && (
+    <>
+      <path class="l-soft" d="M30 20V84M30 84H64" />
+      <path class="l-faint" d="M30 176H220" />
+      <g transform="translate(-52 0)">
+        <path class="fill" d="M124 36L90 104L92 164L120 164Z" />
+        <path class="l" d="M92 164L148 164L160 98L124 36L90 104Z" />
+        <path class="l-soft" d="M124 36L120 164M90 104L120 130L160 98" />
+        <rect class="l" x="84" y="164" width="72" height="6" />
+        <circle class="l" cx="98" cy="173" r="3" />
+        <circle class="l" cx="142" cy="173" r="3" />
+      </g>
+      <rect class="l-dash" x="150" y="100" width="62" height="72" />
+      <path class="l-signal" d="M112 188H146" />
+      <path class="signal" d="M150 188l-8-4.5v9z" />
+    </>
+  )}
+</svg>

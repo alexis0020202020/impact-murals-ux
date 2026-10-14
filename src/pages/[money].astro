@@ -19,6 +19,8 @@ import CorporateArtwork from "@/components/money/pages/CorporateArtwork.astro";
 import CustomCanvas from "@/components/money/pages/CustomCanvas.astro";
 import HotelArtwork from "@/components/money/pages/HotelArtwork.astro";
 import LiveCustomisation from "@/components/money/pages/LiveCustomisation.astro";
+import ArtInstallations from "@/components/money/pages/ArtInstallations.astro";
+import Designers from "@/components/money/pages/Designers.astro";
 import { global } from "@/content/global";
 import { moneyMode } from "@/content/money/launch";
 import { moneyCanonical, moneyPage, moneyPages, type MoneyKey } from "@/content/money/pages";
@@ -40,7 +42,9 @@ const components: Partial<Record<MoneyKey, typeof LivePainting>> = {
   "corporate-artwork": CorporateArtwork,
   "custom-canvas": CustomCanvas,
   "hotel-artwork": HotelArtwork,
-  "live-customisation": LiveCustomisation
+  "live-customisation": LiveCustomisation,
+  "art-installations": ArtInstallations,
+  designers: Designers
 };
 const Page = components[pageKey];
 if (!Page) throw new Error(`Money page ${pageKey} has no component yet.`);

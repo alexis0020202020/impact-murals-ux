@@ -22,7 +22,7 @@ const { steps, label, gateLabel = "Decision" } = Astro.props;
       <span class="mp-track-node" aria-hidden="true"></span>
       <span class="mp-track-n" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
       <h3 class="mp-name">{step.title}</h3>
-      <p class="mp-small"><Tight text={step.body} /></p>
+      {step.body && <p class="mp-small"><Tight text={step.body} /></p>}
       {step.gate && <p class="mp-track-gate"><span>{gateLabel}</span>{step.gate}</p>}
     </li>
   ))}

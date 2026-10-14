@@ -20,6 +20,17 @@
   color: var(--color-paper-bright);
 }
 
+/* CUSTOMISATION is a long word: the opening title is sized so it never breaks inside it. */
+.lc-hero .mp-title-hero {
+  font-size: clamp(2.2rem, 9.4vw, 3.6rem);
+}
+
+@media (min-width: 768px) {
+  .lc-hero .mp-title-hero {
+    font-size: clamp(2.6rem, 5.8vw, 5.6rem);
+  }
+}
+
 .lc-hero-inner {
   display: flex;
   flex-direction: column;
@@ -33,9 +44,11 @@
   align-items: flex-start;
 }
 
+/* Under the call to action on a phone, so the button is on the first screen; under the support on a screen. */
 .lc-qualifier {
+  order: 9;
   max-width: 32rem;
-  margin-top: 1.1rem;
+  margin-top: 1.25rem;
   color: color-mix(in srgb, var(--color-paper) 84%, transparent);
 }
 
@@ -44,21 +57,29 @@
   margin: 0;
 }
 
+/* A phone shows the station as a slim band (the drawing is cropped, not squeezed); a screen shows all of it. */
 .lc-scene {
   display: block;
   width: 100%;
-  height: auto;
+  height: 11rem;
 }
 
-.lc-hands {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-top: 0.4rem;
-  text-align: center;
+@media (min-width: 600px) {
+  .lc-scene {
+    height: 17rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lc-scene {
+    height: auto;
+  }
 }
 
 .lc-hero-fig figcaption {
-  margin-top: 0.75rem;
+  margin-top: 0.6rem;
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
   text-align: center;
 }
 
@@ -73,12 +94,21 @@
   }
 
   .lc-hero-text {
-    grid-column: 1 / span 6;
+    grid-column: 1 / span 7;
   }
 
   .lc-hero-fig {
     order: 0;
-    grid-column: 7 / span 6;
+    grid-column: 8 / span 5;
+  }
+
+  .lc-qualifier {
+    order: 0;
+  }
+
+  .lc-hero-fig figcaption {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
   }
 }
 
@@ -311,7 +341,7 @@
 
 .lc-wait-tag {
   position: absolute;
-  top: 0.35rem;
+  bottom: 0.3rem;
   left: 0.4rem;
   font-size: 0.5625rem;
   letter-spacing: 0.1em;
@@ -343,7 +373,7 @@
   }
 
   .lc-step-panel {
-    aspect-ratio: 4 / 3.3;
+    height: clamp(9rem, 13vw, 12.5rem);
     margin-bottom: 1.1rem;
     padding: 1rem;
   }

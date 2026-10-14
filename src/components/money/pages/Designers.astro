@@ -1,0 +1,287 @@
+---
+/**
+ * Art for Interior Designers & Architects in Dubai.
+ *
+ * Organising idea: send and receive. The page behaves like the brief it asks
+ * for: a plain, document-like layout in which two columns, what you send and
+ * what comes back, are the centre of gravity, with a four-stage ledger of when
+ * to involve the studio, a swimlane of who signs off what, and a three-part
+ * fee split. Light, quiet, typographic.
+ *
+ * No design-team partnership is claimed: the drawings and specimen documents
+ * are labelled illustrative, and the one real image is a mural captioned as
+ * such. Copy is in src/content/money/designers.ts.
+ */
+import "@/styles/money/designers.css";
+import { ds } from "@/content/money/designers";
+import { moneyPage } from "@/content/money/pages";
+import { mediaSlots } from "@/content/money/media";
+import { resolveLink } from "@/lib/money-links";
+import Section from "../Section.astro";
+import Media from "../Media.astro";
+import Cta from "../Cta.astro";
+import Paths from "../Paths.astro";
+import Ledger from "../Ledger.astro";
+import Faq from "../Faq.astro";
+import Guides from "../Guides.astro";
+import Closing from "../Closing.astro";
+import Tight from "../Tight.astro";
+import Link from "../Link.astro";
+import DesignPlan from "../diagrams/DesignPlan.astro";
+
+const page = moneyPage("designers");
+const formats = await Promise.all(ds.commission.formats.map(async (format) => ({ format, link: await resolveLink(format.href) })));
+---
+
+<!-- 01. A plan beside a finished plate, a hairline between them. -->
+<section class="mp-hero ds-hero" aria-labelledby="ds-title">
+  <div class="mp-wrap ds-hero-inner">
+    <div class="ds-hero-text">
+      <h1 id="ds-title" class="headline-display mp-title-xl ds-title mp-open" style="--i:1">{page.h1}.</h1>
+      <p class="mp-hero-sub mp-open" style="--i:2">{ds.hero.statement}</p>
+      <p class="mp-hero-support mp-open" style="--i:3">{ds.hero.support}</p>
+      <div class="mp-open" style="--i:4">
+        <Cta pageKey="designers" cta={ds.cta} where="hero" micro={ds.hero.micro} />
+      </div>
+    </div>
+    <figure class="ds-pair mp-open" style="--i:2">
+      <div class="ds-pair-plan"><DesignPlan /></div>
+      <div class="ds-pair-plate">
+        <Media slot="DS_PLATE" priority sizes="(min-width: 1024px) 26vw, 92vw" />
+      </div>
+      <figcaption class="mp-label">{ds.hero.caption}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 02. Four places to involve the studio. -->
+<Section tone="soft" labelledby="ds-involve-title">
+  <p class="mp-eyebrow" data-auto-reveal>{ds.involve.eyebrow}</p>
+  <h2 id="ds-involve-title" class="headline-display mp-title-lg" data-auto-reveal>{ds.involve.headline}</h2>
+  <Ledger steps={ds.involve.steps} cols={4} label="Four stages at which to involve the studio" />
+</Section>
+
+<!-- 03. What you send. What comes back. The page's argument. -->
+<Section labelledby="ds-exchange-title">
+  <p class="mp-eyebrow" data-auto-reveal>{ds.exchange.eyebrow}</p>
+  <h2 id="ds-exchange-title" class="headline-display mp-title-xl" data-auto-reveal>{ds.exchange.headline}</h2>
+  <div class="ds-exchange">
+    <div class="ds-col" data-auto-reveal>
+      <h3 class="mp-eyebrow">{ds.exchange.sendTitle}</h3>
+      <ul class="ds-list" role="list">
+        {ds.exchange.send.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+    <div class="ds-arrow" aria-hidden="true"></div>
+    <div class="ds-col" data-auto-reveal>
+      <h3 class="mp-eyebrow">{ds.exchange.backTitle}</h3>
+      <ul class="ds-list" role="list">
+        {ds.exchange.back.map((item) => <li><Tight text={item} /></li>)}
+      </ul>
+    </div>
+  </div>
+  <p class="mp-body ds-exchange-note" data-auto-reveal>{ds.exchange.note}</p>
+  <div class="ds-docs">
+    {ds.exchange.docs.map((doc) => (
+      <figure class="ds-doc" data-auto-reveal>
+        <figcaption class="ds-doc-head">
+          <span class="mp-label">{doc.title}</span>
+          <span class="ds-doc-stamp mp-label" aria-hidden="true">Sample</span>
+        </figcaption>
+        <table class="ds-doc-table" role="table" aria-label={`Illustrative ${doc.title.toLowerCase()}`}>
+          <thead role="rowgroup">
+            <tr role="row">
+              {doc.columns.map((column) => <th scope="col" role="columnheader">{column}</th>)}
+            </tr>
+          </thead>
+          <tbody role="rowgroup">
+            {doc.rows.map((row) => (
+              <tr role="row">
+                {row.map((cell, index) => <td role="cell" data-label={doc.columns[index]}>{cell}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </figure>
+    ))}
+  </div>
+  <p class="mp-micro ds-docs-caption">{ds.exchange.docsLabel}</p>
+</Section>
+
+<!-- 04. Your direction, or one developed with you. -->
+<Section tone="soft" labelledby="ds-paths-title">
+  <div class="ds-paths">
+    <div class="ds-paths-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ds.paths.eyebrow}</p>
+      <h2 id="ds-paths-title" class="headline-display mp-title-lg" data-auto-reveal>{ds.paths.headline}</h2>
+    </div>
+    <div class="ds-paths-body">
+      <Paths paths={ds.paths.items} />
+      <p class="mp-small ds-paths-note" data-auto-reveal>{ds.paths.note}</p>
+    </div>
+  </div>
+</Section>
+
+<!-- 05. What can be commissioned: names that lead to the pages that own the detail. -->
+<Section labelledby="ds-commission-title">
+  <p class="mp-eyebrow" data-auto-reveal>{ds.commission.eyebrow}</p>
+  <h2 id="ds-commission-title" class="headline-display mp-title-lg" data-auto-reveal>{ds.commission.headline}</h2>
+  <div class="ds-commission">
+    <div class="ds-formats" data-auto-reveal>
+      <p class="mp-eyebrow">{ds.commission.formatsLabel}</p>
+      <ul class="ds-format-list" role="list">
+        {formats.map(({ format }) => (
+          <li class="ds-format">
+            <h3 class="ds-format-name">
+              <Link href={format.href} class="ds-format-link">{format.name}</Link>
+            </h3>
+            <p class="mp-small">{format.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="ds-projects" data-auto-reveal>
+      <p class="mp-eyebrow">{ds.commission.projectsLabel}</p>
+      <ul class="ds-project-list" role="list">
+        {ds.commission.projects.map((project) => (
+          <li><Link href={project.href} class="ds-project-link">{project.name}</Link></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</Section>
+
+<!-- 06. Who signs off what: a swimlane as an accessible table. -->
+<Section tone="soft" labelledby="ds-signoff-title">
+  <div class="ds-signoff-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{ds.signoff.eyebrow}</p>
+      <h2 id="ds-signoff-title" class="headline-display mp-title-lg" data-auto-reveal>{ds.signoff.headline}</h2>
+    </div>
+    <ul class="mp-rows ds-signoff-rows" role="list">
+      {ds.signoff.rows.map((row) => (
+        <li class="mp-row" data-auto-reveal>
+          <h3 class="mp-name">{row.name}</h3>
+          <p class="mp-body">{row.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="ds-lanes-wrap" data-auto-reveal>
+    <table class="ds-lanes" role="table" aria-label="Illustrative sign-off workflow: who signs off at each gate">
+      <thead role="rowgroup">
+        <tr role="row">
+          <th scope="col" role="columnheader"><span class="sr-only">Party</span></th>
+          {ds.signoff.gates.map((gate, index) => (
+            <th scope="col" role="columnheader"><span class="ds-gate-n" aria-hidden="true">{index + 1}</span>{gate}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody role="rowgroup">
+        {ds.signoff.lanes.map((lane) => (
+          <tr role="row">
+            <th scope="row" role="rowheader">{lane.name}</th>
+            {lane.marks.map((mark, index) => (
+              <td role="cell" data-label={ds.signoff.gates[index]} data-mark={mark}>
+                {mark ? (
+                  <>
+                    <span class={`ds-mark ds-mark--${mark}`} aria-hidden="true"></span>
+                    <span class="ds-mark-text">{ds.signoff.key[mark]}</span>
+                  </>
+                ) : (
+                  <span class="sr-only">Not at this gate</span>
+                )}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <ul class="ds-key" role="list" aria-hidden="true">
+      <li><span class="ds-mark ds-mark--signs"></span>{ds.signoff.key.signs}</li>
+      <li><span class="ds-mark ds-mark--submits"></span>{ds.signoff.key.submits}</li>
+    </ul>
+    <p class="mp-micro">{ds.signoff.laneCaption}</p>
+  </div>
+  <div class="ds-signoff-foot">
+    <p class="mp-body" data-auto-reveal>{ds.signoff.body}</p>
+    <p class="mp-body" data-auto-reveal>{ds.signoff.consultant}</p>
+  </div>
+</Section>
+
+<!-- 07. From drawing to wall. -->
+<Section labelledby="ds-wall-title">
+  <div class="ds-wall">
+    <div class="ds-wall-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{ds.wall.eyebrow}</p>
+      <h2 id="ds-wall-title" class="headline-display mp-title-lg" data-auto-reveal>{ds.wall.headline}</h2>
+      <p class="mp-body" data-auto-reveal>{ds.wall.body}</p>
+    </div>
+    <ul class="ds-wall-list" role="list">
+      {ds.wall.items.map((item) => <li class="mp-label" data-auto-reveal>{item}</li>)}
+    </ul>
+  </div>
+</Section>
+
+<!-- 08. What you receive. -->
+<Section tone="soft" labelledby="ds-receive-title">
+  <div class="ds-receive">
+    <div class="ds-receive-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ds.receive.eyebrow}</p>
+      <h2 id="ds-receive-title" class="headline-display mp-title-lg" data-auto-reveal>{ds.receive.headline}</h2>
+    </div>
+    <ul class="ds-receive-list" role="list">
+      {ds.receive.items.map((item) => <li class="mp-label" data-auto-reveal>{item}</li>)}
+    </ul>
+    <div class="ds-receive-copy">
+      <p class="mp-body" data-auto-reveal>{ds.receive.lead}</p>
+      <p class="mp-body" data-auto-reveal>{ds.receive.body}</p>
+    </div>
+  </div>
+</Section>
+
+<!-- 09. How it runs, and the fee in three parts. -->
+<Section labelledby="ds-process-title">
+  <div class="ds-process">
+    <div class="ds-process-steps">
+      <p class="mp-eyebrow" data-auto-reveal>{ds.process.eyebrow}</p>
+      <h2 id="ds-process-title" class="headline-display mp-title-lg" data-auto-reveal>{ds.process.headline}</h2>
+      <Ledger steps={ds.process.steps} cols={3} label="How a collaboration runs" />
+    </div>
+    <div class="ds-fee" data-auto-reveal>
+      <h3 class="mp-eyebrow">{ds.process.feeLabel}</h3>
+      <ul class="mp-rows ds-fee-rows" role="list">
+        {ds.process.fee.map((part) => (
+          <li class="mp-row">
+            <h4 class="mp-name">{part.name}</h4>
+            <p class="mp-body">{part.text}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="mp-small">{ds.process.feeClosing}</p>
+    </div>
+  </div>
+</Section>
+
+<!-- 10. Questions and guides. -->
+<Section tone="soft" labelledby="ds-faq-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ds.faq.eyebrow}</p>
+      <h2 id="ds-faq-title" class="headline-display mp-title-lg" data-auto-reveal>{ds.faq.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Faq items={ds.faq.items} /></div>
+  </div>
+</Section>
+
+<Section labelledby="ds-guides-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ds.guides.eyebrow}</p>
+      <h2 id="ds-guides-title" class="headline-display mp-title-md" data-auto-reveal>{ds.guides.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Guides guides={ds.guides.items} /></div>
+  </div>
+</Section>
+
+<Closing pageKey="designers" closing={ds.closing} cta={ds.cta} />
