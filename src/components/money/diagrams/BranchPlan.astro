@@ -1,0 +1,32 @@
+---
+/*
+  An illustrative branching diagram: one direction, three sites, three local
+  adaptations. Drawn without labels (the caption beside it says what it shows),
+  so it stays legible at any width. Labelled illustrative wherever it appears.
+*/
+const rows = [
+  { y: 36, w: 120 },
+  { y: 100, w: 84 },
+  { y: 164, w: 148 }
+];
+---
+<svg
+  class="mp-svg pa-branch"
+  viewBox="0 0 560 200"
+  style="--tm:22px"
+  role="img"
+  aria-label="Illustrative branching diagram: one direction on the left leads to three sites, each with its own local adaptation."
+  focusable="false"
+>
+  <rect class="fill-ink" x="16" y="84" width="40" height="40" />
+  {rows.map((row, i) => (
+    <g>
+      <path class="l" d={`M56 104H120L150 ${row.y}H196`} />
+      <circle class="l" cx="214" cy={row.y} r="17" style="fill: var(--svg-bg)" />
+      <text class="t-mid t-num" x="214" y={row.y + 5}>{["A", "B", "C"][i]}</text>
+      <path class="l" d={`M231 ${row.y}H266`} />
+      <rect class="l" x="268" y={row.y - 15} width={row.w} height="30" />
+      <path class="l-signal" d={`M278 ${row.y}H${268 + row.w - 10}`} style="stroke-dasharray: 3 4" />
+    </g>
+  ))}
+</svg>

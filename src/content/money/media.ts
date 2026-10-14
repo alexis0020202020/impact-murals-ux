@@ -316,6 +316,81 @@ export const mediaSlots = {
     stillOnly: true,
     caption: "HAND-PAINTED MURAL / STUDIO WORK",
     eager: true
+  },
+  // ---- Public Art ---------------------------------------------------------
+  PA_WALL: {
+    page: "public-art",
+    alt: "A building-scale exterior mural in black and white, a winged figure on a pedestal, with scaffolding at its side",
+    brief: "The exterior wall at full height",
+    ratio: "0.75",
+    priority: "essential",
+    alias: "EXTERIOR_MURAL_MAIN",
+    stillOnly: true,
+    caption: "PRIVATE COMMISSION / EXTERIOR MURAL",
+    eager: true
+  },
+  PA_BEFORE: {
+    page: "public-art",
+    alt: "The same exterior wall before the mural: a plain white pillar with the number 77, a service wall of air-conditioning units and parked cars beside it",
+    brief: "The wall before the work",
+    ratio: "0.75",
+    priority: "essential",
+    alias: "EXTERIOR_MURAL_BEFORE",
+    stillOnly: true,
+    caption: "BEFORE"
+  },
+  PA_SCAFFOLD: {
+    page: "public-art",
+    alt: "The foot of a large exterior mural: a mobile scaffold tower against the wall, the painted base of the figure and the building entrance beside it",
+    brief: "Documentary access imagery: scaffold, lift or platform at the wall",
+    ratio: "1.667",
+    priority: "essential",
+    caption: "SCAFFOLD ACCESS AT THE FOOT OF THE WALL."
+  },
+  PA_PREP: {
+    page: "public-art",
+    alt: "A wall surface prepared for painting: cleaned, repaired and primed",
+    brief: "The prepared surface: cleaned, repaired and primed, before any paint",
+    ratio: "0.75",
+    priority: "essential"
+  },
+  PA_PAINTED: {
+    page: "public-art",
+    alt: "A detail of the finished exterior mural: the wings and upper body of the winged figure in black, white and grey",
+    brief: "The painted wall: a detail of the finished work",
+    ratio: "0.75",
+    priority: "essential",
+    caption: "PAINTED"
+  },
+  PA_RANGE_PHOTOREAL: {
+    page: "public-art",
+    alt: "A black-and-white photoreal mural of a woman in a long white dress between a white horse and a black horse at two stone windows",
+    brief: "A mural of one character",
+    ratio: "1.366",
+    priority: "essential",
+    alias: "FERRARI_REALISM",
+    stillOnly: true,
+    caption: "PHOTOREAL MURAL / STUDIO WORK"
+  },
+  PA_RANGE_GRAPHIC: {
+    page: "public-art",
+    alt: "A mural of pink cherry blossom branches against a pale wall above a line drawing of a classic sports car",
+    brief: "A mural of a second character",
+    ratio: "0.581",
+    priority: "essential",
+    alias: "WHAT_WE_DO_MAIN",
+    stillOnly: true,
+    caption: "ILLUSTRATED INTERIOR MURAL / STUDIO WORK"
+  },
+  PA_RANGE_SCRIPT: {
+    page: "public-art",
+    alt: "Arabic calligraphy hand-painted across the bonnet and door of a white SUV at a launch event",
+    brief: "A third register: calligraphy or graphic work",
+    ratio: "0.4625",
+    priority: "essential",
+    alias: "ICAUR_LAUNCH",
+    stillOnly: true,
+    caption: "ARABIC CALLIGRAPHY, PAINTED LIVE ON A VEHICLE / iCAUR LAUNCH"
   }
 } as const satisfies Record<string, MediaSlot>;
 

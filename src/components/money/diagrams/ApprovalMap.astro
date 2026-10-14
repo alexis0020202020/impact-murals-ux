@@ -1,0 +1,40 @@
+---
+/*
+  An illustrative approval map: the project at the centre and the six parties
+  that may have to say yes around it, each on a thin line. Real HTML text, so it
+  reads and is selectable as words; the lines are decoration. On a phone it
+  becomes a list under the project. Labelled illustrative wherever it appears;
+  it promises no approval and names no real party.
+*/
+interface Props {
+  core: string;
+  roles: string[];
+}
+
+const { core, roles } = Astro.props;
+// Where each role sits on the map, as a share of its width and height; the lines meet at the middle.
+const spots = [
+  { x: 14, y: 16 },
+  { x: 50, y: 10 },
+  { x: 86, y: 16 },
+  { x: 14, y: 84 },
+  { x: 50, y: 90 },
+  { x: 86, y: 84 }
+];
+---
+<div class="pa-map">
+  <svg class="pa-map-lines" viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    {spots.map((spot) => (
+      <path
+        d={`M500 200L${spot.x * 10} ${spot.y * 4}`}
+        style="fill: none; stroke: var(--hair); stroke-width: 1; vector-effect: non-scaling-stroke"
+      />
+    ))}
+  </svg>
+  <p class="pa-node pa-node--core">{core}</p>
+  <ul class="pa-roles" role="list">
+    {roles.map((role, index) => (
+      <li class="pa-node" style={`--x:${spots[index].x}%;--y:${spots[index].y}%`}>{role}</li>
+    ))}
+  </ul>
+</div>

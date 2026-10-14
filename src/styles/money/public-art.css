@@ -1,0 +1,776 @@
+/*
+  /what-we-do/public-art/ (strengthened): the page's own composition.
+
+  Organising idea: the site dossier. A full-height portrait of a wall opens a
+  six-part file on a site (surface, access, exposure, approvals, programme,
+  care); an access diagram, an approval map and a programme bar are its working
+  drawings. Procurement-literate, with the art always visible. The shared
+  vocabulary is in base.css.
+*/
+
+/* ------------------------------------------------------------------- hero */
+
+.pa-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+  background: var(--color-ink);
+  color: var(--color-paper-bright);
+}
+
+.pa-hero .headline-display {
+  color: var(--color-paper-bright);
+}
+
+.pa-hero-inner {
+  order: 1;
+  padding-block: 2.25rem 2.5rem;
+}
+
+.pa-hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* A phone and tablet: the wall above the type, whole, its "before" lapping the lower corner. */
+.pa-wall {
+  position: relative;
+  order: 0;
+  margin: 0;
+  padding: 1.25rem var(--gutter) 0;
+}
+
+.pa-wall-frame {
+  position: relative;
+  width: min(100%, calc(54svh * var(--r)));
+  margin-inline: auto;
+}
+
+/* A shade under the caption, so the label holds on any part of the wall. */
+.pa-wall-frame::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 1;
+  height: 26%;
+  pointer-events: none;
+  background: linear-gradient(to top, color-mix(in srgb, var(--color-ink) 72%, transparent), transparent);
+}
+
+.pa-wall-caption {
+  position: absolute;
+  right: calc(var(--gutter) + 0.7rem);
+  bottom: 0.7rem;
+  z-index: 3;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--color-paper-bright);
+}
+
+.pa-before {
+  position: absolute;
+  bottom: -1.4rem;
+  left: calc(var(--gutter) + 0.3rem);
+  z-index: 3;
+  width: min(30%, 8rem);
+  border: 3px solid var(--color-ink);
+}
+
+.pa-before-tag {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  z-index: 1;
+  padding: 0.1rem 0.35rem;
+  background: var(--color-ink);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  color: var(--color-paper-bright);
+}
+
+@media (min-width: 1024px) {
+  .pa-hero {
+    display: block;
+    min-height: clamp(36rem, calc(100svh - 11rem), 52rem);
+  }
+
+  .pa-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    min-height: inherit;
+    padding-block: clamp(2rem, 6svh, 4rem);
+  }
+
+  .pa-hero-text {
+    width: 52%;
+    padding-right: var(--gap);
+  }
+
+  /* A screen: the wall at full height, flush to the top, the bottom and the right edge. */
+  .pa-wall {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    padding: 0;
+  }
+
+  .pa-wall-frame {
+    width: auto;
+    height: 100%;
+    margin: 0;
+    aspect-ratio: var(--r);
+  }
+
+  .pa-wall-frame .mp-frame {
+    height: 100%;
+    aspect-ratio: auto;
+  }
+
+  .pa-wall-caption {
+    right: 1.25rem;
+    bottom: 1.1rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+  }
+
+  .pa-before {
+    bottom: 12%;
+    left: -17%;
+    width: 36%;
+  }
+
+  .pa-before-tag {
+    font-size: 0.625rem;
+  }
+}
+
+/* ---------------------------------------------------------------- dossier */
+
+.pa-dossier {
+  position: relative;
+  padding-block: 1.25rem 1.6rem;
+  background: var(--color-ink);
+  border-top: 1px solid var(--hair);
+}
+
+.pa-parts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 1rem;
+  margin-top: 0.9rem;
+}
+
+.pa-part {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding-block: 0.65rem;
+  border-top: 1px solid var(--hair);
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: var(--color-paper-bright);
+  transition: color 180ms ease;
+}
+
+.pa-part-n {
+  color: color-mix(in srgb, var(--color-paper) 55%, transparent);
+}
+
+.pa-part:hover .pa-part-n,
+.pa-part:focus-visible .pa-part-n {
+  color: var(--color-signal);
+}
+
+@media (min-width: 768px) {
+  .pa-parts {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: var(--gap);
+  }
+}
+
+/* --------------------------------------------------------------- contexts */
+
+.pa-contexts {
+  display: grid;
+  gap: 2rem;
+}
+
+.pa-contexts-head {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+@media (min-width: 1024px) {
+  .pa-contexts {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .pa-contexts-head {
+    grid-column: 1 / span 4;
+  }
+
+  .pa-contexts-rows {
+    grid-column: 5 / span 8;
+  }
+
+  .pa-contexts-rows .mp-row {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+}
+
+/* ------------------------------------------------------------------ place */
+
+.pa-place {
+  display: grid;
+  gap: 2.25rem;
+}
+
+.pa-place-copy {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.pa-range {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 1.25rem 0.9rem;
+}
+
+.pa-range-item:first-child {
+  grid-column: 1 / -1;
+}
+
+.pa-range figcaption {
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+}
+
+@media (min-width: 1024px) {
+  .pa-place {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: end;
+  }
+
+  .pa-place-copy {
+    grid-column: 1 / span 4;
+    align-self: start;
+  }
+
+  .pa-range {
+    grid-column: 5 / span 8;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 0.85fr);
+    gap: var(--gap);
+  }
+
+  .pa-range-item:first-child {
+    grid-column: auto;
+  }
+
+  .pa-range figcaption {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+  }
+}
+
+/* ------------------------------------------------------------------- ways */
+
+.pa-ways {
+  display: grid;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+  border-top: 1px solid var(--hair);
+}
+
+.pa-way {
+  padding-block: 1.4rem 1.6rem;
+  border-bottom: 1px solid var(--hair);
+}
+
+.pa-way .mp-name {
+  margin-bottom: 0.7rem;
+}
+
+.pa-ways-note {
+  max-width: 62ch;
+  margin-top: 1.5rem;
+  color: var(--color-ink);
+}
+
+@media (min-width: 768px) {
+  .pa-ways {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .pa-way {
+    padding: clamp(1.4rem, 2vw, 2.1rem) clamp(1.25rem, 2.6vw, 2.6rem) clamp(1.4rem, 2vw, 2.1rem) 0;
+    border-bottom: 0;
+  }
+
+  .pa-way + .pa-way {
+    padding-left: clamp(1.25rem, 2.6vw, 2.6rem);
+    border-left: 1px solid var(--hair);
+  }
+}
+
+/* ------------------------------------------------------------------- site */
+
+.pa-site-head {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.pa-site-copy {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.pa-site-figs {
+  display: grid;
+  gap: 2rem;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+.pa-access {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.pa-site-labels {
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 1024px) {
+  .pa-site-head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: end;
+  }
+
+  .pa-site-head > :first-child {
+    grid-column: 1 / span 6;
+  }
+
+  .pa-site-copy {
+    grid-column: 8 / span 5;
+  }
+
+  .pa-site-figs {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: end;
+  }
+
+  .pa-site-photo {
+    grid-column: 1 / span 7;
+  }
+
+  .pa-site-diagram {
+    grid-column: 8 / span 5;
+  }
+}
+
+/* ------------------------------------------------------------------- care */
+
+.pa-care {
+  display: grid;
+  gap: 2.25rem;
+}
+
+.pa-care-copy {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+}
+
+.pa-seq {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  align-items: start;
+}
+
+.pa-seq-item {
+  min-width: 0;
+}
+
+.pa-seq figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+}
+
+/* The placeholder keeps its tag on a narrow frame; the longer brief is for wider ones. */
+.pa-seq .mp-slot-brief,
+.pa-seq .mp-slot-ratio {
+  display: none;
+}
+
+.pa-seq .mp-slot {
+  padding: 0.55rem;
+}
+
+.pa-seq .mp-slot::after {
+  inset: 0.3rem;
+}
+
+.pa-seq .mp-slot-tag {
+  gap: 0.35rem;
+  font-size: 0.5625rem;
+  letter-spacing: 0.05em;
+}
+
+.pa-seq .mp-slot-tag::before {
+  width: 0.6rem;
+}
+
+@media (min-width: 600px) {
+  .pa-seq {
+    gap: var(--gap);
+  }
+
+  .pa-seq figcaption {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+  }
+
+  .pa-seq .mp-slot {
+    padding: clamp(0.9rem, 2.2vw, 1.4rem);
+  }
+
+  .pa-seq .mp-slot::after {
+    inset: 0.55rem;
+  }
+
+  .pa-seq .mp-slot-tag {
+    gap: 0.6rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+  }
+
+  .pa-seq .mp-slot-tag::before {
+    width: 0.95rem;
+  }
+
+  .pa-seq .mp-slot-brief {
+    display: block;
+    font-size: 0.9375rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pa-care {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: center;
+  }
+
+  .pa-care-copy {
+    grid-column: 1 / span 5;
+  }
+
+  .pa-seq {
+    grid-column: 7 / span 6;
+  }
+}
+
+/* -------------------------------------------------------------- approvals */
+
+.pa-approvals-fig {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+.pa-map {
+  position: relative;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.pa-map .pa-map-lines {
+  display: none;
+}
+
+.pa-node {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--hair);
+  background: var(--color-paper);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 610;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.pa-node--core {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-paper-bright);
+  text-align: center;
+}
+
+.pa-roles {
+  display: grid;
+  gap: 0.5rem;
+  margin-left: 1.1rem;
+  padding-left: 1.1rem;
+  border-left: 1px solid var(--color-ink);
+}
+
+.pa-approvals-body {
+  max-width: 62ch;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 768px) {
+  .pa-map {
+    display: block;
+    aspect-ratio: 5 / 2;
+    min-height: 18rem;
+  }
+
+  .pa-map .pa-map-lines {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .pa-roles {
+    display: contents;
+  }
+
+  .pa-node {
+    position: absolute;
+    top: var(--y);
+    left: var(--x);
+    width: max-content;
+    max-width: 17rem;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: clamp(0.85rem, 1.25vw, 1.35rem);
+  }
+
+  .pa-node--core {
+    top: 50%;
+    left: 50%;
+    padding: 1rem 1.6rem;
+  }
+}
+
+/* -------------------------------------------------------------- programme */
+
+.pa-programme-head {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.pa-bar-fig {
+  margin: clamp(2rem, 4vw, 3.5rem) 0 0;
+}
+
+.pa-bar {
+  display: flex;
+  gap: 3px;
+}
+
+.pa-bar li {
+  display: grid;
+  gap: 0.55rem;
+  flex: var(--span) 1 0;
+  min-width: 0;
+}
+
+.pa-bar-fill {
+  display: block;
+  height: 0.9rem;
+  background: var(--color-ink);
+}
+
+.pa-bar li:nth-child(even) .pa-bar-fill {
+  background: color-mix(in srgb, var(--color-ink) 50%, transparent);
+}
+
+.pa-bar .mp-label {
+  padding-right: 0.45rem;
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  overflow-wrap: anywhere;
+}
+
+.pa-bar-fig figcaption {
+  margin-top: 0.9rem;
+}
+
+.pa-branch-fig {
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+.pa-branch {
+  display: block;
+  width: 100%;
+  max-width: 36rem;
+  height: auto;
+}
+
+.pa-programme-link {
+  margin-top: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .pa-bar .mp-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pa-programme-head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: end;
+  }
+
+  .pa-programme-head > :first-child {
+    grid-column: 1 / span 6;
+  }
+
+  .pa-programme-head > .mp-body {
+    grid-column: 8 / span 5;
+  }
+}
+
+/* ------------------------------------------------------------------ scale */
+
+.pa-scale {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.pa-scale-copy {
+  display: grid;
+  gap: 1rem;
+  max-width: 60ch;
+}
+
+@media (min-width: 1024px) {
+  .pa-scale {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .pa-scale-head {
+    grid-column: 1 / span 5;
+    grid-row: 1 / span 2;
+  }
+
+  .pa-scale-label {
+    grid-column: 7 / span 4;
+  }
+
+  .pa-scale-copy {
+    grid-column: 7 / span 6;
+  }
+}
+
+/* ------------------------------------------------------------------ route */
+
+.pa-route {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.pa-receive {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.pa-receive-list {
+  border-bottom: 1px solid var(--hair);
+}
+
+.pa-receive-list li {
+  padding-block: 0.85rem;
+  border-top: 1px solid var(--hair);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--color-ink);
+}
+
+@media (min-width: 1024px) {
+  .pa-route {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .pa-route-steps {
+    grid-column: 1 / span 7;
+  }
+
+  .pa-receive {
+    grid-column: 9 / span 4;
+    padding-top: clamp(1rem, 5vw, 6rem);
+  }
+
+  .pa-route .mp-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ----------------------------------------------------------------- budget */
+
+.pa-budget {
+  display: grid;
+  gap: 2rem;
+}
+
+.pa-budget-head {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.pa-budget-head .mp-body {
+  max-width: 46ch;
+}
+
+@media (min-width: 1024px) {
+  .pa-budget {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .pa-budget-head {
+    grid-column: 1 / span 6;
+  }
+
+  .pa-budget-tags {
+    grid-column: 8 / span 5;
+    padding-top: clamp(1rem, 4vw, 4.5rem);
+  }
+}

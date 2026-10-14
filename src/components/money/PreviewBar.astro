@@ -9,16 +9,18 @@ import { moneyMode } from "@/content/money/launch";
 */
 interface Props {
   provisional?: boolean;
+  /** An existing page shown in its strengthened form: the live page is unchanged and still indexed. */
+  existing?: boolean;
 }
 
-const { provisional = false } = Astro.props;
+const { provisional = false, existing = false } = Astro.props;
 const mode = moneyMode();
 ---
 {mode !== "live" && (
   <div class:list={["mp-preview", provisional && "mp-preview--provisional"]} role="note">
     <b>Preview</b>
-    <span>Unpublished draft.</span>
-    <span class="mp-preview-detail">Not indexed. Not in the sitemap.</span>
+    <span>{existing ? "Strengthened draft of an existing page." : "Unpublished draft."}</span>
+    <span class="mp-preview-detail">{existing ? "The live page is unchanged until launch." : "Not indexed. Not in the sitemap."}</span>
     {provisional && <span>Provisional: launch on hold until the workshop gate is cleared.</span>}
   </div>
 )}

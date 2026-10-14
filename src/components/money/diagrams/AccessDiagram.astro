@@ -1,0 +1,60 @@
+---
+/*
+  An illustrative access diagram: an elevation of a building with a painted
+  surface, the two common ways a team reaches it (a scaffold tower, a mobile
+  lift) and a barrier that keeps the public out of the working zone. It shows
+  the questions a site raises, not an access solution, and certifies nothing.
+  Labelled illustrative wherever it appears; not a drawing of a real site.
+*/
+const label =
+  "Illustrative access diagram: the elevation of a building with a painted surface, a scaffold tower at its left, a mobile lift at its right, and a barrier along the ground that keeps the public out of the working zone.";
+---
+<svg
+  class="mp-svg pa-access"
+  viewBox="0 0 560 430"
+  style="--tm:24px"
+  role="img"
+  aria-label={label}
+  focusable="false"
+>
+  <!-- Ground and building -->
+  <path class="l" d="M0 372H560" />
+  <rect class="l" x="170" y="36" width="230" height="336" />
+  <path class="l-faint" d="M170 108H400M170 180H400M170 252H400M170 324H400" />
+  <rect class="fill" x="200" y="72" width="170" height="254" />
+  <rect class="l-soft" x="200" y="72" width="170" height="254" />
+  <text class="t-soft t-small t-mid t-minor" x="285" y="204">PAINTED SURFACE</text>
+
+  <!-- A scaffold tower -->
+  <path class="l" d="M118 372V150M156 372V150" />
+  <path class="l" d="M110 150H164M110 222H164M110 294H164" />
+  <path class="l-soft" d="M118 372L156 336L118 300L156 264L118 228L156 192L118 156" />
+  <text class="t-soft t-small t-mid t-minor" x="137" y="138">SCAFFOLD</text>
+
+  <!-- A mobile lift -->
+  <rect class="l" x="428" y="346" width="84" height="22" />
+  <circle class="l" cx="446" cy="370" r="6" />
+  <circle class="l" cx="494" cy="370" r="6" />
+  <path class="l" d="M456 346L384 160" />
+  <rect class="l" x="368" y="140" width="32" height="20" />
+  <text class="t-soft t-small t-mid t-minor" x="470" y="330">MOBILE LIFT</text>
+
+  <!-- A barrier and a protected public zone -->
+  <path class="l-signal" d="M20 394H540" style="stroke-dasharray: 5 6" />
+  <path class="l-signal" d="M70 372V394M170 372V394M270 372V394M370 372V394M470 372V394" />
+  <circle class="l" cx="36" cy="352" r="5" />
+  <path class="l" d="M28 362Q36 358 44 362L46 386H26Z" />
+  <text class="t-signal t-small t-mid t-minor" x="280" y="418">PROTECTED PUBLIC ZONE</text>
+
+  <!-- Numbered points: scaffold, lift, barrier -->
+  {[
+    [1, 137, 100],
+    [2, 470, 300],
+    [3, 120, 408]
+  ].map(([n, x, y]) => (
+    <g>
+      <circle class="l" cx={x} cy={y} r="13" style="fill: var(--svg-bg)" />
+      <text class="t-mid t-num" x={x} y={Number(y) + 5}>{n}</text>
+    </g>
+  ))}
+</svg>

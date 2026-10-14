@@ -30,7 +30,7 @@ const trail = (await breadcrumbsFor(page.path)).map((crumb, index, all) =>
   index === all.length - 1 && !page.existing ? { ...crumb, path: `${page.path}/` } : crumb
 );
 ---
-<PreviewBar provisional={page.status === "provisional"} />
+<PreviewBar provisional={page.status === "provisional"} existing={Boolean(page.existing)} />
 <Breadcrumbs trail={trail} currentLabel={page.label} />
 <JsonLd pageKey={pageKey} canonical={canonical} />
 <div class="mp-page" data-money-page={pageKey}>

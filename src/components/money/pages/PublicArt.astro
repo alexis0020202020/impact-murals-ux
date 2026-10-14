@@ -1,0 +1,278 @@
+---
+/**
+ * Public Art Dubai & UAE (the existing page, strengthened in place).
+ *
+ * Organising idea: the site dossier. The page reads as a six-part file on a
+ * site (surface, access, exposure, approvals, programme, care) with a full-height
+ * portrait of a building as its opening and an illustrated approval map and
+ * access diagram as its working drawings. Procurement-literate in tone, with
+ * the art always visible.
+ *
+ * Claims fence: the only exterior work shown is a private commission, so it is
+ * captioned as one; the marque it depicts is the subject, not a client; the
+ * page claims the artistic access requirement and coordination, not access
+ * certification, and promises no approval. Copy is in
+ * src/content/money/public-art.ts. This page replaces the generic offer
+ * template for this one URL only while the launch switch is not off (see
+ * src/pages/what-we-do/[slug].astro).
+ */
+import "@/styles/money/public-art.css";
+import { pa } from "@/content/money/public-art";
+import { moneyPage } from "@/content/money/pages";
+import { mediaSlots } from "@/content/money/media";
+import { resolveSlot } from "@/lib/money-media";
+import Section from "../Section.astro";
+import Media from "../Media.astro";
+import Cta from "../Cta.astro";
+import Rows from "../Rows.astro";
+import Ledger from "../Ledger.astro";
+import Faq from "../Faq.astro";
+import Guides from "../Guides.astro";
+import Closing from "../Closing.astro";
+import Tight from "../Tight.astro";
+import Link from "../Link.astro";
+import WallLabel from "../WallLabel.astro";
+import AccessDiagram from "../diagrams/AccessDiagram.astro";
+import ApprovalMap from "../diagrams/ApprovalMap.astro";
+import BranchPlan from "../diagrams/BranchPlan.astro";
+
+const page = moneyPage("public-art");
+const wallRatio = resolveSlot("PA_WALL").ratio;
+const range = ["PA_RANGE_PHOTOREAL", "PA_RANGE_GRAPHIC", "PA_RANGE_SCRIPT"] as const;
+---
+
+<!-- 01. The opening: a full-height portrait of a wall, its "before" lapping the corner. -->
+<section class="mp-hero pa-hero surface-dark" aria-labelledby="pa-title">
+  <div class="mp-wrap pa-hero-inner">
+    <div class="pa-hero-text">
+      <h1 id="pa-title" class="headline-display mp-title-xl mp-open" style="--i:1">{page.h1}.</h1>
+      <p class="mp-hero-sub mp-open" style="--i:2">{pa.hero.statement}</p>
+      <p class="mp-hero-support mp-open" style="--i:3">{pa.hero.support}</p>
+      <div class="mp-open" style="--i:4">
+        <Cta pageKey="public-art" cta={pa.cta} where="hero" micro={pa.hero.micro} />
+      </div>
+    </div>
+  </div>
+  <figure class="pa-wall mp-open" style={`--i:2;--r:${wallRatio}`}>
+    <div class="pa-wall-frame"><Media slot="PA_WALL" priority sizes="(min-width: 1024px) 36vw, 90vw" /></div>
+    <div class="pa-before">
+      <Media slot="PA_BEFORE" sizes="(min-width: 1024px) 14vw, 30vw" />
+      <span class="pa-before-tag mp-label">{mediaSlots.PA_BEFORE.caption}</span>
+    </div>
+    <figcaption class="pa-wall-caption mp-label">{mediaSlots.PA_WALL.caption}</figcaption>
+  </figure>
+</section>
+
+<!-- The file's six parts, each leading to where it is dealt with. -->
+<nav class="pa-dossier surface-dark" aria-label={pa.dossier.label}>
+  <div class="mp-wrap">
+    <p class="mp-eyebrow">{pa.dossier.label}</p>
+    <ol class="pa-parts" role="list">
+      {pa.dossier.parts.map((part) => (
+        <li><a class="pa-part" href={part.href}><span class="pa-part-n" aria-hidden="true">{part.n}</span>{part.name}</a></li>
+      ))}
+    </ol>
+  </div>
+</nav>
+
+<!-- 02. Where public art is commissioned. -->
+<Section labelledby="pa-contexts-title">
+  <div class="pa-contexts">
+    <div class="pa-contexts-head">
+      <p class="mp-eyebrow" data-auto-reveal>{pa.contexts.eyebrow}</p>
+      <h2 id="pa-contexts-title" class="headline-display mp-title-lg" data-auto-reveal>{pa.contexts.headline}</h2>
+    </div>
+    <div class="pa-contexts-rows"><Rows rows={pa.contexts.rows} /></div>
+  </div>
+</Section>
+
+<!-- 03. The place writes the brief: three registers, three heights. -->
+<Section tone="soft" labelledby="pa-place-title">
+  <div class="pa-place">
+    <div class="pa-place-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{pa.place.eyebrow}</p>
+      <h2 id="pa-place-title" class="headline-display mp-title-lg" data-auto-reveal>{pa.place.headline}</h2>
+      <p class="mp-lead" data-auto-reveal>{pa.place.lead}</p>
+      <p class="mp-body" data-auto-reveal>{pa.place.body}</p>
+    </div>
+    <ul class="pa-range" role="list">
+      {range.map((slot) => (
+        <li class="pa-range-item" data-auto-reveal>
+          <figure class="mp-figure" style={`--r:${resolveSlot(slot).ratio}`}>
+            <div data-auto-scale><Media slot={slot} sizes="(min-width: 1024px) 24vw, 30vw" /></div>
+            <figcaption class="mp-label">{mediaSlots[slot].caption}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Section>
+
+<!-- 04. Three ways to start. -->
+<Section labelledby="pa-ways-title">
+  <p class="mp-eyebrow" data-auto-reveal>{pa.ways.eyebrow}</p>
+  <h2 id="pa-ways-title" class="headline-display mp-title-lg" data-auto-reveal>{pa.ways.headline}</h2>
+  <div class="pa-ways">
+    {pa.ways.items.map((item) => (
+      <div class="pa-way" data-auto-reveal>
+        <h3 class="mp-name">{item.name}</h3>
+        <p class="mp-body"><Tight text={item.body} /></p>
+      </div>
+    ))}
+  </div>
+  <p class="mp-label pa-ways-note" data-auto-reveal>{pa.ways.note}</p>
+</Section>
+
+<!-- 05. What the site allows: the wall with its scaffold, and the access question drawn. -->
+<Section tone="soft" id="pa-site" labelledby="pa-site-title">
+  <div class="pa-site-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{pa.site.eyebrow}</p>
+      <h2 id="pa-site-title" class="headline-display mp-title-lg" data-auto-reveal>{pa.site.headline}</h2>
+    </div>
+    <div class="pa-site-copy">
+      <p class="mp-lead" data-auto-reveal>{pa.site.lead}</p>
+      <p class="mp-body" data-auto-reveal>{pa.site.body}</p>
+    </div>
+  </div>
+  <div class="pa-site-figs">
+    <figure class="mp-figure pa-site-photo">
+      <div data-auto-scale><Media slot="PA_SCAFFOLD" sizes="(min-width: 1024px) 56vw, 92vw" /></div>
+      <figcaption class="mp-label">{mediaSlots.PA_SCAFFOLD.caption}</figcaption>
+    </figure>
+    <figure class="mp-fig pa-site-diagram" data-auto-reveal>
+      <AccessDiagram />
+      <figcaption class="mp-label">{pa.site.caption}</figcaption>
+    </figure>
+  </div>
+  <ul class="mp-tags pa-site-labels" role="list" data-auto-reveal>
+    {pa.site.labels.map((label) => <li>{label}</li>)}
+  </ul>
+</Section>
+
+<!-- 06. Made to stand outdoors: bare wall, prepared surface, painted. -->
+<Section tone="dark" id="pa-care" labelledby="pa-care-title">
+  <div class="pa-care">
+    <div class="pa-care-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{pa.care.eyebrow}</p>
+      <h2 id="pa-care-title" class="headline-display mp-title-lg" data-auto-reveal>{pa.care.headline}</h2>
+      <p class="mp-lead" data-auto-reveal>{pa.care.lead}</p>
+      <p class="mp-body" data-auto-reveal>{pa.care.body}</p>
+    </div>
+    <ol class="pa-seq" role="list" aria-label="A wall: bare, prepared, painted">
+      {pa.care.frames.map((frame) => (
+        <li class="pa-seq-item">
+          <figure class="mp-figure">
+            <div data-auto-scale><Media slot={frame.slot} sizes="(min-width: 1024px) 18vw, 30vw" /></div>
+            <figcaption class="mp-label"><span aria-hidden="true">{frame.n} </span>{frame.label}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ol>
+  </div>
+</Section>
+
+<!-- 07. Who has to say yes. -->
+<Section id="pa-approvals" labelledby="pa-approvals-title">
+  <p class="mp-eyebrow" data-auto-reveal>{pa.approvals.eyebrow}</p>
+  <h2 id="pa-approvals-title" class="headline-display mp-title-lg" data-auto-reveal>{pa.approvals.headline}</h2>
+  <figure class="mp-fig pa-approvals-fig" data-auto-reveal>
+    <ApprovalMap core={pa.approvals.core} roles={pa.approvals.roles} />
+    <figcaption class="mp-label">{pa.approvals.caption}</figcaption>
+  </figure>
+  <p class="mp-body pa-approvals-body" data-auto-reveal>{pa.approvals.body}</p>
+</Section>
+
+<!-- 08. Sequencing the work: one site, then several. -->
+<Section tone="soft" id="pa-programme" labelledby="pa-programme-title">
+  <div class="pa-programme-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{pa.programme.eyebrow}</p>
+      <h2 id="pa-programme-title" class="headline-display mp-title-lg" data-auto-reveal>{pa.programme.headline}</h2>
+    </div>
+    <p class="mp-body" data-auto-reveal>{pa.programme.body}</p>
+  </div>
+  <figure class="pa-bar-fig" data-auto-reveal>
+    <ol class="pa-bar" role="list" aria-label="One site, in sequence">
+      {pa.programme.bar.map((segment) => (
+        <li style={`--span:${segment.span}`}><span class="pa-bar-fill" aria-hidden="true"></span><span class="mp-label">{segment.label}</span></li>
+      ))}
+    </ol>
+    <figcaption class="mp-micro">{pa.programme.barCaption}</figcaption>
+  </figure>
+  <figure class="mp-fig pa-branch-fig" data-auto-reveal>
+    <BranchPlan />
+    <figcaption class="mp-label">{pa.programme.branchCaption}</figcaption>
+  </figure>
+  <p class="pa-programme-link"><Link href={pa.programme.link.href} class="mp-link" arrow>{pa.programme.link.label}</Link></p>
+</Section>
+
+<!-- 09. Scale, on a real wall: a wall label, never a case study. -->
+<Section labelledby="pa-scale-title">
+  <div class="pa-scale">
+    <div class="pa-scale-head">
+      <p class="mp-eyebrow" data-auto-reveal>{pa.scale.eyebrow}</p>
+      <h2 id="pa-scale-title" class="headline-display mp-title-lg" data-auto-reveal>{pa.scale.headline}</h2>
+    </div>
+    <WallLabel class="pa-scale-label" lines={pa.scale.label} />
+    <div class="pa-scale-copy">
+      <p class="mp-body" data-auto-reveal>{pa.scale.body}</p>
+      <p class="mp-small" data-auto-reveal>{pa.scale.note}</p>
+    </div>
+  </div>
+</Section>
+
+<!-- 10. The procurement route. -->
+<Section tone="soft" labelledby="pa-route-title">
+  <div class="pa-route">
+    <div class="pa-route-steps">
+      <p class="mp-eyebrow" data-auto-reveal>{pa.route.eyebrow}</p>
+      <h2 id="pa-route-title" class="headline-display mp-title-lg" data-auto-reveal>{pa.route.headline}</h2>
+      <Ledger steps={pa.route.steps} cols={3} label="The procurement route" />
+    </div>
+    <div class="pa-receive" data-auto-reveal>
+      <h3 class="mp-eyebrow">{pa.route.receiveLabel}</h3>
+      <ul class="pa-receive-list" role="list">
+        {pa.route.receive.map((item) => <li><Tight text={item} /></li>)}
+      </ul>
+      <p class="mp-small">{pa.route.receiveNote}</p>
+    </div>
+  </div>
+</Section>
+
+<!-- 11. What a public art budget depends on. -->
+<Section labelledby="pa-budget-title">
+  <div class="pa-budget">
+    <div class="pa-budget-head">
+      <p class="mp-eyebrow" data-auto-reveal>{pa.budget.eyebrow}</p>
+      <h2 id="pa-budget-title" class="headline-display mp-title-lg" data-auto-reveal>{pa.budget.headline}</h2>
+      <p class="mp-body" data-auto-reveal>{pa.budget.body}</p>
+    </div>
+    <ul class="mp-tags pa-budget-tags" role="list" data-auto-reveal>
+      {pa.budget.factors.map((factor) => <li>{factor}</li>)}
+    </ul>
+  </div>
+</Section>
+
+<!-- 12. Questions and guides. -->
+<Section tone="soft" labelledby="pa-faq-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{pa.faq.eyebrow}</p>
+      <h2 id="pa-faq-title" class="headline-display mp-title-lg" data-auto-reveal>{pa.faq.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Faq items={pa.faq.items} /></div>
+  </div>
+</Section>
+
+<Section labelledby="pa-guides-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{pa.guides.eyebrow}</p>
+      <h2 id="pa-guides-title" class="headline-display mp-title-md" data-auto-reveal>{pa.guides.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Guides guides={pa.guides.items} /></div>
+  </div>
+</Section>
+
+<Closing pageKey="public-art" closing={pa.closing} cta={pa.cta} />
