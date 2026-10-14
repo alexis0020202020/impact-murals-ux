@@ -46,7 +46,7 @@ const pitch = 34;
   {step === 4 && (
     <>
       <path class="l-soft" d="M60 6L24 22M60 6L96 22" />
-      <circle class="fill-ink" cx="60" cy="6" r="2.4" />
+      <circle class="ink-fill" cx="60" cy="6" r="2.4" />
       <g transform="translate(15 22)">
         {picture.flatMap((row, r) =>
           row.map((fill, c) => <rect x={c * 30} y={r * 30} width="30" height="30" style={`fill: ${fill}`} />)

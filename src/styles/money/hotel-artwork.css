@@ -10,6 +10,7 @@
 /* ------------------------------------------------------------------- hero */
 
 .ht-hero {
+  --color-stone: var(--stone-on-soft);
   position: relative;
   background: var(--surface-soft);
   border-bottom: 1px solid var(--hair);
@@ -79,7 +80,7 @@
     grid-template-columns: repeat(12, minmax(0, 1fr));
     grid-template-areas:
       "route route route route route route route route route route route route"
-      "title title title title title title title title plate plate plate plate"
+      "title title title title title title title title title title title title"
       "text  text  text  text  text  text  text  text  plate plate plate plate";
     column-gap: var(--gap);
     row-gap: clamp(0.9rem, 2svh, 1.5rem);
@@ -89,6 +90,11 @@
   .ht-plate {
     align-self: start;
     margin-top: clamp(0.25rem, 1svh, 0.75rem);
+  }
+
+  /* The text has most of the width here, so its paragraph can use more of it. */
+  .ht-hero .mp-hero-support {
+    max-width: 40rem;
   }
 
   .ht-route-fig {

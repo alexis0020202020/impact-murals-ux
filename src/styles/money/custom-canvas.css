@@ -21,6 +21,7 @@
 
 /* The wall: first on a phone and tablet, the right half on a screen. */
 .cc-hero-wall {
+  --color-stone: var(--stone-on-soft);
   order: -1;
   display: flex;
   align-items: flex-end;
@@ -67,6 +68,22 @@
   max-width: 34rem;
   margin-top: 1.1rem;
   color: var(--color-ink);
+}
+
+/* Below a screen the call to action follows the statement, so it is on the first screen; the words it summarises come after. */
+@media (max-width: 1023px) {
+  .cc-hero-text > .cc-cta {
+    order: 3;
+    margin-top: 1.25rem;
+  }
+
+  .cc-hero-text > .mp-hero-support {
+    order: 4;
+  }
+
+  .cc-hero-text > .cc-qualifier {
+    order: 5;
+  }
 }
 
 @media (min-width: 1024px) {

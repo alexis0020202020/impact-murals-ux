@@ -16,7 +16,7 @@
   Breakpoints: 768px (md) and 1024px (lg). Below md is a recomposition for
   phones, not a collapsed desktop. Everything is unlayered on purpose: these
   rules must beat the shared layered component colours wherever they overlap.
-  No box-shadow, no border-radius, no scroll snapping, nothing sticky or pinned.
+  No box-shadow, no rounded cards (a circle only for a numbered marker), no scroll snapping, nothing sticky or pinned.
 */
 
 .mp-page {
@@ -28,6 +28,8 @@
   --frame-dark: color-mix(in srgb, var(--color-ink) 88%, var(--color-paper));
   /* The one tonal step between paper and ink: a quiet second light surface. */
   --surface-soft: color-mix(in srgb, var(--color-sand) 55%, var(--color-paper));
+  /* The stone grey of small text, one shade darker for the soft surface: stone itself is 4.2:1 there, this is 5.1:1. */
+  --stone-on-soft: #625c53;
   /* Distance from the content edge to the edge of the page, for a picture that bleeds. */
   --bleed: calc(max(0px, (100vw - 1800px) / 2) + var(--gutter));
   position: relative;
@@ -60,6 +62,7 @@
 }
 
 .mp-section--soft {
+  --color-stone: var(--stone-on-soft);
   background: var(--surface-soft);
 }
 
@@ -770,6 +773,7 @@
   later with no redesign. A launch build refuses to ship one.
 */
 .mp-slot {
+  --color-stone: var(--stone-on-soft);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -959,7 +963,7 @@
   stroke: none;
 }
 
-.mp-svg .fill-ink {
+.mp-svg .ink-fill {
   fill: var(--svg-ink);
   stroke: none;
 }

@@ -36,7 +36,7 @@ const people = rows.flatMap((row, r) =>
   <rect class="l-faint" x="16" y="16" width="608" height="408" />
 
   <!-- Surface -->
-  <rect class="fill-ink" x="190" y="42" width="260" height="10" />
+  <rect class="ink-fill" x="190" y="42" width="260" height="10" />
   <text class="t-mid t-small" x="320" y="34">SURFACE</text>
 
   <!-- Protected floor -->
@@ -62,7 +62,7 @@ const people = rows.flatMap((row, r) =>
   <path class="l-dash" d="M172 214L206 154M468 214L434 154" />
   <text class="t-soft t-small t-minor" x="52" y="196">SIGHTLINES</text>
   <path class="l-soft" d="M100 196H140L186 196" />
-  {people.map((p) => <circle class="fill-ink" cx={p.x} cy={p.y} r="3.4" />)}
+  {people.map((p) => <circle class="ink-fill" cx={p.x} cy={p.y} r="3.4" />)}
   <text class="t-mid" x="320" y="346">AUDIENCE</text>
 
   <!-- Camera line -->

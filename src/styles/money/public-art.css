@@ -34,6 +34,18 @@
   align-items: flex-start;
 }
 
+/* Below a screen the call to action follows the statement, so it is on the first screen. */
+@media (max-width: 1023px) {
+  .pa-hero-text > .pa-cta {
+    order: 3;
+    margin-top: 1.25rem;
+  }
+
+  .pa-hero-text > .mp-hero-support {
+    order: 4;
+  }
+}
+
 /* A phone and tablet: the wall above the type, whole, its "before" lapping the lower corner. */
 .pa-wall {
   position: relative;
@@ -44,7 +56,7 @@
 
 .pa-wall-frame {
   position: relative;
-  width: min(100%, calc(54svh * var(--r)));
+  width: min(100%, calc(46svh * var(--r)));
   margin-inline: auto;
 }
 
@@ -59,9 +71,14 @@
   background: linear-gradient(to top, color-mix(in srgb, var(--color-ink) 72%, transparent), transparent);
 }
 
+/*
+  The wall is centred and capped by the screen's height, so its edges are not the
+  figure's: half the figure's width, less half the wall's own, is where its right
+  edge is, and its left edge is the same distance from the other side.
+*/
 .pa-wall-caption {
   position: absolute;
-  right: calc(var(--gutter) + 0.7rem);
+  right: calc(50% - min(50% - var(--gutter), 23svh * var(--r)) + 0.7rem);
   bottom: 0.7rem;
   z-index: 3;
   font-size: 0.625rem;
@@ -69,10 +86,19 @@
   color: var(--color-paper-bright);
 }
 
+/* On a phone the label wraps to two short lines at the right, clear of the "before" frame at the left. */
+@media (max-width: 767px) {
+  .pa-wall-caption {
+    max-width: 10.5rem;
+    line-height: 1.5;
+    text-align: right;
+  }
+}
+
 .pa-before {
   position: absolute;
   bottom: -1.4rem;
-  left: calc(var(--gutter) + 0.3rem);
+  left: calc(50% - min(50% - var(--gutter), 23svh * var(--r)) - 0.5rem);
   z-index: 3;
   width: min(30%, 8rem);
   border: 3px solid var(--color-ink);
@@ -575,6 +601,15 @@
     top: 50%;
     left: 50%;
     padding: 1rem 1.6rem;
+  }
+}
+
+/* A tablet's map is narrower than its labels are long: the labels wrap before they reach the edge of the page. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .pa-node {
+    max-width: 11.5rem;
+    padding: 0.7rem 0.8rem;
+    font-size: 0.9rem;
   }
 }
 

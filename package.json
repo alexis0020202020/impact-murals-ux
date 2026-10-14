@@ -13,6 +13,7 @@
     "content:check": "node scripts/validate-content.mjs",
     "content:stress": "node scripts/stress-build.mjs",
     "test": "node --test tests/*.test.mjs",
+    "money:media": "node scripts/money-media-report.mjs",
     "content:confirm": "node scripts/confirm-deploy.mjs",
     "content:integration": "node scripts/test-airtable-build.mjs"
   },

@@ -8,7 +8,7 @@
   A drawing, labelled as one. The real sequence replaces each frame as its file
   is added (WS_OUT_TILES, WS_OUT_ASSEMBLED, WS_OUT_WALL).
 */
-import { mosaic, palette } from "./mosaic";
+import { mosaic } from "./mosaic";
 
 interface Props {
   kind: "tiles" | "assembled" | "wall";
@@ -83,7 +83,7 @@ const canvases = [0, 1, 2].flatMap((c) => [0, 1].map((r) => ({ c, r, index: r * 
       <path class="l" d="M8 150H232" />
       <path class="l-soft" d="M8 142H232" />
       <path class="l-soft" d="M120 20L74 34M120 20L166 34" />
-      <circle class="fill-ink" cx="120" cy="20" r="2.4" />
+      <circle class="ink-fill" cx="120" cy="20" r="2.4" />
       <rect x="52" y="40" width={cell * 6} height={cell * 4} style="fill: var(--svg-faint)" />
       <g transform="translate(46 34)">
         {tiles.map((tile) => (

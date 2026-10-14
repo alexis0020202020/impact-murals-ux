@@ -1,0 +1,28 @@
+---
+/**
+ * Public Art & Large-Scale Murals, strengthened in place.
+ *
+ * The page already exists at this address, in production. This route replaces
+ * the existing offer template for it, but only while the money pages are in
+ * preview or live: src/integrations/money-pages.mjs adds the route then, and
+ * src/pages/what-we-do/[slug].astro stops generating Public Art then. With the
+ * money pages off, this file is not a route at all and no part of it is built.
+ *
+ * Address, canonical and indexation are the existing page's own (no `noindex`:
+ * it stays indexed throughout). Copy is in src/content/money/public-art.ts and
+ * the composition in src/components/money/pages/PublicArt.astro.
+ */
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import MoneyBody from "@/components/money/MoneyBody.astro";
+import PublicArt from "@/components/money/pages/PublicArt.astro";
+import { global } from "@/content/global";
+import { moneyPage } from "@/content/money/pages";
+
+const page = moneyPage("public-art");
+---
+
+<BaseLayout title={page.title} useTemplate={false} description={page.description} canonical={`${global.domain}${page.path}`}>
+  <MoneyBody pageKey="public-art">
+    <PublicArt />
+  </MoneyBody>
+</BaseLayout>

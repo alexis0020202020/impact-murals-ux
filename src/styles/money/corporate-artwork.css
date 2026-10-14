@@ -657,6 +657,7 @@
 }
 
 .ca-schedule {
+  --color-stone: var(--stone-on-soft);
   padding: clamp(1rem, 2vw, 1.75rem);
   border: 1px solid var(--hair);
   background: var(--surface-soft);

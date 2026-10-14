@@ -2,9 +2,10 @@
 /**
  * Everything a money page shares inside the site layout: the preview strip
  * (while the pages are not live), the breadcrumb trail, the page wrapper that
- * scopes the styles, the structured data and the two small scripts (the
- * secondary scroll reveals and the muted-clip playback, both the Automotive
- * page's own modules). The page's content goes in the slot.
+ * scopes the styles, the structured data and the two small scripts: the
+ * scroll reveals (the Automotive page's own module) and the muted-clip
+ * playback (src/lib/money-video.ts, a copy of the Automotive page's). The
+ * page's content goes in the slot.
  *
  * The scripts are progressive enhancement: the page is complete without them,
  * and under reduced motion they exit before animating or loading anything.
@@ -39,7 +40,7 @@ const trail = (await breadcrumbsFor(page.path)).map((crumb, index, all) =>
 
 <script>
   import { initAutomotiveMotion } from "@/lib/automotive-motion";
-  import { initAutomotiveVideo } from "@/lib/automotive-video";
+  import { initMoneyVideo } from "@/lib/money-video";
   initAutomotiveMotion(document);
-  initAutomotiveVideo(document);
+  initMoneyVideo(document);
 </script>

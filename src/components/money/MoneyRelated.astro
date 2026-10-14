@@ -1,0 +1,41 @@
+---
+import { moneyHref, moneyPages } from "@/content/money/pages";
+import { moneyMode, moneyPageActive } from "@/content/money/launch";
+
+/*
+  The inbound links for the new service pages: a short list on the offer page
+  that owns them, in the offer page's own list style. Without it a launched
+  page would be an orphan (the build's reachability check walks real anchors
+  from the homepage), and a visitor on Art for Brands or Art for Places would
+  have no way to the specific service they came for.
+
+  It draws nothing while the money pages are off, so a production build before
+  launch is byte for byte what it was. A page whose launch is on hold (the
+  workshops) is listed in preview and left out of a live build, exactly as its
+  route is.
+*/
+interface Props {
+  offerKey: string;
+}
+
+const { offerKey } = Astro.props;
+const pages =
+  moneyMode() === "off"
+    ? []
+    : moneyPages.filter((page) => !page.existing && page.offer === offerKey && moneyPageActive(page));
+---
+{pages.length > 0 && (
+  <div class="mt-10" data-money-related>
+    <p class="body-copy-strong">DUBAI SERVICES</p>
+    <ul class="offer-format-list mt-5">
+      {pages.map((page) => (
+        <li>
+          <a href={moneyHref(page.key)} class="offer-format-row">
+            <span>{page.label}</span>
+            <span aria-hidden="true" class="offer-format-arrow">↗</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}

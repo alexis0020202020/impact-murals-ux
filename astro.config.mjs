@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import slugRedirects from "./src/integrations/slug-redirects.mjs";
+import moneyPages from "./src/integrations/money-pages.mjs";
 import { loadEnvFile } from "./scripts/lib/load-env.mjs";
 
 // Vite exposes .env through import.meta.env; the server-side adapter uses process.env.
@@ -8,7 +9,7 @@ loadEnvFile();
 
 export default defineConfig({
   site: "https://www.impactmurals.ae",
-  integrations: [slugRedirects()],
+  integrations: [slugRedirects(), moneyPages()],
   vite: {
     plugins: [tailwindcss()]
   }

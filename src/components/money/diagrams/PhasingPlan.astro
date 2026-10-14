@@ -43,7 +43,7 @@ const h = 56;
       <text class="t-soft" x="0" y={row.y + h / 2 + 4}>{row.label}</text>
       <path class="l-faint" d={`M${x0} ${row.y + h / 2}H${x0 + col * 5}`} />
       <rect class="l" x={x0 + col * row.start + 2} y={row.y} width={col - 4} height={h} style="fill: url(#ca-hatch)" />
-      <rect class="fill-ink" x={x0 + col * (row.start + 1) + 2} y={row.y} width={col - 4} height={h} />
+      <rect class="ink-fill" x={x0 + col * (row.start + 1) + 2} y={row.y} width={col - 4} height={h} />
       <rect class="l" x={x0 + col * (row.start + 2) + 2} y={row.y} width={col - 4} height={h} />
     </g>
   ))}

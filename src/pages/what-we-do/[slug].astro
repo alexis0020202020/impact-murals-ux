@@ -12,16 +12,25 @@ import { global } from "@/content/global";
 import { pageSeoOffers } from "@/content/seo";
 import { breadcrumbsFor } from "@/lib/routes";
 import { contentForOffer } from "@/lib/relations";
-import MoneyBody from "@/components/money/MoneyBody.astro";
-import PublicArt from "@/components/money/pages/PublicArt.astro";
+import MoneyRelated from "@/components/money/MoneyRelated.astro";
 import { moneyMode } from "@/content/money/launch";
-import { moneyPage } from "@/content/money/pages";
 
 export function getStaticPaths() {
-  const live = offers.map((offer) => ({
-    params: { slug: offer.slug },
-    props: { offer, redirectedFrom: null as string | null }
-  }));
+  /*
+    Once the money pages are in preview or live, Public Art is the strengthened
+    page of src/money/public-art.astro, a route of its own that
+    src/integrations/money-pages.mjs adds only then. This template steps aside
+    for it. With the money pages off (a production build before launch) nothing
+    here changes, and no money component, stylesheet or script is part of this
+    route's build: the output is what it was.
+  */
+  const strengthenedElsewhere = moneyMode() !== "off";
+  const live = offers
+    .filter((offer) => !(strengthenedElsewhere && offer.key === "public-art"))
+    .map((offer) => ({
+      params: { slug: offer.slug },
+      props: { offer, redirectedFrom: null as string | null }
+    }));
 
   if (import.meta.env.PROD) return live;
 
@@ -85,23 +94,8 @@ const closingBody = offer.key === "art-for-brands"
   : offer.key === "art-for-places"
     ? "Share the location, plans or references you have, and tell us what role you imagine for art. An early idea is enough to begin."
     : "Share the site, brief or approved artwork, along with any drawings, dimensions or timing you have. We can start before every detail is final.";
-
-/**
- * Public Art is strengthened in place (src/content/money/public-art.ts) once the
- * money pages are in preview or live. A production build before launch keeps the
- * current page exactly as it is: nothing below this flag changes for it.
- */
-const strengthened = offer.key === "public-art" && !redirectedFrom && moneyMode() !== "off";
-const strengthenedPage = moneyPage("public-art");
 ---
 
-{strengthened ? (
-  <BaseLayout title={strengthenedPage.title} useTemplate={false} description={strengthenedPage.description} canonical={canonical}>
-    <MoneyBody pageKey="public-art">
-      <PublicArt />
-    </MoneyBody>
-  </BaseLayout>
-) : (
 <BaseLayout title={pageSeoOffers[offer.key].title} description={pageSeoOffers[offer.key].description} canonical={canonical}>
   <Breadcrumbs trail={trail} currentLabel={offer.shortTitle} />
 
@@ -168,6 +162,7 @@ const strengthenedPage = moneyPage("public-art");
             );
           })}
         </ul>
+        <MoneyRelated offerKey={offer.key} />
       </div>
     </div>
   </section>
@@ -235,4 +230,3 @@ const strengthenedPage = moneyPage("public-art");
 
   <FragmentMotion />
 </BaseLayout>
-)}

@@ -54,11 +54,15 @@ export const pa = {
     rows: [
       {
         name: "DEVELOPMENTS AND COMMON AREAS",
-        text: "Entrances, podiums, amenity areas and the routes between them."
+        text: "Entrances, podiums, amenity areas and the routes between them.",
+        href: "/what-we-do/public-art/large-scale-murals/",
+        linkLabel: "See Large-Scale Murals"
       },
       {
         name: "FAÇADES AND BUILDING ENVELOPES",
-        text: "Art developed around the elevation and the way the building is seen."
+        text: "Art developed around the elevation and the way the building is seen.",
+        href: "/what-we-do/public-art/facade-artwork/",
+        linkLabel: "See Façade Artwork"
       },
       {
         name: "CIVIC AND CULTURAL SITES",
@@ -66,7 +70,9 @@ export const pa = {
       },
       {
         name: "DESTINATIONS AND VENUES",
-        text: "Public-facing places people visit, cross and photograph."
+        text: "Public-facing places people visit, cross and photograph.",
+        href: "/what-we-do/public-art/site-specific-artworks/",
+        linkLabel: "See Site-Specific Artworks"
       },
       {
         name: "GROUND AND PAVEMENT",

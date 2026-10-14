@@ -27,6 +27,26 @@ export const gatedRoutes: Record<string, { label: string; deployed: boolean }> =
   "/mural-artist-dubai/": { label: "Mural Artist", deployed: false }
 };
 
+/**
+ * Routes the strategy consolidates into a money page, with a 301, after launch
+ * (docs/money-pages/08-public-art-dubai.md). Until that redirect is live they
+ * are ordinary pages and are linked like any other: leaving them out of the
+ * strengthened Public Art page would make each of them an orphan, which the
+ * build refuses. The moment `redirected` is switched to true (in the same
+ * commit that activates the redirect), every link to one of them is drawn as
+ * plain text, so no page links to a URL that redirects.
+ */
+export const consolidatedRoutes: Record<string, { into: string; redirected: boolean }> = {
+  "/what-we-do/public-art/large-scale-murals": { into: "/what-we-do/public-art", redirected: false },
+  "/what-we-do/public-art/facade-artwork": { into: "/what-we-do/public-art", redirected: false },
+  "/what-we-do/public-art/site-specific-artworks": { into: "/what-we-do/public-art", redirected: false }
+};
+
+/** True when `href` is a consolidated route whose redirect is already live. */
+export function isRedirected(href: string): boolean {
+  return consolidatedRoutes[registryPath(href)]?.redirected === true;
+}
+
 export function gatedState(href: string): { gated: boolean; deployed: boolean } {
   const entry = gatedRoutes[href];
   return entry ? { gated: true, deployed: entry.deployed } : { gated: false, deployed: true };
