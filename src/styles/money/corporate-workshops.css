@@ -1,0 +1,505 @@
+/*
+  /corporate-art-workshops-dubai/: the page's own composition.
+
+  Organising idea: many hands, one work. Output first: the page opens on a
+  shared artwork made of many tiles, then follows what participants do and what
+  the group leaves with. Warm, light and social, without being a class
+  timetable. The shared vocabulary is in base.css.
+*/
+
+/* ------------------------------------------------------------------- hero */
+
+.ws-hero {
+  background: var(--color-paper);
+  border-bottom: 1px solid var(--hair);
+}
+
+.ws-hero-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-block: 1.25rem 2.75rem;
+}
+
+.ws-hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* WORKSHOPS is a long word: the title is sized so it never breaks inside it. */
+.ws-hero .ws-title {
+  font-size: clamp(2.1rem, 9.2vw, 3.4rem);
+}
+
+/* The finished piece first on a phone, then the type. */
+.ws-hero-art {
+  order: -1;
+  margin: 0;
+}
+
+.ws-hero-piece {
+  position: relative;
+}
+
+.ws-hero-piece > svg,
+.ws-hero-piece > .mp-frame {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ws-hero-art figcaption {
+  margin-top: 0.9rem;
+}
+
+/* The group at work, lapping the corner of the piece, only once a real picture exists. */
+.ws-hero-group {
+  position: absolute;
+  bottom: -1.1rem;
+  left: -0.5rem;
+  width: 36%;
+  border: 6px solid var(--color-paper);
+  background: var(--color-paper);
+}
+
+/* The mosaic paints in tile by tile, for a visitor who has not asked for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .ws-mosaic[data-animate] .ws-tile {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ws-paint 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(0.45s + var(--o) * 0.022s);
+  }
+}
+
+@keyframes ws-paint {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .ws-hero .ws-title {
+    font-size: clamp(2.6rem, 4.9vw, 4.8rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .ws-hero-inner {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: center;
+    min-height: clamp(34rem, calc(100svh - 11rem), 48rem);
+    padding-block: clamp(2rem, 5svh, 4rem);
+  }
+
+  .ws-hero-text {
+    grid-column: 1 / span 5;
+  }
+
+  .ws-hero-art {
+    order: 0;
+    grid-column: 6 / span 7;
+  }
+}
+
+/* ---------------------------------------------------------------- formats */
+
+.ws-formats-head {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.ws-formats {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+.ws-format {
+  align-items: start;
+}
+
+.ws-format-n {
+  display: inline-block;
+  min-width: 2.4rem;
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--color-signal);
+}
+
+.ws-format-glyph {
+  width: min(100%, 15rem);
+  margin-top: 0.75rem;
+}
+
+.ws-format-glyph svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ws-formats-caption {
+  margin-top: 1rem;
+}
+
+.ws-boundary {
+  display: grid;
+  gap: 0.35rem;
+  max-width: 62ch;
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 768px) {
+  .ws-formats .ws-format {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr);
+    align-items: center;
+  }
+
+  .ws-format-glyph {
+    justify-self: end;
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ws-formats-head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: end;
+  }
+
+  .ws-formats-head > :first-child {
+    grid-column: 1 / span 6;
+  }
+
+  .ws-formats-head > .mp-body {
+    grid-column: 8 / span 5;
+  }
+}
+
+/* -------------------------------------------------------------------- fit */
+
+.ws-fit {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+}
+
+.ws-fit-rows {
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+/* In a half column the name sits over its words, not beside them. */
+.ws-fit-rows .mp-row {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 0.4rem;
+}
+
+.ws-fit-note {
+  margin-top: 1.5rem;
+  color: var(--color-ink);
+  font-weight: 500;
+}
+
+.ws-flow {
+  margin: 0;
+}
+
+.ws-flow-title {
+  margin-bottom: 1.25rem;
+}
+
+.ws-flow-list {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--hair);
+}
+
+.ws-flow-step {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  align-items: center;
+  column-gap: 1.25rem;
+  padding-block: 0.7rem;
+  border-bottom: 1px solid var(--hair);
+}
+
+.ws-flow-art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ws-flow-text {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.ws-flow-n {
+  color: var(--color-signal);
+}
+
+.ws-flow .mp-micro {
+  margin-top: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .ws-fit {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .ws-fit-copy {
+    grid-column: 1 / span 6;
+  }
+
+  .ws-flow {
+    grid-column: 8 / span 5;
+    padding-top: clamp(4rem, 7vw, 6rem);
+  }
+
+  .ws-flow-step {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+  }
+}
+
+/* ----------------------------------------------------------------- artist */
+
+.ws-artist-head {
+  max-width: 48rem;
+}
+
+.ws-artist-fig {
+  margin: clamp(2rem, 4vw, 3.5rem) 0 0;
+}
+
+/* A real picture is cropped to a wide band, never taller than the plate drawn for it. */
+.ws-artist-fig .mp-frame {
+  width: 100%;
+  aspect-ratio: max(var(--r), 1.7);
+}
+
+.ws-artist-fig .mp-frame > img {
+  object-position: 50% 38%;
+}
+
+@media (min-width: 768px) {
+  .ws-artist-fig .mp-frame {
+    aspect-ratio: max(var(--r), 2.2);
+  }
+}
+
+.ws-artist-fig figcaption {
+  margin-top: 0.8rem;
+}
+
+.ws-artist-copy {
+  display: grid;
+  gap: 1rem;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 768px) {
+  .ws-artist-copy {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--gap);
+  }
+
+  .ws-artist-copy .mp-body {
+    max-width: 44ch;
+  }
+}
+
+/* ------------------------------------------------------------------ venue */
+
+.ws-venue {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3.5rem);
+}
+
+.ws-venue-fig svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ws-layout text.t-num,
+.mp-svg.ws-layout text.t-num {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+@media (max-width: 767px) {
+  .mp-svg.ws-layout text.t-num {
+    font-size: var(--tm, 18px);
+  }
+}
+
+.ws-venue-list {
+  display: grid;
+  gap: 0;
+  margin: 1.5rem 0 1.25rem;
+  border-top: 1px solid var(--hair);
+}
+
+.ws-venue-line {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.75rem;
+  padding-block: 0.7rem;
+  border-bottom: 1px solid var(--hair);
+}
+
+.ws-venue-n {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid var(--color-ink);
+  border-radius: 50%;
+  font-family: var(--font-notation);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.ws-setup {
+  margin: 1.5rem 0 0;
+}
+
+@media (min-width: 1024px) {
+  .ws-venue {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: center;
+  }
+
+  .ws-venue-fig {
+    grid-column: 1 / span 7;
+  }
+
+  .ws-venue-copy {
+    grid-column: 9 / span 4;
+  }
+}
+
+/* ----------------------------------------------------------------- output */
+
+.ws-output-head {
+  max-width: 48rem;
+}
+
+.ws-output-frames {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.75rem;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+}
+
+.ws-output-frame figure {
+  margin: 0;
+}
+
+.ws-output-frame svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: color-mix(in srgb, var(--color-sand) 40%, var(--color-paper));
+}
+
+.ws-output-frame figcaption {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.ws-output-n {
+  color: var(--color-signal);
+}
+
+.ws-output-caption {
+  margin-top: 1.25rem;
+}
+
+.ws-output-copy {
+  display: grid;
+  gap: 1rem;
+  margin-top: clamp(1.75rem, 3vw, 2.75rem);
+}
+
+@media (min-width: 640px) {
+  .ws-output-frames {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+}
+
+@media (min-width: 768px) {
+  .ws-output-copy {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--gap);
+  }
+
+  .ws-output-copy .mp-body {
+    max-width: 44ch;
+  }
+}
+
+/* ---------------------------------------------------------------- process */
+
+/* The fee line is one sentence, set large: the cost, said plainly, in the page's own voice. */
+.ws-fee {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding-top: clamp(1.5rem, 3vw, 2.25rem);
+  border-top: 1px solid var(--color-ink);
+}
+
+.ws-fee-line {
+  max-width: 34ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3.4vw, 2.6rem);
+  font-weight: 560;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
+}
+
+.ws-fee-lead {
+  text-transform: uppercase;
+  color: var(--color-signal);
+}
+
+.ws-fee-closing {
+  max-width: 54ch;
+}
+
+@media (min-width: 1024px) {
+  .ws-fee {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap);
+    align-items: end;
+  }
+
+  .ws-fee-line {
+    grid-column: 1 / span 8;
+    max-width: 30ch;
+  }
+
+  .ws-fee-closing {
+    grid-column: 9 / span 4;
+  }
+}

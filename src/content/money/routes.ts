@@ -12,7 +12,7 @@
  */
 import type { RouteEntry } from "@/lib/routes";
 import { global } from "@/content/global";
-import { moneyMode, type MoneyMode } from "./launch";
+import { moneyMode, moneyPageActive, type MoneyMode } from "./launch";
 import { moneyCanonical, moneyPages } from "./pages";
 
 export function moneyRouteEntries(mode: MoneyMode = moneyMode()): RouteEntry[] {
@@ -20,7 +20,7 @@ export function moneyRouteEntries(mode: MoneyMode = moneyMode()): RouteEntry[] {
   const live = mode === "live";
 
   return moneyPages
-    .filter((page) => !page.existing)
+    .filter((page) => moneyPageActive(page, mode))
     .map((page) => ({
       path: page.path,
       label: page.label,

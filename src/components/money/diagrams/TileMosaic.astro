@@ -1,0 +1,60 @@
+---
+/*
+  The hero's illustration: a small abstract artwork painted as a grid of
+  ninety-six square tiles, each by a different hand, so the page opens on what
+  its title promises: many hands, one work. Each tile paints in, one after
+  another in a shuffled order, when the page loads (only for a visitor who has
+  not asked for reduced motion; everyone else gets the finished piece at once).
+
+  It is a drawing, not a photograph, and the page labels it as one. The real
+  shared piece replaces it the moment a file is added for WS_HERO_PIECE.
+*/
+import { mosaic, palette } from "./mosaic";
+
+interface Props {
+  cols?: number;
+  rows?: number;
+  /** Paint the tiles in one after another. */
+  animate?: boolean;
+}
+
+const { cols = 12, rows = 8, animate = true } = Astro.props;
+const pitch = 100;
+const gap = 7;
+const width = cols * pitch;
+const height = rows * pitch;
+// The panel stands a little off the page: a quiet offset shadow outside the grid.
+const lift = { x: 14, y: 16 };
+const tiles = mosaic(cols, rows);
+const label = `Illustrative artwork: a sun over two hills and a tower, painted as a grid of ${cols * rows} square tiles, each by a different hand.`;
+---
+<svg
+  class="mp-svg ws-mosaic"
+  viewBox={`0 0 ${width + lift.x} ${height + lift.y}`}
+  role="img"
+  aria-label={label}
+  data-animate={animate ? "" : undefined}
+>
+  <rect x={lift.x} y={lift.y} width={width} height={height} style="fill: var(--svg-faint)" />
+  <rect x="0" y="0" width={width} height={height} style={`fill: ${palette.bright}`} />
+  <g>
+    {tiles.map((tile) => (
+      <g class="ws-tile" style={`--o:${tile.order}`}>
+        <rect
+          x={tile.col * pitch + gap / 2}
+          y={tile.row * pitch + gap / 2}
+          width={pitch - gap}
+          height={pitch - gap}
+          rx="2"
+          style={`fill: ${tile.fill}`}
+        />
+        {tile.mark && (
+          <path
+            d={`M${tile.col * pitch + gap / 2 + tile.mark.x1 * (pitch - gap)} ${tile.row * pitch + gap / 2 + tile.mark.y1 * (pitch - gap)}L${tile.col * pitch + gap / 2 + tile.mark.x2 * (pitch - gap)} ${tile.row * pitch + gap / 2 + tile.mark.y2 * (pitch - gap)}`}
+            style={`fill: none; stroke: ${tile.mark.stroke}; stroke-width: 5; stroke-linecap: round`}
+          />
+        )}
+      </g>
+    ))}
+  </g>
+</svg>

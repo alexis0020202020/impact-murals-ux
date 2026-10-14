@@ -857,6 +857,29 @@
   letter-spacing: 0.12em;
 }
 
+/*
+  A placeholder may carry a drawing that stands in for the picture until it
+  arrives (the Workshops page's session scene). The drawing fills the frame
+  under the tag; the brief and the proportion, written for the studio, step
+  aside because the drawing already says what the picture is.
+*/
+.mp-slot-stand-in {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  padding: clamp(1.9rem, 3.4vw, 2.6rem) clamp(0.9rem, 2.2vw, 1.4rem) clamp(0.7rem, 1.6vw, 1.1rem);
+}
+
+.mp-slot-stand-in svg {
+  width: 100%;
+  height: 100%;
+}
+
+.mp-slot--stand-in .mp-slot-brief,
+.mp-slot--stand-in .mp-slot-ratio {
+  display: none;
+}
+
 /* ---------------------------------------------------------------- figure */
 
 /* An illustrative drawing: thin line, real text, always labelled as illustrative. */

@@ -26,7 +26,12 @@ const automotiveStills = import.meta.glob<{ default: ImageMetadata }>(
 /** The clip that already lives elsewhere on the site: reused by address, never copied. */
 const sharedClips: Record<string, string> = { "studio-at-work": studio.media.video };
 
-export type SlotState = "own" | "alias" | "placeholder";
+/**
+ * `drawing` and `absent` are the two honest stand-ins a slot may declare
+ * (`fallback` in the manifest): the page draws its own labelled illustration,
+ * or shows nothing. Neither is a hole, so neither stops a launch build.
+ */
+export type SlotState = "own" | "alias" | "placeholder" | "drawing" | "absent";
 
 export interface ResolvedSlot {
   id: MoneySlotId;
@@ -81,6 +86,11 @@ export function resolveSlot(id: MoneySlotId): ResolvedSlot {
             : undefined;
       return { id, def, state: "alias", image, video: clip, ratio: Number((image.width / image.height).toFixed(4)) };
     }
+  }
+
+  // A slot that names its own stand-in is not a hole.
+  if (def.fallback) {
+    return { id, def, state: def.fallback === "drawing" ? "drawing" : "absent", ratio: ratioValue(def.ratio) };
   }
 
   // A launch build refuses a hole: every slot must be a real picture before the pages go live.

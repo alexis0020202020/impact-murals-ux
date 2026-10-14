@@ -48,10 +48,13 @@ const subject = description.split(/[:,]/)[0].trim();
 const pause = subject ? `Pause video: ${subject}` : "Pause video";
 const play = subject ? `Play video: ${subject}` : "Play video";
 const widths = image ? imageWidths(image) : [];
+// A placeholder may carry a drawing that stands in for the picture until it arrives.
+const standIn = Astro.slots.has("default");
 ---
 
-{state === "placeholder" ? (
-  <div class={`${frameClass} mp-slot`} style={frameStyle} data-media-slot={slot} data-media-state="placeholder" role="group" aria-label={`Image to come: ${def.brief}`}>
+{state === "drawing" || state === "absent" ? null : state === "placeholder" ? (
+  <div class={`${frameClass} mp-slot${standIn ? " mp-slot--stand-in" : ""}`} style={frameStyle} data-media-slot={slot} data-media-state="placeholder" role="group" aria-label={`Image to come: ${def.brief}`}>
+    {standIn && <div class="mp-slot-stand-in"><slot /></div>}
     <p class="mp-slot-tag">Asset to come / {def.priority}</p>
     <p class="mp-slot-brief">{def.brief}</p>
     <p class="mp-slot-ratio">{def.ratio.includes(":") ? def.ratio.replace(":", " : ") : `${resolved.ratio}`}</p>

@@ -1,0 +1,84 @@
+---
+/*
+  An illustrative layout of a workshop room, drawn in thin line: the artist's
+  station at the front, six tables with their stools, a protected floor under
+  them, a materials trolley, drying racks, a storage corner by the door and the
+  route a setup takes in from it. The six numbers match the six lines of the
+  list beside it; the words in the drawing are the room's own parts.
+
+  It is an example, labelled as one wherever it appears. It is not a plan of
+  any real venue, and it promises no layout a given room will allow.
+*/
+const label =
+  "Illustrative layout of a workshop room: the artist's station at the front, six tables with stools on a protected floor, a materials trolley on the left, drying racks on the right and storage by the entrance. Six numbered positions match the six planning lines beside the drawing.";
+
+const tableX = [150, 288, 426];
+const tableY = [206, 298];
+---
+<svg class="mp-svg ws-layout" viewBox="0 0 640 444" style="--tm:24px" role="img" aria-label={label}>
+  <!-- The room, with the entrance gap bottom left -->
+  <path class="l" d="M70 420H20V20H620V420H130" />
+  <path class="l-soft" d="M70 420A60 60 0 0 1 130 360" />
+  <text class="t-mid t-small t-soft" x="100" y="438">ENTRANCE</text>
+
+  <!-- Floor protection under the tables -->
+  <rect class="l-dash" x="122" y="180" width="434" height="180" />
+
+  <!-- The artist's station -->
+  <rect class="l" x="290" y="44" width="100" height="60" />
+  <path class="l-soft" d="M306 104L296 128M374 104L384 128" />
+  <rect class="l" x="412" y="72" width="62" height="28" />
+  <circle class="fill-ink" cx="270" cy="96" r="6" />
+  <text class="t-mid" x="340" y="152">ARTIST STATION</text>
+
+  <!-- Six tables, four stools each -->
+  {tableY.flatMap((y) =>
+    tableX.map((x) => (
+      <>
+        <rect class="l" x={x} y={y} width="112" height="36" />
+        <circle class="l-soft" cx={x + 30} cy={y - 14} r="6" />
+        <circle class="l-soft" cx={x + 82} cy={y - 14} r="6" />
+        <circle class="l-soft" cx={x + 30} cy={y + 50} r="6" />
+        <circle class="l-soft" cx={x + 82} cy={y + 50} r="6" />
+      </>
+    ))
+  )}
+
+  <!-- Materials trolley -->
+  <rect class="l" x="36" y="190" width="50" height="100" />
+  <circle class="l-soft" cx="52" cy="214" r="7" />
+  <circle class="l-soft" cx="70" cy="214" r="7" />
+  <circle class="l-soft" cx="52" cy="240" r="7" />
+  <circle class="l-soft" cx="70" cy="240" r="7" />
+  <circle class="l-soft" cx="61" cy="266" r="7" />
+  <text class="t-mid t-minor" x="61" y="316">MATERIALS</text>
+
+  <!-- Drying racks along the right wall -->
+  <rect class="l" x="576" y="150" width="32" height="230" />
+  <path class="l-soft" d="M576 184H608M576 218H608M576 252H608M576 286H608M576 320H608M576 354H608" />
+  <text class="t-end" x="608" y="406">DRYING</text>
+
+  <!-- Storage and transport by the entrance -->
+  <rect class="l" x="150" y="372" width="64" height="36" />
+  <rect class="l-soft" x="158" y="380" width="48" height="20" />
+  <text x="264" y="396">STORAGE</text>
+
+  <!-- Setup and clean-up: the route in from the door -->
+  <path d="M100 420V134H232" style="fill: none; stroke: var(--color-signal); stroke-width: 1.6; stroke-dasharray: 6 5; vector-effect: non-scaling-stroke" />
+  <path d="M224 127L236 134L224 141" style="fill: none; stroke: var(--color-signal); stroke-width: 1.6; vector-effect: non-scaling-stroke" />
+
+  <!-- The six numbers -->
+  {[
+    { n: 1, x: 346, y: 176 },
+    { n: 2, x: 556, y: 180 },
+    { n: 3, x: 61, y: 166 },
+    { n: 4, x: 592, y: 128 },
+    { n: 5, x: 100, y: 372 },
+    { n: 6, x: 238, y: 392 }
+  ].map((mark) => (
+    <>
+      <circle class="l" cx={mark.x} cy={mark.y} r="13" style="fill: var(--svg-bg)" />
+      <text class="t-mid t-num" x={mark.x} y={mark.y + 4}>{mark.n}</text>
+    </>
+  ))}
+</svg>

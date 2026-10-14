@@ -1,0 +1,75 @@
+---
+/*
+  A small drawing of one kind of output, for the four ruled rows of formats:
+  one shared canvas that several hands have marked, canvas tiles that make one
+  image, separate works that answer one brief, and a lettering session. Flat
+  colour from the studio palette, drawn on the page's own paper. Decorative (the
+  row's name carries the meaning), so hidden from assistive technology, and
+  labelled as an illustration under the list.
+*/
+import { palette } from "./mosaic";
+
+interface Props {
+  kind: "shared" | "tiles" | "individual" | "specialist";
+}
+
+const { kind } = Astro.props;
+const stroke = (colour: string, width = 9) => `fill: none; stroke: ${colour}; stroke-width: ${width}; stroke-linecap: round; stroke-linejoin: round`;
+---
+<svg class="mp-svg ws-glyph" viewBox="0 0 240 160" aria-hidden="true" focusable="false">
+  {kind === "shared" && (
+    <>
+      <rect x="26" y="20" width="196" height="132" style="fill: var(--svg-faint)" />
+      <rect x="18" y="12" width="196" height="132" style={`fill: ${palette.bright}`} />
+      <rect class="l" x="18" y="12" width="196" height="132" />
+      <path d="M40 46C58 28 78 62 96 44" style={stroke(palette.signal)} />
+      <path d="M110 34C128 22 142 50 164 36" style={stroke(palette.moss)} />
+      <path d="M172 52L196 30" style={stroke(palette.clay)} />
+      <path d="M44 92C62 76 80 108 100 90" style={stroke(palette.ink, 8)} />
+      <path d="M118 96C136 80 152 110 176 92" style={stroke(palette.signal, 8)} />
+      <path d="M62 124C84 114 108 128 132 118" style={stroke(palette.moss, 8)} />
+      <path d="M150 124L190 120" style={stroke(palette.clay, 8)} />
+    </>
+  )}
+
+  {kind === "tiles" && (
+    <>
+      <rect x="40" y="22" width="180" height="132" style="fill: var(--svg-faint)" />
+      <rect x="30" y="12" width="180" height="132" style={`fill: ${palette.sand}`} />
+      <circle cx="120" cy="78" r="48" style={`fill: ${palette.signal}`} />
+      <path d="M30 118C70 96 110 128 150 108S196 112 210 104V144H30Z" style={`fill: ${palette.ink}`} />
+      <path d="M30 12H210M30 56H210M30 100H210M30 144H210" style="fill: none; stroke: var(--svg-bg); stroke-width: 6" />
+      <path d="M30 12V144M90 12V144M150 12V144M210 12V144" style="fill: none; stroke: var(--svg-bg); stroke-width: 6" />
+      <rect class="l-soft" x="30" y="12" width="180" height="132" />
+    </>
+  )}
+
+  {kind === "individual" && (
+    <>
+      {[
+        { x: 18, y: 10, fill: palette.signal, cx: 62, cy: 42, r: 18 },
+        { x: 126, y: 10, fill: palette.moss, cx: 160, cy: 52, r: 14 },
+        { x: 18, y: 86, fill: palette.clay, cx: 48, cy: 114, r: 12 },
+        { x: 126, y: 86, fill: palette.ink, cx: 182, cy: 122, r: 20 }
+      ].map((frame) => (
+        <>
+          <rect x={frame.x} y={frame.y} width="96" height="64" style={`fill: ${palette.bright}`} />
+          <circle cx={frame.cx} cy={frame.cy} r={frame.r} style={`fill: ${frame.fill}`} />
+          <rect class="l" x={frame.x} y={frame.y} width="96" height="64" />
+        </>
+      ))}
+    </>
+  )}
+
+  {kind === "specialist" && (
+    <>
+      <rect x="26" y="20" width="196" height="132" style="fill: var(--svg-faint)" />
+      <rect x="18" y="12" width="196" height="132" style={`fill: ${palette.bright}`} />
+      <rect class="l" x="18" y="12" width="196" height="132" />
+      <path class="l-faint" d="M18 42H214M18 72H214M18 102H214" />
+      <path class="l-soft" d="M18 102H214" />
+      <path d="M44 100C56 28 82 28 78 76S60 112 94 92 126 48 120 84 132 110 160 62 176 56 190 90" style={stroke(palette.ink, 7)} />
+      <path d="M44 124C90 116 150 134 196 118" style={stroke(palette.signal, 4)} />
+    </>
+  )}
+</svg>

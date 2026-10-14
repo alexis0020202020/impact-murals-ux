@@ -1,0 +1,254 @@
+---
+/**
+ * Corporate Art Workshops Dubai (provisional: launch on hold).
+ *
+ * Organising idea: many hands, one work. The page is output-first: it opens on
+ * a shared artwork made of many individual tiles, then follows what the
+ * participants do and what the group leaves with. Warm, light and social
+ * without being a class timetable: the one page where the people, not just
+ * the paint, are the subject.
+ *
+ * Nothing real exists to show yet, and the page does not pretend otherwise:
+ * every picture is a drawing labelled "illustrative" (the tile mosaic, the
+ * output glyphs, the session flow, the room layout) or, for the one thing that
+ * must be real, an honest placeholder (the artist with the group). Each
+ * drawing gives way to a real picture the moment its file is added. The
+ * "selected sessions" module is absent until a pilot or a real session can be
+ * shown. Copy is in src/content/money/corporate-workshops.ts.
+ */
+import "@/styles/money/corporate-workshops.css";
+import { ws } from "@/content/money/corporate-workshops";
+import { moneyPage } from "@/content/money/pages";
+import { mediaSlots } from "@/content/money/media";
+import { resolveSlot } from "@/lib/money-media";
+import Section from "../Section.astro";
+import Media from "../Media.astro";
+import Cta from "../Cta.astro";
+import Ledger from "../Ledger.astro";
+import Faq from "../Faq.astro";
+import Guides from "../Guides.astro";
+import Closing from "../Closing.astro";
+import Tight from "../Tight.astro";
+import Link from "../Link.astro";
+import TileMosaic from "../diagrams/TileMosaic.astro";
+import OutputGlyph from "../diagrams/OutputGlyph.astro";
+import OutputFrame from "../diagrams/OutputFrame.astro";
+import SessionStep from "../diagrams/SessionStep.astro";
+import RoomLayout from "../diagrams/RoomLayout.astro";
+import ArtistScene from "../diagrams/ArtistScene.astro";
+
+const page = moneyPage("corporate-workshops");
+
+const hero = resolveSlot("WS_HERO_PIECE");
+const heroGroup = resolveSlot("WS_HERO_GROUP");
+const setup = resolveSlot("WS_SETUP");
+const facilitation = resolveSlot("WS_FACILITATION");
+const outputs = [
+  { slot: "WS_OUT_TILES", kind: "tiles" },
+  { slot: "WS_OUT_ASSEMBLED", kind: "assembled" },
+  { slot: "WS_OUT_WALL", kind: "wall" }
+] as const;
+const frames = outputs.map((entry) => ({ ...entry, state: resolveSlot(entry.slot).state }));
+
+// "a, b, c and d": the fee line is one sentence, so it reads as one.
+const factors = ws.process.fee.items;
+const feeTail = `${factors.slice(0, -1).join(", ")} and ${factors[factors.length - 1]}.`;
+---
+
+<!-- 01. Many hands, one work: a shared piece, tile by tile. -->
+<section class="mp-hero ws-hero" aria-labelledby="ws-title">
+  <div class="mp-wrap ws-hero-inner">
+    <div class="ws-hero-text">
+      <h1 id="ws-title" class="headline-display mp-title-xl ws-title mp-open" style="--i:1">{page.h1}.</h1>
+      <p class="mp-hero-sub mp-open" style="--i:2">{ws.hero.statement}</p>
+      <p class="mp-hero-support mp-open" style="--i:3">{ws.hero.support}</p>
+      <div class="mp-open" style="--i:4">
+        <Cta pageKey="corporate-workshops" cta={ws.cta} where="hero" micro={ws.hero.qualifier} />
+      </div>
+    </div>
+    <figure class="ws-hero-art mp-open" style="--i:2">
+      <div class="ws-hero-piece">
+        {hero.state === "drawing" ? (
+          <TileMosaic />
+        ) : (
+          <Media slot="WS_HERO_PIECE" priority sizes="(min-width: 1024px) 58vw, 92vw" />
+        )}
+        {heroGroup.state !== "absent" && (
+          <div class="ws-hero-group">
+            <Media slot="WS_HERO_GROUP" sizes="(min-width: 1024px) 18vw, 40vw" />
+          </div>
+        )}
+      </div>
+      <figcaption class="mp-label">{hero.state === "drawing" ? ws.hero.caption : mediaSlots.WS_HERO_PIECE.caption}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 02. Four kinds of output, and where a workshop stops. -->
+<Section labelledby="ws-formats-title">
+  <div class="ws-formats-head">
+    <div>
+      <p class="mp-eyebrow" data-auto-reveal>{ws.formats.eyebrow}</p>
+      <h2 id="ws-formats-title" class="headline-display mp-title-lg" data-auto-reveal>{ws.formats.headline}</h2>
+    </div>
+    <p class="mp-body" data-auto-reveal>{ws.formats.lead}</p>
+  </div>
+  <ul class="mp-rows ws-formats" role="list">
+    {ws.formats.rows.map((row, index) => (
+      <li class="mp-row ws-format" data-auto-reveal>
+        <h3 class="mp-name"><span class="ws-format-n" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>{row.name}</h3>
+        <p class="mp-body ws-format-text"><Tight text={row.text} /></p>
+        <div class="ws-format-glyph"><OutputGlyph kind={row.kind} /></div>
+      </li>
+    ))}
+  </ul>
+  <p class="mp-micro ws-formats-caption">{ws.formats.glyphLabel}</p>
+  <div class="ws-boundary" data-auto-reveal>
+    {ws.formats.boundary.map((sentence) => (
+      <p class="mp-body">
+        {sentence.before} <Link href={sentence.href} class="mp-inline-link">{sentence.label}</Link>{sentence.after}
+      </p>
+    ))}
+  </div>
+</Section>
+
+<!-- 03. Fits the group you have, and a session in five parts. -->
+<Section tone="soft" labelledby="ws-fit-title">
+  <div class="ws-fit">
+    <div class="ws-fit-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{ws.fit.eyebrow}</p>
+      <h2 id="ws-fit-title" class="headline-display mp-title-lg" data-auto-reveal>{ws.fit.headline}</h2>
+      <ul class="mp-rows ws-fit-rows" role="list">
+        {ws.fit.rows.map((row) => (
+          <li class="mp-row" data-auto-reveal>
+            <h3 class="mp-name">{row.name}</h3>
+            <p class="mp-body">{row.text}</p>
+          </li>
+        ))}
+      </ul>
+      <p class="mp-body ws-fit-note" data-auto-reveal>{ws.fit.note}</p>
+    </div>
+    <figure class="ws-flow" data-auto-reveal>
+      <figcaption class="mp-eyebrow ws-flow-title">{ws.fit.flowTitle}</figcaption>
+      <ol class="ws-flow-list" role="list">
+        {ws.fit.flow.map((name, index) => (
+          <li class="ws-flow-step">
+            <span class="ws-flow-art"><SessionStep step={index as 0 | 1 | 2 | 3 | 4} /></span>
+            <span class="ws-flow-text">
+              <span class="ws-flow-n mp-label" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+              <span class="mp-name">{name}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+      <p class="mp-micro">{ws.fit.flowCaption}</p>
+    </figure>
+  </div>
+</Section>
+
+<!-- 04. The artist leads the room: the one picture that has to be real. -->
+<Section labelledby="ws-artist-title">
+  <div class="ws-artist-head">
+    <p class="mp-eyebrow" data-auto-reveal>{ws.artist.eyebrow}</p>
+    <h2 id="ws-artist-title" class="headline-display mp-title-xl" data-auto-reveal>{ws.artist.headline}</h2>
+  </div>
+  <figure class="mp-figure ws-artist-fig" data-auto-reveal>
+    <Media slot="WS_FACILITATION" sizes="(min-width: 1024px) 92vw, 94vw"><ArtistScene /></Media>
+    <figcaption class="mp-label">{facilitation.state === "placeholder" ? ws.artist.standInCaption : mediaSlots.WS_FACILITATION.caption}</figcaption>
+  </figure>
+  <div class="ws-artist-copy">
+    {ws.artist.paragraphs.map((paragraph) => <p class="mp-body" data-auto-reveal>{paragraph}</p>)}
+  </div>
+</Section>
+
+<!-- 05. The room, the tables, the clean-up: a layout and its six lines. -->
+<Section tone="soft" labelledby="ws-venue-title">
+  <div class="ws-venue">
+    <figure class="mp-fig ws-venue-fig" data-auto-reveal>
+      <RoomLayout />
+      <figcaption class="mp-label">{ws.venue.layoutCaption}</figcaption>
+    </figure>
+    <div class="ws-venue-copy">
+      <p class="mp-eyebrow" data-auto-reveal>{ws.venue.eyebrow}</p>
+      <h2 id="ws-venue-title" class="headline-display mp-title-lg" data-auto-reveal>{ws.venue.headline}</h2>
+      <ol class="ws-venue-list" role="list">
+        {ws.venue.lines.map((line, index) => (
+          <li class="ws-venue-line" data-auto-reveal>
+            <span class="ws-venue-n" aria-hidden="true">{index + 1}</span>
+            <span class="mp-name">{line.name}</span>
+          </li>
+        ))}
+      </ol>
+      <p class="mp-body" data-auto-reveal>{ws.venue.note}</p>
+      {setup.state !== "absent" && (
+        <figure class="mp-figure ws-setup" data-auto-reveal>
+          <Media slot="WS_SETUP" sizes="(min-width: 1024px) 30vw, 92vw" />
+          <figcaption class="mp-label">{mediaSlots.WS_SETUP.caption}</figcaption>
+        </figure>
+      )}
+    </div>
+  </div>
+</Section>
+
+<!-- 06. What the group leaves with: three stages of one piece. -->
+<Section labelledby="ws-output-title">
+  <div class="ws-output-head">
+    <p class="mp-eyebrow" data-auto-reveal>{ws.output.eyebrow}</p>
+    <h2 id="ws-output-title" class="headline-display mp-title-lg" data-auto-reveal>{ws.output.headline}</h2>
+  </div>
+  <ol class="ws-output-frames" role="list">
+    {frames.map((frame, index) => (
+      <li class="ws-output-frame" data-auto-reveal>
+        <figure class="mp-fig">
+          {frame.state === "drawing" ? (
+            <OutputFrame kind={frame.kind} />
+          ) : (
+            <Media slot={frame.slot} sizes="(min-width: 768px) 30vw, 92vw" />
+          )}
+          <figcaption class="mp-label"><span class="ws-output-n" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>{ws.output.frames[index]}</figcaption>
+        </figure>
+      </li>
+    ))}
+  </ol>
+  <p class="mp-micro ws-output-caption">{ws.output.framesCaption}</p>
+  <div class="ws-output-copy">
+    <p class="mp-body" data-auto-reveal>{ws.output.lead}</p>
+    <p class="mp-body" data-auto-reveal>
+      {ws.output.scope.before} <Link href={ws.output.scope.href} class="mp-inline-link">{ws.output.scope.label}</Link>{ws.output.scope.after}
+    </p>
+  </div>
+</Section>
+
+<!-- 07. How a session comes together, and what the cost depends on. -->
+<Section tone="soft" labelledby="ws-process-title">
+  <p class="mp-eyebrow" data-auto-reveal>{ws.process.eyebrow}</p>
+  <h2 id="ws-process-title" class="headline-display mp-title-lg" data-auto-reveal>{ws.process.headline}</h2>
+  <Ledger steps={ws.process.steps} cols={3} label="How a workshop session comes together" />
+  <div class="ws-fee" data-auto-reveal>
+    <p class="ws-fee-line"><span class="ws-fee-lead">{ws.process.fee.lead}</span> {feeTail}</p>
+    <p class="mp-body ws-fee-closing">{ws.process.fee.closing}</p>
+  </div>
+</Section>
+
+<!-- 08. Organiser questions and guides. -->
+<Section labelledby="ws-faq-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ws.faq.eyebrow}</p>
+      <h2 id="ws-faq-title" class="headline-display mp-title-lg" data-auto-reveal>{ws.faq.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Faq items={ws.faq.items} /></div>
+  </div>
+</Section>
+
+<Section tone="soft" labelledby="ws-guides-title">
+  <div class="mp-split">
+    <div class="mp-split-head">
+      <p class="mp-eyebrow" data-auto-reveal>{ws.guides.eyebrow}</p>
+      <h2 id="ws-guides-title" class="headline-display mp-title-md" data-auto-reveal>{ws.guides.headline}</h2>
+    </div>
+    <div class="mp-split-body"><Guides guides={ws.guides.items} /></div>
+  </div>
+</Section>
+
+<Closing pageKey="corporate-workshops" closing={ws.closing} cta={ws.cta} />

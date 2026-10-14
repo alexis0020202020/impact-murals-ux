@@ -4,7 +4,8 @@
  * src/pages/what-we-do/[slug].astro).
  *
  * One dispatcher decides which pages exist: none in a production build until
- * launch, all of them in preview and live (src/content/money/launch.ts). Each
+ * launch, all of them in preview, and in live every page whose launch is not on
+ * hold (src/content/money/launch.ts). Each
  * page is its own composition in src/components/money/pages/, drawn inside the
  * shared body (breadcrumbs, preview strip, structured data, scripts).
  *
@@ -21,15 +22,16 @@ import HotelArtwork from "@/components/money/pages/HotelArtwork.astro";
 import LiveCustomisation from "@/components/money/pages/LiveCustomisation.astro";
 import ArtInstallations from "@/components/money/pages/ArtInstallations.astro";
 import Designers from "@/components/money/pages/Designers.astro";
+import CorporateWorkshops from "@/components/money/pages/CorporateWorkshops.astro";
 import { global } from "@/content/global";
-import { moneyMode } from "@/content/money/launch";
+import { moneyMode, moneyPageActive } from "@/content/money/launch";
 import { moneyCanonical, moneyPage, moneyPages, type MoneyKey } from "@/content/money/pages";
 import { routeFor } from "@/lib/routes";
 
 export function getStaticPaths() {
   if (moneyMode() === "off") return [];
   return moneyPages
-    .filter((page) => !page.existing)
+    .filter((page) => moneyPageActive(page))
     .map((page) => ({ params: { money: page.path.slice(1) }, props: { pageKey: page.key } }));
 }
 
@@ -44,7 +46,8 @@ const components: Partial<Record<MoneyKey, typeof LivePainting>> = {
   "hotel-artwork": HotelArtwork,
   "live-customisation": LiveCustomisation,
   "art-installations": ArtInstallations,
-  designers: Designers
+  designers: Designers,
+  "corporate-workshops": CorporateWorkshops
 };
 const Page = components[pageKey];
 if (!Page) throw new Error(`Money page ${pageKey} has no component yet.`);

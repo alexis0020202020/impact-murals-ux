@@ -48,6 +48,17 @@ export interface MediaSlot {
    * frame of real footage as the poster, the same footage as the loop.
    */
   clipAlias?: AutomotiveSlot;
+  /**
+   * What the page does while the slot has no real picture, instead of a
+   * placeholder (and instead of a launch build refusing it):
+   *   "drawing": the page draws its own labelled illustration in the slot's
+   *              place (the Workshops page's tile mosaic), replaced the moment
+   *              a real file is added;
+   *   "omit":    the picture is an addition, so the page simply has none until
+   *              a real one exists.
+   * Only used where the specification itself names the stand-in.
+   */
+  fallback?: "drawing" | "omit";
 }
 
 export const mediaSlots = {
@@ -391,6 +402,69 @@ export const mediaSlots = {
     alias: "ICAUR_LAUNCH",
     stillOnly: true,
     caption: "ARABIC CALLIGRAPHY, PAINTED LIVE ON A VEHICLE / iCAUR LAUNCH"
+  },
+
+  // ---- Corporate Art Workshops (provisional: nothing real exists yet) ------
+  // The alt text of a slot with no picture yet describes the brief. When the
+  // real file is added, rewrite it to say what that picture actually shows.
+  WS_HERO_PIECE: {
+    page: "corporate-workshops",
+    alt: "A finished shared artwork assembled from many individually painted square sections, made by a company group in an artist-led workshop",
+    brief: "The finished shared artwork, assembled from many hands, or a clearly labelled pilot piece",
+    ratio: "3:2",
+    priority: "essential",
+    fallback: "drawing",
+    caption: "SHARED WORK / CORPORATE WORKSHOP"
+  },
+  WS_HERO_GROUP: {
+    page: "corporate-workshops",
+    alt: "A team of colleagues painting sections of a shared artwork, guided by an artist, at a corporate venue",
+    brief: "A group at work, small, lapping the corner of the finished piece",
+    ratio: "4:3",
+    priority: "optional",
+    fallback: "omit",
+    caption: "THE GROUP AT WORK"
+  },
+  WS_FACILITATION: {
+    page: "corporate-workshops",
+    alt: "An artist introducing a technique to a group of colleagues seated at long tables, each with a canvas section in front of them",
+    brief: "The artist working with participants: facilitation, not a performance. Real session footage or a labelled pilot",
+    ratio: "11:5",
+    priority: "essential",
+    caption: "THE ARTIST WITH THE GROUP"
+  },
+  WS_SETUP: {
+    page: "corporate-workshops",
+    alt: "A workshop room set up before the session: protected tables, laid-out materials and a drying rack",
+    brief: "Real setup: tables, protection, materials and the drying area before the group arrives",
+    ratio: "4:3",
+    priority: "optional",
+    fallback: "omit",
+    caption: "SETUP BEFORE THE GROUP ARRIVES"
+  },
+  WS_OUT_TILES: {
+    page: "corporate-workshops",
+    alt: "The finished painted tiles from a group session laid out on a table, each section different",
+    brief: "End result 1: the finished tiles, laid out",
+    ratio: "4:3",
+    priority: "essential",
+    fallback: "drawing"
+  },
+  WS_OUT_ASSEMBLED: {
+    page: "corporate-workshops",
+    alt: "The painted tiles assembled into one finished image",
+    brief: "End result 2: the sections assembled into one work",
+    ratio: "4:3",
+    priority: "essential",
+    fallback: "drawing"
+  },
+  WS_OUT_WALL: {
+    page: "corporate-workshops",
+    alt: "The finished shared artwork installed on the wall of an office",
+    brief: "End result 3: the work on a wall in the client's space",
+    ratio: "4:3",
+    priority: "essential",
+    fallback: "drawing"
   }
 } as const satisfies Record<string, MediaSlot>;
 

@@ -1,0 +1,58 @@
+---
+/*
+  One part of a session, drawn as a small three-by-three grid of canvas tiles
+  that fills in as the session goes: empty at the welcome, one tile painted in
+  the demonstration, half the grid in guided making, every tile at the finish
+  and one assembled work, framed and hung, at the display. The same piece as
+  the hero, in miniature. Decorative (the label beside it carries the meaning).
+*/
+import { palette } from "./mosaic";
+
+interface Props {
+  /** 0 welcome, 1 demonstration, 2 guided making, 3 finishing, 4 display. */
+  step: 0 | 1 | 2 | 3 | 4;
+}
+
+const { step } = Astro.props;
+
+// The miniature piece, row by row.
+const picture = [
+  [palette.sand, palette.signal, palette.signal],
+  [palette.moss, palette.signal, palette.clay],
+  [palette.ink, palette.ink, palette.clay]
+];
+// The order the nine tiles are painted in.
+const order = [4, 1, 5, 3, 7, 0, 2, 6, 8];
+const painted = new Set(order.slice(0, [0, 1, 5, 9, 9][step]));
+const pitch = 34;
+---
+<svg class="mp-svg ws-step-grid" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+  {step < 4 && picture.flatMap((row, r) =>
+    row.map((fill, c) => {
+      const index = r * 3 + c;
+      const x = 7 + c * pitch + c * 3;
+      const y = 7 + r * pitch + r * 3;
+      return painted.has(index) ? (
+        <rect x={x} y={y} width={pitch} height={pitch} rx="1.5" style={`fill: ${fill}`} />
+      ) : (
+        <rect class="l-soft" x={x} y={y} width={pitch} height={pitch} rx="1.5" />
+      );
+    })
+  )}
+  {step === 1 && <path d="M54 59L66 49" style={`fill: none; stroke: ${palette.bright}; stroke-width: 4; stroke-linecap: round`} />}
+  {step === 3 && (
+    <path d="M14 94L30 84M46 20L62 12M82 56L98 48" style={`fill: none; stroke: ${palette.bright}; stroke-width: 4; stroke-linecap: round; opacity: .7`} />
+  )}
+  {step === 4 && (
+    <>
+      <path class="l-soft" d="M60 6L24 22M60 6L96 22" />
+      <circle class="fill-ink" cx="60" cy="6" r="2.4" />
+      <g transform="translate(15 22)">
+        {picture.flatMap((row, r) =>
+          row.map((fill, c) => <rect x={c * 30} y={r * 30} width="30" height="30" style={`fill: ${fill}`} />)
+        )}
+        <rect class="l" x="0" y="0" width="90" height="90" />
+      </g>
+    </>
+  )}
+</svg>

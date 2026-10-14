@@ -1,0 +1,82 @@
+---
+/*
+  An illustrative scene for the facilitation section: the artist at a board
+  showing one technique on one tile, a row of people at a long table each with
+  a canvas in front of them, and an assistant standing behind the group. Flat
+  colour and plain figures, drawn from the studio's palette, no faces.
+
+  It stands inside the placeholder for the real session picture, which is the
+  one image the page cannot do without (an artist painting while people watch
+  is not facilitation): it is labelled as an illustration and gives way to the
+  real picture the moment WS_FACILITATION has a file. It shows no real session,
+  person or company.
+*/
+import { palette } from "./mosaic";
+
+const label =
+  "Illustration: an artist demonstrates a technique on a board while five people sit at a long table, each with a canvas in front of them, and an assistant stands behind the group.";
+
+const seats = [
+  { x: 650, fill: palette.moss },
+  { x: 742, fill: palette.clay },
+  { x: 834, fill: palette.ink },
+  { x: 926, fill: palette.signal },
+  { x: 1018, fill: palette.moss }
+];
+const canvases = [palette.signal, palette.moss, palette.clay, palette.ink, palette.signal];
+---
+<svg class="mp-svg ws-scene" viewBox="0 0 1100 500" style="--tm:38px" role="img" aria-label={label}>
+  <!-- The floor -->
+  <path class="l" d="M0 432H1100" />
+  <path class="l-faint" d="M0 442H1100M0 452H1100" />
+
+  <!-- The assistant, standing behind the group -->
+  <g style="fill: var(--color-stone)">
+    <circle cx="880" cy="150" r="21" />
+    <path d="M848 200Q880 184 912 200L922 340H838Z" />
+    <rect x="852" y="340" width="20" height="92" />
+    <rect x="888" y="340" width="20" height="92" />
+  </g>
+
+  <!-- The artist, at the board -->
+  <g style="fill: var(--color-ink)">
+    <circle cx="170" cy="146" r="25" />
+    <path d="M136 196Q170 180 204 196L216 336H124Z" />
+    <rect x="142" y="336" width="21" height="96" />
+    <rect x="178" y="336" width="21" height="96" />
+  </g>
+  <path d="M204 214L292 178" style="fill: none; stroke: var(--color-ink); stroke-width: 17; stroke-linecap: round" />
+  <path d="M292 178L326 162" style="fill: none; stroke: var(--color-signal); stroke-width: 5; stroke-linecap: round" />
+
+  <!-- The board: one technique shown on one tile -->
+  <path class="l" d="M392 288L362 432M464 288L494 432" />
+  <path class="l-soft" d="M428 288V404" />
+  <rect x="352" y="84" width="152" height="204" style={`fill: ${palette.bright}`} />
+  <rect class="l" x="352" y="84" width="152" height="204" />
+  <rect x="368" y="100" width="56" height="56" style={`fill: ${palette.signal}`} />
+  <path d="M376 140L414 112" style={`fill: none; stroke: ${palette.bright}; stroke-width: 5; stroke-linecap: round; opacity: .7`} />
+  <rect class="l-soft" x="432" y="100" width="56" height="56" />
+  <rect class="l-soft" x="368" y="168" width="56" height="56" />
+  <rect class="l-soft" x="432" y="168" width="56" height="56" />
+
+  <!-- The long table and the group -->
+  {seats.map((seat) => (
+    <>
+      <circle cx={seat.x} cy="252" r="20" style="fill: var(--color-ink)" />
+      <path d={`M${seat.x - 34} 346L${seat.x - 28} 296Q${seat.x} 276 ${seat.x + 28} 296L${seat.x + 34} 346Z`} style={`fill: ${seat.fill}`} />
+    </>
+  ))}
+  <rect x="590" y="344" width="480" height="14" style="fill: var(--color-ink)" />
+  <rect x="606" y="358" width="11" height="74" style="fill: var(--color-ink)" />
+  <rect x="1042" y="358" width="11" height="74" style="fill: var(--color-ink)" />
+  <rect x="826" y="358" width="11" height="74" style="fill: var(--color-ink)" />
+  {seats.map((seat, index) => (
+    <path d={`M${seat.x - 30} 344L${seat.x - 22} 326H${seat.x + 22}L${seat.x + 30} 344Z`} style={`fill: ${canvases[index]}`} />
+  ))}
+
+  <!-- Names, on thin leaders -->
+  <text class="t-mid" x="170" y="86">ARTIST</text>
+  <text class="t-mid t-minor" x="428" y="60">DEMONSTRATION</text>
+  <text class="t-mid t-minor" x="880" y="104">ASSISTANT</text>
+  <text class="t-mid" x="830" y="486">PARTICIPANTS</text>
+</svg>
