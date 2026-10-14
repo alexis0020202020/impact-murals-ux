@@ -1369,3 +1369,99 @@ Eighth brief on the route and a narrow one: the page is structurally approved, s
 - Evidence: `docs/ux-evidence/automotive-final-desktop-1440x900.jpg` and `automotive-final-mobile-390x844.jpg` (end states: the headless browser renders at about 1.5 frames per second, so the entrances were forced to their end).
 - Outcome: PASS for everything verifiable here. BLOCKED, not passed: Lighthouse (the DevTools connector timed out), Safari, iOS and Firefox rendering, real devices, analytics, smoothness of the entrance animations, and the owner's answers to the decisions in the handoff.
 - Cycles completed in this part: 11 (the 15-cycle minimum of the overall pass was met in earlier parts; nothing here was added to fill a count).
+
+# Part 22: money pages build (brief received 14 October 2026)
+
+## Baseline and decisions
+
+- Baseline: the specification commit `9775e31` (documentation only). A production build of it, with `CONTENT_SOURCE=fixtures`, was saved (29 pages, 167 files, one SHA-256 each) and every later production build with the switch off was compared to it.
+- Scope: the nine pages of `docs/money-pages/` built in the branch, unpublished, reviewable. The Automotive page is the quality bar, not a template. Illustrations are labelled; nothing real is invented. A missing tool is BLOCKED, never PASS.
+- Every cycle below is a real observation with a real change or a justified decision to keep. None was added to fill a count.
+
+## Cycles
+
+### Cycle 01: Corporate Artwork, first render at 1440 and 390
+
+- Observation: the gate labels of the process track collided with its line; the hatch of the phasing diagram did not show (a class rule beat the fill attribute); the four-cell plan was unreadable on a phone; the format fields did not reflow; placeholder tags were clipped in the narrow sequence.
+- Change: room above the labels; the hatch as an inline style; a two-by-two plan on phones; a reflow for the fields; a compact placeholder.
+- Verification: re-rendered at both widths. Outcome: PASS.
+
+### Cycle 02: Custom Canvas
+
+- Observation: the hero label broke hyphenated words and the plate word "EXPERIMENTAL" broke mid-word.
+- Change: smaller type in the label and plate, no forced word breaks. Verification: re-rendered at both widths. Outcome: PASS.
+
+### Cycle 03: Hotel Artwork
+
+- Observation: both route drawings (horizontal and vertical) showed at once and the horizontal one was giant (`.mp-fig svg` outranks a bare class); a plan marker rendered black (its background variable was undefined); the drawing was not first.
+- Change: rules scoped to the wrapper; a default `--svg-bg`; the drawing placed first. Verification: re-rendered. Outcome: PASS.
+
+### Cycle 04: Live Customisation
+
+- Observation: the title broke inside "CUSTOMISATION"; the hands labels were duplicated; the hatched waiting band grew taller than its panel; on a phone the call to action was below the first screen.
+- Change: smaller title sizes, one label set, a fixed panel height, a cropped scene with the qualifier under the button. Verification: re-rendered at both widths. Outcome: PASS.
+
+### Cycle 05: Art Installations
+
+- Observation: the title broke inside "INSTALLATIONS" and its caption nearly touched the support text; one internal link pointed to a path that does not exist (`/art-for-interior-designers-architects-dubai/`).
+- Change: smaller title, narrower text and sheet widths; the link corrected to `/art-for-interior-designers-dubai/`. Verification: re-rendered; the link test now checks every path. Outcome: PASS.
+
+### Cycle 06: Public Art, mobile contact sheets
+
+- Observation: on phones the approval map drew its connector lines as a large empty cross above the list (the same specificity trap as Cycle 03); the programme bar's labels ran together.
+- Change: the hide rule scoped to the component; padding on the labels. Verification: the two elements re-shot on a 390 px screen. Outcome: PASS.
+
+### Cycle 07: Corporate Art Workshops, first render
+
+- Observation: the one picture the page cannot do without (the artist with the group) was a 600 px hatched void; the mosaic was flat (one tone of sky); two room-layout numbers sat on stools and a label on the entrance route.
+- Change: a labelled illustration inside the placeholder (a general mechanism, `Media.astro` default slot); a warm sky, a sun with a halo, three hills; the markers moved. Verification: re-rendered at both widths. Outcome: PASS.
+
+### Cycle 08: Swapping a real picture in
+
+- Observation: the pages claim that a drawing gives way to a real picture the moment a file is added; that had not been exercised.
+- Verification: temporary stand-in files for the seven Workshops slots were added, the page rendered (the hero shows the picture and the lapped group frame, the facilitation figure crops to a band, the captions switch), and the files were removed. Outcome: PASS; the placeholder state is back.
+
+### Cycle 09: Cross-page audit of the rendered pages
+
+- Observation (by script over the nine rendered pages): no em dash anywhere, no repeated FAQ question in 77, one H1 per page and no skipped level, every image has alt text, unique titles and descriptions, valid structured data; the repeated headings are generic process steps ("BRIEF", "APPOINTMENT"); the repeated sentences are the studio line and the provisional investment note by design.
+- Decision to keep: process step names stay; they sit in different contexts. Outcome: PASS.
+
+### Cycle 10: First screens side by side, and the call to action
+
+- Observation: set side by side, the nine first screens differ (four dark, five light, nine organising devices); but at 390 by 844 the primary button was below the first screen on Custom Canvas and Public Art, and on Hotel Artwork at 1440 by 900.
+- Change: Custom Canvas and Public Art put the button after the statement on phones; the Public Art wall is capped lower and its caption and "before" frame are anchored to the capped wall; the Hotel title runs across the page and the plate stands beside the text only.
+- Verification: measured with a script at four screens: above the fold on all nine at 390 by 844 and 1440 by 900. Outcome: PASS; documented: two pages marginally below at 1280 by 720 and six at 360 by 740.
+
+### Cycle 11: Contrast
+
+- Observation: computed for the colour pairs the pages use, the stone grey of small text is 4.17:1 on the soft surface, under 4.5.
+- Change: one shade darker on the soft surface inside the money pages (5.07:1); the shared stylesheet is untouched. Verification: recomputed. Outcome: PASS.
+
+### Cycle 12: Width sweep
+
+- Observation: at twelve widths from 320 to 1920 on all nine pages, a script reported content cut off by the page's `overflow-x: clip`: two approval-map labels on Public Art at 768.
+- Change: shorter, wrapping labels on tablets. Verification: sweep rerun: 0 offenders. Outcome: PASS.
+
+### Cycle 13: Is production really unchanged?
+
+- Observation: the first build with the switch off was NOT identical to the baseline: a money component imported statically by an existing template adds its stylesheet and scripts to production pages even when not rendered, the shared clip script became a separate chunk, and Tailwind generated two rules from tokens in my own files (a class name and a footer utility).
+- Change: the dispatcher and the strengthened Public Art moved to `src/money/` and are injected only when the pages are on; the clip playback is a copy; the class renamed; the footer uses a utility the stylesheet already has; a test guards all of it.
+- Verification: 166 of 167 files identical (the 167th, `deploy-proof.json`, has a build-time hash that differs between any two builds). Outcome: PASS.
+
+### Cycle 14: The three builds
+
+- Observation: the first preview build failed the orphan check: `facade-artwork`, `large-scale-murals` and `site-specific-artworks` had lost their only inbound links when Public Art was strengthened.
+- Change: Public Art links them again until their later redirect, controlled by one flag per route; the inbound-links list on the offer pages is what keeps every launched page reachable.
+- Verification: off 29 pages, preview 37 pages, rehearsed live 36 pages (the workshops page held out), validator clean on all three; a live build without the pictures fails naming the first missing slot. Outcome: PASS.
+
+### Cycle 15: The large empty frames, and a price that must not publish by accident
+
+- Observation: four wide placeholders (a setup view, sample panels, material tests, the facilitation scene) dominated their pages; the investment range would have appeared on three pages the moment the launch switch flipped, whether or not the owner had decided.
+- Change: a labelled illustration inside each of the four frames (the tag "Asset to come" stays); a third switch, `INVESTMENT_NOTE_APPROVED`, so a live build leaves the note out until it is approved.
+- Verification: the four frames re-shot at 1440 and 390; tests for the switch. Outcome: PASS.
+
+### Cycle 16: Final regression on the last build
+
+- Verification: all nine pages re-shot full length at 1440 and 390 and read as contact sheets; `npm test` 155 of 155; `astro check` 0 errors, 0 warnings; reduced motion and no JavaScript on all nine; no duplicate id, every label reference resolves.
+- Outcome: PASS for everything verifiable here. BLOCKED, not passed: automated accessibility audit and Lighthouse (no tool installed), Safari, Firefox, a real phone, a screen reader, the original Money Pages Master Context.
+- Cycles completed in this part: 16.

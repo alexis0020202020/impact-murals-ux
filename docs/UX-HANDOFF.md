@@ -1539,3 +1539,29 @@ The complete production specification for the nine money pages is in `docs/money
 2. Approve or amend the nine specifications.
 3. Schedule the media work in 5.2, starting with one studio demonstration day.
 4. Do not build or redirect anything until the enquiry delivery dependency is cleared and the destination pages exist.
+
+# Part 22: money pages built, unpublished (brief received 14 October 2026)
+
+The nine pages specified in Part 21 are built in the branch `claude/funny-pascal-r0cn99` and reviewable. **Nothing is published, merged, redirected or deployed; no pull request was opened.** The full account is `docs/money-pages/IMPLEMENTATION.md`; this part is the summary a returning session needs.
+
+## State
+
+- **Built:** Live Painting, Corporate Artwork, Custom Canvas, Hotel Artwork, Live Customisation, Art Installations, Designers & Architects and Corporate Art Workshops (eight new routes; the last is provisional), and Public Art strengthened in place. Each is its own composition on the shared vocabulary in `src/styles/money/base.css`; the Automotive page was the quality bar, not a template.
+- **Unpublished by construction.** Three switches in `src/content/money/launch.ts` (`MONEY_LIVE`, `WORKSHOP_GATE_CLEARED`, `INVESTMENT_NOTE_APPROVED`), all `false`. The routes are injected by `src/integrations/money-pages.mjs` only when the pages are on, and live in `src/money/`, outside `src/pages`. A production build with the switch off is **byte for byte the pre-money output** (166 of 166 files; only `deploy-proof.json`'s build-time `manifestHash` differs, as it does between any two builds).
+- **Existing files touched (five):** `astro.config.mjs`, `package.json` (one script), `src/components/Footer.astro`, `src/lib/routes.ts`, `src/pages/what-we-do/[slug].astro`. No Automotive file, no dependency, no lockfile.
+- **Checks:** `npm test` 155 of 155 (34 new); `astro check` 0 errors, 0 warnings; production build off, preview and a rehearsed live build all pass the validator; width sweep 320 to 1920 on all nine pages shows nothing cut off; reduced motion and no JavaScript verified on all nine.
+- **A real defect found and fixed on the way:** the first off-mode build was not identical (a statically imported money component adds its stylesheet and scripts to a production page even when not rendered, and Tailwind reads every file for utility names). It is why the routes moved out of `src/pages`, why the clip playback is a copy, and why `tests/money-pages.test.mjs` guards both.
+- **Another:** the first preview build failed the orphan check: three Public Art child pages lost their only inbound links when the page was strengthened. Public Art links them again until the later 301 (`consolidatedRoutes` in `src/content/money/links.ts`).
+
+## Blocked or not verified
+
+- Automated accessibility audit and Lighthouse (no tool installed; dependencies must not change); Safari, Firefox, a real phone, a screen reader: **BLOCKED**, not passed.
+- The original Money Pages Master Context was never supplied.
+- None of the pages' factual claims has been confirmed by the studio (`docs/money-pages/README.md` 5.1 and `IMPLEMENTATION.md` 8).
+- Ten pictures are placeholders (`npm run money:media`); a live build refuses them by design.
+
+## Exact next action
+
+1. Open the branch in a deploy preview (or `CONTENT_SOURCE=fixtures npm run dev`) and read the eight pages and Public Art together, desktop and phone.
+2. Answer the MUST FIX list in `IMPLEMENTATION.md` section 11, starting with the confirmations, the ten pictures, the enquiry route and the investment note.
+3. Do not set `MONEY_LIVE` or open a pull request until then. Redirects come last, destination first.

@@ -1,5 +1,7 @@
 # Impact Murals · Money Page Production Master
 
+**Update, 14 October 2026:** the nine pages are now built and reviewable in the branch, still unpublished: see `IMPLEMENTATION.md` for routes, files, how to preview, what is real and what is a placeholder, the decisions taken, and what must be done before publication. The rest of this file is the specification as it was delivered on 13 October.
+
 **Phase:** production specification. **Date:** 13 October 2026. **Nothing is published, migrated, redirected or edited on the live site.** No route, canonical, sitemap entry, navigation item or Search Console setting was changed. No source file of the website was modified; this folder holds documentation only.
 
 ## Contents
